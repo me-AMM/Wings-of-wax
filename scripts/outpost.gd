@@ -19,6 +19,7 @@ var pending_cards: Array = []
 var card_wait := 0.0
 var busy := false
 var lander_sprite: AnimatedSprite2D
+var lander_body: StaticBody2D
 var crate: Sprite2D
 var locks := {}               # Interactable -> {icon, label}
 var prompt: Node2D
@@ -33,8 +34,8 @@ func _ready() -> void:
 	_build_prompt()
 	_build_lander()
 	_build_locks()
-	for b in get_tree().get_nodes_in_group("blocker"):
-		player.blockers.append(b.rect())
+	player.stepped.connect(func(p): _effect("dust_puff", p + Vector2(0, -2), 0.5, false))
+	add_child(load("res://scripts/debug_overlay.gd").new())
 	GameState.event.connect(_on_event)
 	GameState.card.connect(func(k): GameState.card_queue.append(k))
 	add_child(load("res://scripts/storm_warning.gd").new())
@@ -82,6 +83,20 @@ func _build_lander() -> void:
 	lander_sprite.offset = -Art.anchor("cargo_lander_touchdown")
 	lander_sprite.visible = false
 	lander.add_child(lander_sprite)
+	# landed cargo lander is solid (footprint from data/footprints.json; static sprite sits 24 px below the anchor)
+	lander_body = StaticBody2D.new()
+	lander_body.name = "Footprint"
+	lander_body.position = Vector2(0, 24)
+	lander_body.collision_layer = 0
+	lander_body.collision_mask = 0
+	var cp := CollisionPolygon2D.new()
+	cp.add_to_group("footprint_shape")
+	var pts := PackedVector2Array()
+	for p in Config.load_json("res://data/footprints.json")["cargo_lander"]["poly"]:
+		pts.append(Vector2(p[0], p[1]))
+	cp.polygon = pts
+	lander_body.add_child(cp)
+	lander.add_child(lander_body)
 	crate = Sprite2D.new()
 	crate.texture = Art.tex("cargo_crate")
 	crate.centered = false
@@ -92,8 +107,8 @@ func _build_lander() -> void:
 
 func _build_locks() -> void:
 	for it in get_tree().get_nodes_in_group("interactable"):
-		if it.unlock_key == "" or not (it.kind in ["recycler", "tray", "console", "lab", "pad", "shelter"]):
-			continue
+		if not (it.name in ["Recycler", "Greenhouse", "Console", "Lab", "Pad", "Shelter"]):
+			continue               # one lock per building (the tray shares the greenhouse lock)
 		var sp: Sprite2D = it.get_node_or_null("Sprite2D")
 		if sp == null:
 			continue
@@ -123,21 +138,27 @@ func _refresh_visuals() -> void:
 		if it.kind == "panel":
 			var step := int(round(GameState.dust[it.index] / 25.0))
 			sp.texture = Art.tex(["solar_clean", "solar_dust25", "solar_dust50", "solar_dust75"][clampi(step, 0, 3)])
-		elif it.kind == "tray":
+		elif it.name == "Tray":
 			sp.texture = Art.tex("radish_" + GameState.tray_stage())
 		elif it.kind == "charger":
 			sp.texture = Art.tex("charger_full" if GameState.spare_pack > 0.5 else "charger_empty")
 		elif it.kind == "crew_lander":
 			it.visible = GameState.day >= 32
+			_set_solid(it.get_node_or_null("Footprint"), it.visible)
 		if locks.has(it):
 			locks[it]["icon"].visible = not open
 			locks[it]["label"].visible = not open
 			locks[it]["label"].text = "%s %d" % [Text.t("ui.opens_on_day"), it.unlock_day()]
 	crate.visible = not GameState.cargo_waiting.is_empty()
+	_set_solid(lander_body, _lander_on_pad())
 	if _lander_on_pad() and not lander_sprite.is_playing():
 		lander_sprite.visible = true
 		lander_sprite.frame = lander_sprite.sprite_frames.get_frame_count("default") - 1
 	dark.color = shadow_tint if GameState.in_shadow else Color.WHITE
+
+func _set_solid(body: Node, on: bool) -> void:
+	if body != null:
+		body.collision_layer = 1 if on else 0
 
 func _lander_on_pad() -> bool:
 	return GameState.day > 4 or (GameState.day == 4 and GameState.hour >= 7.0)

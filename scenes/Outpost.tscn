@@ -1,30 +1,29 @@
-[gd_scene load_steps=26 format=3]
+[gd_scene load_steps=25 format=3]
 
 [ext_resource type="Script" path="res://scripts/outpost.gd" id="1"]
 [ext_resource type="Texture2D" path="res://assets/sprites/tiles/ground_1.png" id="2"]
 [ext_resource type="Texture2D" path="res://assets/sprites/tiles/path.png" id="3"]
 [ext_resource type="Texture2D" path="res://assets/sprites/tiles/ground_2.png" id="4"]
 [ext_resource type="Texture2D" path="res://assets/sprites/tiles/ground_3.png" id="5"]
-[ext_resource type="Script" path="res://scripts/blocker.gd" id="6"]
-[ext_resource type="Texture2D" path="res://assets/sprites/tiles/crater_small.png" id="7"]
-[ext_resource type="Texture2D" path="res://assets/sprites/tiles/boulder_wall.png" id="8"]
-[ext_resource type="Script" path="res://scripts/interactable.gd" id="9"]
-[ext_resource type="Texture2D" path="res://assets/sprites/buildings/habitat.png" id="10"]
-[ext_resource type="Texture2D" path="res://assets/sprites/buildings/water_recycler.png" id="11"]
+[ext_resource type="Texture2D" path="res://assets/sprites/tiles/crater_small.png" id="6"]
+[ext_resource type="Texture2D" path="res://assets/sprites/tiles/boulder_wall.png" id="7"]
+[ext_resource type="Script" path="res://scripts/interactable.gd" id="8"]
+[ext_resource type="Texture2D" path="res://assets/sprites/buildings/habitat.png" id="9"]
+[ext_resource type="Texture2D" path="res://assets/sprites/buildings/water_recycler.png" id="10"]
+[ext_resource type="Texture2D" path="res://assets/sprites/buildings/greenhouse.png" id="11"]
 [ext_resource type="Texture2D" path="res://assets/sprites/props/radish_empty.png" id="12"]
-[ext_resource type="Texture2D" path="res://assets/sprites/buildings/greenhouse.png" id="13"]
-[ext_resource type="Texture2D" path="res://assets/sprites/buildings/solar_clean.png" id="14"]
-[ext_resource type="Texture2D" path="res://assets/sprites/props/slider_console.png" id="15"]
-[ext_resource type="Texture2D" path="res://assets/sprites/buildings/charger_full.png" id="16"]
-[ext_resource type="Texture2D" path="res://assets/sprites/buildings/science_lab.png" id="17"]
-[ext_resource type="Texture2D" path="res://assets/sprites/props/forecast_board.png" id="18"]
-[ext_resource type="Texture2D" path="res://assets/sprites/buildings/landing_pad.png" id="19"]
-[ext_resource type="Texture2D" path="res://assets/sprites/buildings/shelter.png" id="20"]
-[ext_resource type="Texture2D" path="res://assets/sprites/props/crew_lander.png" id="21"]
-[ext_resource type="Texture2D" path="res://assets/sprites/props/antenna.png" id="22"]
-[ext_resource type="Texture2D" path="res://assets/sprites/tiles/rocks_2.png" id="23"]
-[ext_resource type="Texture2D" path="res://assets/sprites/tiles/rocks_1.png" id="24"]
-[ext_resource type="Script" path="res://scripts/player.gd" id="25"]
+[ext_resource type="Texture2D" path="res://assets/sprites/buildings/solar_clean.png" id="13"]
+[ext_resource type="Texture2D" path="res://assets/sprites/props/slider_console.png" id="14"]
+[ext_resource type="Texture2D" path="res://assets/sprites/buildings/charger_full.png" id="15"]
+[ext_resource type="Texture2D" path="res://assets/sprites/buildings/science_lab.png" id="16"]
+[ext_resource type="Texture2D" path="res://assets/sprites/props/forecast_board.png" id="17"]
+[ext_resource type="Texture2D" path="res://assets/sprites/buildings/landing_pad.png" id="18"]
+[ext_resource type="Texture2D" path="res://assets/sprites/buildings/shelter.png" id="19"]
+[ext_resource type="Texture2D" path="res://assets/sprites/props/crew_lander.png" id="20"]
+[ext_resource type="Texture2D" path="res://assets/sprites/props/antenna.png" id="21"]
+[ext_resource type="Texture2D" path="res://assets/sprites/tiles/rocks_2.png" id="22"]
+[ext_resource type="Texture2D" path="res://assets/sprites/tiles/rocks_1.png" id="23"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="24"]
 
 [node name="Outpost" type="Node2D"]
 script = ExtResource("1")
@@ -203,32 +202,17 @@ position = Vector2(192, 64)
 texture = ExtResource("5")
 centered = false
 
-[node name="Crater0" type="Node2D" parent="Ground"]
-position = Vector2(200, 724)
-script = ExtResource("6")
-footprint = Vector2(84, 40)
+[node name="Crater0" type="Sprite2D" parent="Ground"]
+position = Vector2(200, 700)
+texture = ExtResource("6")
 
-[node name="Sprite2D" type="Sprite2D" parent="Ground/Crater0"]
-position = Vector2(0, -24)
-texture = ExtResource("7")
+[node name="Crater1" type="Sprite2D" parent="Ground"]
+position = Vector2(1050, 820)
+texture = ExtResource("6")
 
-[node name="Crater1" type="Node2D" parent="Ground"]
-position = Vector2(1050, 844)
-script = ExtResource("6")
-footprint = Vector2(84, 40)
-
-[node name="Sprite2D" type="Sprite2D" parent="Ground/Crater1"]
-position = Vector2(0, -24)
-texture = ExtResource("7")
-
-[node name="Crater2" type="Node2D" parent="Ground"]
-position = Vector2(260, 324)
-script = ExtResource("6")
-footprint = Vector2(84, 40)
-
-[node name="Sprite2D" type="Sprite2D" parent="Ground/Crater2"]
-position = Vector2(0, -24)
-texture = ExtResource("7")
+[node name="Crater2" type="Sprite2D" parent="Ground"]
+position = Vector2(260, 300)
+texture = ExtResource("6")
 
 [node name="WallTop" type="TextureRect" parent="Ground"]
 layout_mode = 0
@@ -236,7 +220,7 @@ offset_left = 0.0
 offset_top = 0.0
 offset_right = 1280.0
 offset_bottom = 64.0
-texture = ExtResource("8")
+texture = ExtResource("7")
 expand_mode = 1
 stretch_mode = 1
 
@@ -246,7 +230,7 @@ offset_left = 0.0
 offset_top = 896.0
 offset_right = 1280.0
 offset_bottom = 960.0
-texture = ExtResource("8")
+texture = ExtResource("7")
 expand_mode = 1
 stretch_mode = 1
 
@@ -256,7 +240,7 @@ offset_left = 0.0
 offset_top = 0.0
 offset_right = 64.0
 offset_bottom = 960.0
-texture = ExtResource("8")
+texture = ExtResource("7")
 expand_mode = 1
 stretch_mode = 1
 
@@ -266,56 +250,106 @@ offset_left = 1216.0
 offset_top = 0.0
 offset_right = 1280.0
 offset_bottom = 960.0
-texture = ExtResource("8")
+texture = ExtResource("7")
 expand_mode = 1
 stretch_mode = 1
+
+[node name="WorldWalls" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="WallTop" type="CollisionPolygon2D" parent="WorldWalls" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-64, -64, 1344, -64, 1344, 64, -64, 64)
+
+[node name="WallBottom" type="CollisionPolygon2D" parent="WorldWalls" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-64, 896, 1344, 896, 1344, 1024, -64, 1024)
+
+[node name="WallLeft" type="CollisionPolygon2D" parent="WorldWalls" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-64, -64, 64, -64, 64, 1024, -64, 1024)
+
+[node name="WallRight" type="CollisionPolygon2D" parent="WorldWalls" groups=["footprint_shape"]]
+polygon = PackedVector2Array(1216, -64, 1344, -64, 1344, 1024, 1216, 1024)
 
 [node name="World" type="Node2D" parent="."]
 y_sort_enabled = true
 
 [node name="Habitat" type="Node2D" parent="World"]
 position = Vector2(640, 440)
-script = ExtResource("9")
+script = ExtResource("8")
 kind = "habitat"
 index = 0
 radius = 62.0
 hold = 0.0
 unlock_key = "habitat"
-footprint = Vector2(134, 18)
 prompt_key = "ui.habitat"
 prompt_offset = Vector2(0, -24)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Habitat"]
-texture = ExtResource("10")
+texture = ExtResource("9")
 centered = false
 offset = Vector2(-96, -192)
 
+[node name="Footprint" type="StaticBody2D" parent="World/Habitat"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Habitat/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(62.2, -43.0, 57.4, -35.0, 44.0, -28.2, 23.8, -23.6, 0.0, -22.0, -23.8, -23.6, -44.0, -28.2, -57.4, -35.0, -62.2, -43.0, -57.4, -51.0, -44.0, -57.8, -23.8, -62.4, -0.0, -64.0, 23.8, -62.4, 44.0, -57.8, 57.4, -51.0)
+
 [node name="Recycler" type="Node2D" parent="World"]
 position = Vector2(470, 440)
-script = ExtResource("9")
+script = ExtResource("8")
 kind = "recycler"
 index = 0
 radius = 55.0
 hold = 0.0
 unlock_key = "recycler"
-footprint = Vector2(89, 18)
 prompt_key = "ui.drink"
 prompt_offset = Vector2(0, -24)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Recycler"]
+texture = ExtResource("10")
+centered = false
+offset = Vector2(-64, -128)
+
+[node name="Footprint" type="StaticBody2D" parent="World/Recycler"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Recycler/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(34.5, -19.5, 31.9, -12.8, 24.6, -7.1, 13.5, -3.3, 0.5, -2.0, -12.5, -3.3, -23.6, -7.1, -30.9, -12.8, -33.5, -19.5, -30.9, -26.2, -23.6, -31.9, -12.5, -35.7, 0.5, -37.0, 13.5, -35.7, 24.6, -31.9, 31.9, -26.2)
+
+[node name="Greenhouse" type="Node2D" parent="World"]
+position = Vector2(330, 440)
+script = ExtResource("8")
+kind = "tray"
+index = 0
+radius = 60.0
+hold = 0.0
+unlock_key = "greenhouse"
+prompt_key = ""
+prompt_offset = Vector2(0, -24)
+
+[node name="Sprite2D" type="Sprite2D" parent="World/Greenhouse"]
 texture = ExtResource("11")
 centered = false
 offset = Vector2(-64, -128)
 
+[node name="Footprint" type="StaticBody2D" parent="World/Greenhouse"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Greenhouse/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(44.2, -42.0, 40.7, -38.6, 30.7, -35.6, 15.7, -33.7, -2.0, -33.0, -19.7, -33.7, -34.7, -35.6, -44.7, -38.6, -48.2, -42.0, -44.7, -45.4, -34.7, -48.4, -19.7, -50.3, -2.0, -51.0, 15.7, -50.3, 30.7, -48.4, 40.7, -45.4)
+
 [node name="Tray" type="Node2D" parent="World"]
-position = Vector2(330, 504)
-script = ExtResource("9")
+position = Vector2(330, 458)
+script = ExtResource("8")
 kind = "tray"
 index = 0
-radius = 40.0
+radius = 50.0
 hold = 0.0
 unlock_key = "greenhouse"
-footprint = Vector2(28, 8)
 prompt_key = ""
 prompt_offset = Vector2(0, -40)
 
@@ -324,284 +358,352 @@ texture = ExtResource("12")
 centered = false
 offset = Vector2(-32, -64)
 
-[node name="Greenhouse" type="Node2D" parent="World"]
-position = Vector2(330, 440)
-script = ExtResource("9")
-kind = "greenhouse"
-index = 0
-radius = 0.0
-hold = 0.0
-unlock_key = "greenhouse"
-footprint = Vector2(89, 18)
-prompt_key = ""
-prompt_offset = Vector2(0, -40)
+[node name="Footprint" type="StaticBody2D" parent="World/Tray"]
+collision_layer = 1
+collision_mask = 0
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Greenhouse"]
-texture = ExtResource("13")
-centered = false
-offset = Vector2(-64, -128)
+[node name="Shape" type="CollisionPolygon2D" parent="World/Tray/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-24.1, -21, 23.1, -21, 23.1, -10, -24.1, -10)
 
 [node name="Panel0" type="Node2D" parent="World"]
 position = Vector2(300, 200)
-script = ExtResource("9")
+script = ExtResource("8")
 kind = "panel"
 index = 0
 radius = 56.0
 hold = 2.0
 unlock_key = "solar"
-footprint = Vector2(116, 14)
 prompt_key = "ui.clean_panel"
 prompt_offset = Vector2(0, -30)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Panel0"]
-texture = ExtResource("14")
+texture = ExtResource("13")
 centered = false
 offset = Vector2(-64, -64)
 
+[node name="Footprint" type="StaticBody2D" parent="World/Panel0"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Panel0/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-51.6, -18, 50.6, -18, 50.6, -10, -51.6, -10)
+
 [node name="Panel1" type="Node2D" parent="World"]
 position = Vector2(430, 200)
-script = ExtResource("9")
+script = ExtResource("8")
 kind = "panel"
 index = 1
 radius = 56.0
 hold = 2.0
 unlock_key = "solar"
-footprint = Vector2(116, 14)
 prompt_key = "ui.clean_panel"
 prompt_offset = Vector2(0, -30)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Panel1"]
-texture = ExtResource("14")
+texture = ExtResource("13")
 centered = false
 offset = Vector2(-64, -64)
 
+[node name="Footprint" type="StaticBody2D" parent="World/Panel1"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Panel1/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-51.6, -18, 50.6, -18, 50.6, -10, -51.6, -10)
+
 [node name="Panel2" type="Node2D" parent="World"]
 position = Vector2(560, 200)
-script = ExtResource("9")
+script = ExtResource("8")
 kind = "panel"
 index = 2
 radius = 56.0
 hold = 2.0
 unlock_key = "solar"
-footprint = Vector2(116, 14)
 prompt_key = "ui.clean_panel"
 prompt_offset = Vector2(0, -30)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Panel2"]
-texture = ExtResource("14")
+texture = ExtResource("13")
 centered = false
 offset = Vector2(-64, -64)
 
+[node name="Footprint" type="StaticBody2D" parent="World/Panel2"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Panel2/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-51.6, -18, 50.6, -18, 50.6, -10, -51.6, -10)
+
 [node name="Panel3" type="Node2D" parent="World"]
 position = Vector2(690, 200)
-script = ExtResource("9")
+script = ExtResource("8")
 kind = "panel"
 index = 3
 radius = 56.0
 hold = 2.0
 unlock_key = "solar"
-footprint = Vector2(116, 14)
 prompt_key = "ui.clean_panel"
 prompt_offset = Vector2(0, -30)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Panel3"]
-texture = ExtResource("14")
+texture = ExtResource("13")
 centered = false
 offset = Vector2(-64, -64)
 
+[node name="Footprint" type="StaticBody2D" parent="World/Panel3"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Panel3/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-51.6, -18, 50.6, -18, 50.6, -10, -51.6, -10)
+
 [node name="Console" type="Node2D" parent="World"]
 position = Vector2(830, 200)
-script = ExtResource("9")
+script = ExtResource("8")
 kind = "console"
 index = 0
 radius = 40.0
 hold = 0.0
 unlock_key = "solar"
-footprint = Vector2(44, 18)
 prompt_key = "ui.sliders"
 prompt_offset = Vector2(0, -50)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Console"]
-texture = ExtResource("15")
+texture = ExtResource("14")
 centered = false
 offset = Vector2(-32, -64)
 
+[node name="Footprint" type="StaticBody2D" parent="World/Console"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Console/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-15.1, -17, 15.1, -17, 15.1, -2, -15.1, -2)
+
 [node name="Charger" type="Node2D" parent="World"]
 position = Vector2(910, 200)
-script = ExtResource("9")
+script = ExtResource("8")
 kind = "charger"
 index = 0
 radius = 38.0
 hold = 2.0
 unlock_key = "solar"
-footprint = Vector2(44, 18)
 prompt_key = "ui.swap_packs"
 prompt_offset = Vector2(0, -50)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Charger"]
-texture = ExtResource("16")
+texture = ExtResource("15")
 centered = false
 offset = Vector2(-32, -64)
 
+[node name="Footprint" type="StaticBody2D" parent="World/Charger"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Charger/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-12.4, -18, 15.4, -18, 15.4, -4, -12.4, -4)
+
 [node name="Lab" type="Node2D" parent="World"]
 position = Vector2(940, 440)
-script = ExtResource("9")
+script = ExtResource("8")
 kind = "lab"
 index = 0
 radius = 62.0
 hold = 0.0
 unlock_key = "lab"
-footprint = Vector2(134, 18)
 prompt_key = "ui.lab_process"
 prompt_offset = Vector2(0, -24)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Lab"]
-texture = ExtResource("17")
+texture = ExtResource("16")
 centered = false
 offset = Vector2(-96, -192)
 
+[node name="Footprint" type="StaticBody2D" parent="World/Lab"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Lab/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-62.2, -64, 62.2, -64, 62.2, -36, -62.2, -36)
+
 [node name="Board" type="Node2D" parent="World"]
 position = Vector2(1130, 440)
-script = ExtResource("9")
+script = ExtResource("8")
 kind = "board"
 index = 0
 radius = 40.0
 hold = 0.0
 unlock_key = "lab"
-footprint = Vector2(44, 18)
 prompt_key = "ui.forecast_board"
 prompt_offset = Vector2(0, -50)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Board"]
-texture = ExtResource("18")
+texture = ExtResource("17")
 centered = false
 offset = Vector2(-32, -64)
 
+[node name="Footprint" type="StaticBody2D" parent="World/Board"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Board/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-16.2, -17, 13.2, -17, 13.2, -5, -16.2, -5)
+
 [node name="Pad" type="Node2D" parent="World"]
 position = Vector2(640, 780)
-script = ExtResource("9")
+script = ExtResource("8")
 kind = "pad"
 index = 0
 radius = 70.0
 hold = 0.0
 unlock_key = "pad"
-footprint = Vector2(0, 0)
 prompt_key = ""
 prompt_offset = Vector2(0, -120)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Pad"]
-texture = ExtResource("19")
+texture = ExtResource("18")
 centered = false
 offset = Vector2(-96, -192)
 
 [node name="Shelter" type="Node2D" parent="World"]
 position = Vector2(1130, 660)
-script = ExtResource("9")
+script = ExtResource("8")
 kind = "shelter"
 index = 0
 radius = 60.0
 hold = 0.0
 unlock_key = "shelter"
-footprint = Vector2(89, 18)
 prompt_key = "ui.enter_shelter"
 prompt_offset = Vector2(0, -40)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Shelter"]
-texture = ExtResource("20")
+texture = ExtResource("19")
 centered = false
 offset = Vector2(-64, -128)
 
+[node name="Footprint" type="StaticBody2D" parent="World/Shelter"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Shelter/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(49.6, -35.0, 45.8, -30.8, 35.0, -27.2, 19.0, -24.8, 0.0, -24.0, -19.0, -24.8, -35.0, -27.2, -45.8, -30.8, -49.6, -35.0, -45.8, -39.2, -35.0, -42.8, -19.0, -45.2, -0.0, -46.0, 19.0, -45.2, 35.0, -42.8, 45.8, -39.2)
+
 [node name="CrewLander" type="Node2D" parent="World"]
 position = Vector2(900, 780)
-script = ExtResource("9")
+script = ExtResource("8")
 kind = "crew_lander"
 index = 0
 radius = 70.0
 hold = 0.0
 unlock_key = ""
-footprint = Vector2(134, 18)
 prompt_key = "ui.crew_lander"
 prompt_offset = Vector2(0, -60)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/CrewLander"]
-texture = ExtResource("21")
+texture = ExtResource("20")
 centered = false
 offset = Vector2(-96, -192)
 
+[node name="Footprint" type="StaticBody2D" parent="World/CrewLander"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/CrewLander/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-54.4, -48, 56.4, -48, 56.4, -12, -54.4, -12)
+
 [node name="Antenna" type="Node2D" parent="World"]
 position = Vector2(790, 390)
-script = ExtResource("6")
-footprint = Vector2(30, 10)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Antenna"]
+texture = ExtResource("21")
+centered = false
+offset = Vector2(-32, -64)
+
+[node name="Footprint" type="StaticBody2D" parent="World/Antenna"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Antenna/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-1.6, -18, 1.6, -18, 1.6, -9, -1.6, -9)
+
+[node name="Rock1" type="Node2D" parent="World"]
+position = Vector2(910, 804)
+
+[node name="Sprite2D" type="Sprite2D" parent="World/Rock1"]
 texture = ExtResource("22")
 centered = false
 offset = Vector2(-32, -64)
 
-[node name="Rock1" type="Node2D" parent="World"]
-position = Vector2(910, 804)
-script = ExtResource("6")
-footprint = Vector2(30, 10)
+[node name="Footprint" type="StaticBody2D" parent="World/Rock1"]
+collision_layer = 1
+collision_mask = 0
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Rock1"]
-texture = ExtResource("23")
-centered = false
-offset = Vector2(-32, -64)
-
-[node name="Rock2" type="Node2D" parent="World"]
-position = Vector2(166, 592)
-script = ExtResource("6")
-footprint = Vector2(30, 10)
-
-[node name="Sprite2D" type="Sprite2D" parent="World/Rock2"]
-texture = ExtResource("23")
-centered = false
-offset = Vector2(-32, -64)
+[node name="Shape" type="CollisionPolygon2D" parent="World/Rock1/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-21.8, -23, 22.8, -23, 22.8, -10, -21.8, -10)
 
 [node name="Rock3" type="Node2D" parent="World"]
 position = Vector2(464, 745)
-script = ExtResource("6")
-footprint = Vector2(30, 10)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Rock3"]
-texture = ExtResource("24")
+texture = ExtResource("22")
 centered = false
 offset = Vector2(-32, -64)
+
+[node name="Footprint" type="StaticBody2D" parent="World/Rock3"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Rock3/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-21.8, -23, 22.8, -23, 22.8, -10, -21.8, -10)
 
 [node name="Rock4" type="Node2D" parent="World"]
-position = Vector2(1131, 180)
-script = ExtResource("6")
-footprint = Vector2(30, 10)
+position = Vector2(240, 343)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Rock4"]
-texture = ExtResource("24")
-centered = false
-offset = Vector2(-32, -64)
-
-[node name="Rock6" type="Node2D" parent="World"]
-position = Vector2(627, 527)
-script = ExtResource("6")
-footprint = Vector2(30, 10)
-
-[node name="Sprite2D" type="Sprite2D" parent="World/Rock6"]
 texture = ExtResource("23")
 centered = false
 offset = Vector2(-32, -64)
 
+[node name="Rock5" type="Node2D" parent="World"]
+position = Vector2(384, 876)
+
+[node name="Sprite2D" type="Sprite2D" parent="World/Rock5"]
+texture = ExtResource("22")
+centered = false
+offset = Vector2(-32, -64)
+
+[node name="Footprint" type="StaticBody2D" parent="World/Rock5"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Rock5/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-21.8, -23, 22.8, -23, 22.8, -10, -21.8, -10)
+
+[node name="Rock6" type="Node2D" parent="World"]
+position = Vector2(920, 628)
+
+[node name="Sprite2D" type="Sprite2D" parent="World/Rock6"]
+texture = ExtResource("22")
+centered = false
+offset = Vector2(-32, -64)
+
+[node name="Footprint" type="StaticBody2D" parent="World/Rock6"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Rock6/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-21.8, -23, 22.8, -23, 22.8, -10, -21.8, -10)
+
 [node name="Rock7" type="Node2D" parent="World"]
-position = Vector2(1136, 202)
-script = ExtResource("6")
-footprint = Vector2(30, 10)
+position = Vector2(1039, 531)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Rock7"]
-texture = ExtResource("24")
+texture = ExtResource("23")
 centered = false
 offset = Vector2(-32, -64)
 
 [node name="Rock8" type="Node2D" parent="World"]
-position = Vector2(1039, 531)
-script = ExtResource("6")
-footprint = Vector2(30, 10)
+position = Vector2(400, 560)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Rock8"]
 texture = ExtResource("23")
@@ -609,18 +711,33 @@ centered = false
 offset = Vector2(-32, -64)
 
 [node name="Rock9" type="Node2D" parent="World"]
-position = Vector2(400, 560)
-script = ExtResource("6")
-footprint = Vector2(30, 10)
+position = Vector2(690, 843)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/Rock9"]
+texture = ExtResource("22")
+centered = false
+offset = Vector2(-32, -64)
+
+[node name="Footprint" type="StaticBody2D" parent="World/Rock9"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionPolygon2D" parent="World/Rock9/Footprint" groups=["footprint_shape"]]
+polygon = PackedVector2Array(-21.8, -23, 22.8, -23, 22.8, -10, -21.8, -10)
+
+[node name="Rock10" type="Node2D" parent="World"]
+position = Vector2(854, 819)
+
+[node name="Sprite2D" type="Sprite2D" parent="World/Rock10"]
 texture = ExtResource("23")
 centered = false
 offset = Vector2(-32, -64)
 
-[node name="Player" type="Node2D" parent="World"]
+[node name="Player" type="CharacterBody2D" parent="World"]
 position = Vector2(640, 492)
-script = ExtResource("25")
+script = ExtResource("24")
+collision_layer = 2
+collision_mask = 1
 
 [node name="Camera2D" type="Camera2D" parent="World/Player"]
 limit_left = 0

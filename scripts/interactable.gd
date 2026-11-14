@@ -1,5 +1,5 @@
 class_name Interactable
-extends Blocker
+extends Node2D
 # Put this on any node (origin = bottom centre of a building) to make it usable with E.
 # Edit the exported values in the editor: radius = how close the player must be, hold = seconds to hold E.
 @export var kind := ""            # habitat, recycler, tray, console, panel, charger, lab, board, pad, shelter, crew_lander
@@ -11,7 +11,6 @@ extends Blocker
 @export var prompt_offset := Vector2(0, -40)
 
 func _ready() -> void:
-	super._ready()
 	add_to_group("interactable")
 
 func is_open() -> bool:

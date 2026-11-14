@@ -18,6 +18,10 @@ func _start() -> void:
 	var gs = root.get_node("GameState")
 	gs.new_game()
 	match setup:
+		"f3":
+			gs.day = 4
+			gs._start_day(false)
+			gs.advance(1.2)
 		"day2":
 			gs.day = 2
 			gs._start_day(false)
@@ -37,6 +41,10 @@ func _start() -> void:
 			gs._start_day(false)
 	scene_node = load(scene_path).instantiate()
 	root.add_child(scene_node)
+	if setup == "f3":
+		for c in scene_node.get_children():
+			if c.get_script() != null and c.get_script().resource_path.ends_with("debug_overlay.gd"):
+				c.visible = true
 	if args.size() > 4 and scene_node.has_node("World/Player"):
 		scene_node.get_node("World/Player").position = Vector2(float(args[3]), float(args[4]))
 

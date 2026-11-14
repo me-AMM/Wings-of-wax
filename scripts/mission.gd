@@ -16,7 +16,7 @@ extends Node2D
 @export var dark_tint := Color(0.3, 0.34, 0.58)
 
 var kind := "rock"
-var player: Node2D
+var player: CharacterBody2D
 var hud: CanvasLayer
 var world: Node2D
 var items: Array = []             # {node, type, done}
@@ -31,6 +31,7 @@ var objective_done := false
 var ending := false
 var digging := false
 var in_crater := false
+var crater_count := 0           # slow zones the player is inside (Area2D)
 var storm_started := false
 var suit_bar: HudBar
 var suit_label: Label
@@ -99,6 +100,7 @@ func _build_world() -> void:
 	add_child(world)
 	# base: shelter sprite marks the start / safe zone
 	_sprite("shelter", base_pos + Vector2(0, -40), world)
+	_build_collision()
 	# objectives
 	if kind == "rock":
 		for p in sample_positions:
@@ -126,14 +128,59 @@ func _build_world() -> void:
 		fl.play("default")
 		items.append({"node": fl, "type": "flag", "done": false, "pos": flag_pos})
 
+# Real collision: solid shelter footprint, solid world walls, and Area2D SLOW ZONES for the craters
+# (polygon of the crater floor from data/footprints.json; no collision on the rim).
+func _poly(key: String) -> PackedVector2Array:
+	var pts := PackedVector2Array()
+	for p in Config.load_json("res://data/footprints.json")[key]["poly"]:
+		pts.append(Vector2(p[0], p[1]))
+	return pts
+
+func _build_collision() -> void:
+	var sb := StaticBody2D.new()
+	sb.name = "Footprint"
+	sb.position = base_pos + Vector2(0, -40)
+	sb.collision_layer = 1
+	sb.collision_mask = 0
+	var cp := CollisionPolygon2D.new()
+	cp.polygon = _poly("shelter")
+	cp.add_to_group("footprint_shape")
+	sb.add_child(cp)
+	world.add_child(sb)
+	var walls := StaticBody2D.new()
+	walls.name = "WorldWalls"
+	walls.collision_layer = 1
+	walls.collision_mask = 0
+	var w := world_size
+	for r in [Rect2(-64, -64, w.x + 128, 96), Rect2(-64, w.y - 32, w.x + 128, 96), Rect2(-64, -64, 96, w.y + 128), Rect2(w.x - 32, -64, 96, w.y + 128)]:
+		var wp := CollisionPolygon2D.new()
+		wp.polygon = PackedVector2Array([r.position, Vector2(r.end.x, r.position.y), r.end, Vector2(r.position.x, r.end.y)])
+		wp.add_to_group("footprint_shape")
+		walls.add_child(wp)
+	add_child(walls)
+	for c in crater_centers:
+		var area := Area2D.new()
+		area.name = "SlowZone"
+		area.position = c
+		area.collision_layer = 0
+		area.collision_mask = 2
+		var sp := CollisionPolygon2D.new()
+		sp.polygon = _poly("crater_large_slow")
+		sp.add_to_group("slow_shape")
+		area.add_child(sp)
+		area.body_entered.connect(func(_b): crater_count += 1)
+		area.body_exited.connect(func(_b): crater_count = maxi(0, crater_count - 1))
+		add_child(area)
+	add_child(load("res://scripts/debug_overlay.gd").new())
+
 func _build_player() -> void:
-	player = Node2D.new()
+	player = CharacterBody2D.new()
 	player.set_script(load("res://scripts/player.gd"))
 	player.position = base_pos + Vector2(0, 30)
 	world.add_child(player)
 	player.world_min = Vector2(40, 40)
 	player.world_max = world_size - Vector2(40, 36)
-	base_speed = Config.data["player"]["walk_speed"]
+	base_speed = Config.data["player"]["player_speed"]
 	var cam := Camera2D.new()
 	cam.limit_left = 0
 	cam.limit_top = 0
@@ -224,10 +271,7 @@ func _process(delta: float) -> void:
 		return
 	elapsed += delta
 	# craters: slow and more suit air used
-	in_crater = false
-	for c in crater_centers:
-		if player.position.distance_to(c) < crater_radius:
-			in_crater = true
+	in_crater = crater_count > 0
 	player.speed = base_speed * (Config.data["missions"]["crater_speed_mult"] if in_crater else 1.0)
 	crater_label.visible = in_crater
 	# suit air
