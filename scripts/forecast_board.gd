@@ -11,20 +11,20 @@ func _ready() -> void:
 	bg.size = Vector2(640, 360)
 	add_child(bg)
 	var title := UIKit.world_label(Text.t("ui.board_title"), 24, Color("FFD23F"))
-	title.position = Vector2(40, 28)
+	title.position = Vector2(48, 44)
 	add_child(title)
 	var body := UIKit.world_label(_message(), 24)
-	body.position = Vector2(40, 100)
-	body.size = Vector2(560, 100)
+	body.position = Vector2(48, 96)
+	body.size = Vector2(540, 100)
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(body)
 	var real := UIKit.world_label(_real_line(), 16, Color(0.75, 0.85, 1.0))
-	real.position = Vector2(40, 230)
-	real.size = Vector2(560, 44)
+	real.position = Vector2(48, 200)
+	real.size = Vector2(540, 48)
 	real.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(real)
 	var back := UIKit.world_label(Text.t("ui.board_back"), 16)
-	back.position = Vector2(500, 320)
+	back.position = Vector2(440, 266)      # inside the board frame (the border is the outer 30 px)
 	add_child(back)
 
 # The next storm (day, entry) from today on, or {}.

@@ -95,7 +95,7 @@ func _ready() -> void:
 	for r in hm.rows:
 		var lbl: Label = r["label"]
 		var sub: Label = r["sub"]
-		var room: float = (hm.menu_width - 28.0 - 34.0) * 2.0 - 8.0
+		var room: float = (hm.menu_width - 28.0 - 38.0) * 2.0 - 16.0
 		report(text_w(lbl) <= room, "habitat menu '%s' %.0f of %.0f px" % [lbl.text, text_w(lbl), room])
 		report(text_w(sub) <= room, "habitat menu sub '%s' %.0f of %.0f px" % [sub.text, text_w(sub), room])
 	hm.close_modal()

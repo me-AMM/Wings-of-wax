@@ -60,6 +60,8 @@ All values are game-scaled. Put them in data/config.json. docs/01_DECISIONS.md o
 - Gym: 1 game hour, 2 kWh, 2-day cooldown. No gym for 7 days = max Health 90; 14 days = max 75. One session lifts the cap again.
 
 ## Storm watch and storms
+- **Owner decision:** during MISSIONS the warning is the table value x 0.4, at least 20 s (small 20/36 s, medium 24/48 s, large 36/60 s, finale 72 s for watch low / medium-high), starting at a random point between 25% and 40% of the mission time. Outside missions the table below applies unchanged.
+- **Owner decision:** the countdown belongs to the game and keeps running when you leave the mission. You must WALK to the shelter at the Outpost and enter it before it ends. Nothing clears a storm automatically. The mission result (samples, research) is applied only after the storm is resolved; large/finale not sheltered = mission failed (finale: failed ending). Finale sheltered: the crew lander arrives, short extraction scene, ending.
 - Damage is a % of CURRENT Health. Watch high also shows "storm expected tomorrow" on the HUD the day before.
 - The forecast board in the lab is free to read; at watch medium or high it names the next storm and its day.
 - Shelter: forced sleep until the day ends, counts as that day's sleep, the player can't leave. Undone chores are delayed, not lost.
@@ -73,7 +75,9 @@ All values are game-scaled. Put them in data/config.json. docs/01_DECISIONS.md o
 | Finale (X28, day 32) | 180 s | 180 s | Mission failed | tiny (-5 Health) |
 
 ## Missions
-- Start at the landing pad (E). Separate screen. About 90 s. Suit meter 120 s (180 s on mission 1), displayed as "8 h".
+- Start at the landing pad (E). Separate screen. About 90 s. Suit meter **100 s (140 s on mission 1)** (owner decision, was 120/180), displayed as "8 h". The suit bar blinks under 25%.
+- The mission map is about 1.6x larger (2240x1120) with a serpentine of boulder walls and 5 craters; a good route should end with 15-25% suit left. Walking speed is 1.75x the old value (119 px/s).
+- Leave a mission by holding E (2 s) at the exit marker at the start. A yellow arrow points to the next target, then to the exit.
 - Craters slow the player and drain suit oxygen 1.25x. Abort keeps samples only if the waypoint was reached. Out of suit oxygen: -30 Health, samples lost, back at base.
 - Types: rock and soil (missions 1, 3, 5, 7), ice dig (2, 4, 6), rare stone (finale, day 32).
 - Ice dig: bar with a fixed green target zone and a moving marker (see assets/manifest.json, ui_layout.dig_bar).

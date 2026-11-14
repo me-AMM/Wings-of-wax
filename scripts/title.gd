@@ -10,16 +10,16 @@ func _ready() -> void:
 	bg.stretch_mode = TextureRect.STRETCH_SCALE
 	bg.size = Vector2(640, 360)
 	var start := UIKit.button(Text.t("ui.start"), 160)
-	start.position = Vector2(240, 224)
+	start.position = Vector2(100, 22)      # on the sky, away from the habitat picture
 	start.pressed.connect(_on_start)
 	add_child(start)
 	var judge := UIKit.button(Text.t("ui.judge_mode"), 160)
-	judge.position = Vector2(240, 268)
+	judge.position = Vector2(280, 22)
 	judge.pressed.connect(_on_judge)
 	add_child(judge)
 	start.grab_focus()
-	start.focus_neighbor_bottom = judge.get_path()
-	judge.focus_neighbor_top = start.get_path()
+	start.focus_neighbor_right = judge.get_path()
+	judge.focus_neighbor_left = start.get_path()
 
 func _on_start() -> void:
 	Audio.play("ui_click")
@@ -36,7 +36,7 @@ func _unhandled_input(e: InputEvent) -> void:
 	var f := get_viewport().gui_get_focus_owner()
 	if e.is_action_pressed("interact") and f is Button:
 		f.pressed.emit()
-	elif e.is_action_pressed("move_down") or e.is_action_pressed("move_up"):
-		var next_f: Control = f.find_next_valid_focus() if e.is_action_pressed("move_down") else f.find_prev_valid_focus()
+	elif e.is_action_pressed("move_right") or e.is_action_pressed("move_left"):
+		var next_f: Control = f.find_next_valid_focus() if e.is_action_pressed("move_right") else f.find_prev_valid_focus()
 		if next_f:
 			next_f.grab_focus()

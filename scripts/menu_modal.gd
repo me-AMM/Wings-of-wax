@@ -17,7 +17,7 @@ func build() -> void:
 	var y := (180.0 - h) / 2.0
 	root.add_child(UIKit.panel(Vector2(x, y), Vector2(menu_width, h)))
 	var title := UIKit.label(title_text, 10, Color("FFD23F"))
-	title.position = Vector2(x + 18, y + 12)
+	title.position = Vector2(x + 22, y + 14)
 	root.add_child(title)
 	for i in items.size():
 		var it: Dictionary = items[i]
@@ -27,14 +27,14 @@ func build() -> void:
 		bg.position = Vector2(bx, by)
 		root.add_child(bg)
 		var ic := UIKit.icon(it.get("icon", "icon_heart"), 20)
-		ic.position = Vector2(bx + 10, by + 6)
+		ic.position = Vector2(bx + 12, by + 6)
 		root.add_child(ic)
 		var col := Color.WHITE if it.get("enabled", true) else Color(0.6, 0.62, 0.7)
 		var lb := UIKit.label(it["text"], 10, col)
-		lb.position = Vector2(bx + 34, by + 6)
+		lb.position = Vector2(bx + 38, by + 6)
 		root.add_child(lb)
 		var sub := UIKit.label(it.get("sub", ""), 8, Color(0.8, 0.85, 1.0))
-		sub.position = Vector2(bx + 34, by + 18)
+		sub.position = Vector2(bx + 38, by + 18)
 		root.add_child(sub)
 		rows.append({"bg": bg, "label": lb, "sub": sub})
 	_refresh()
