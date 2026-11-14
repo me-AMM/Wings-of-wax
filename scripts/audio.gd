@@ -44,7 +44,7 @@ func _ready() -> void:
 			_amb[n] = {"player": p, "vol": 0.0}
 	# central sounds for state events
 	GameState.event.connect(_on_event)
-	GameState.notice.connect(func(k): Audio.play("warning_low" if k in ["pack_low", "water_low", "oxygen_low"] else "notice"))
+	GameState.notice.connect(func(k): Audio.play("warning_low" if k in ["pack_low", "water_low", "oxygen_low", "blackout"] else "notice"))
 
 func _make_bus(bus_name: String) -> void:
 	if AudioServer.get_bus_index(bus_name) == -1:

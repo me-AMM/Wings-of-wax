@@ -186,6 +186,8 @@ func _process(delta: float) -> void:
 	stats[3]["icon"].texture = Art.tex("icon_pack_low" if (GameState.base_pack < low and blink) else "icon_pack")
 	stats[4]["icon"].texture = Art.tex("icon_pack_low" if (GameState.spare_pack < low and blink) else "icon_pack")
 	blackout_icon.visible = GameState.blackout and blink
+	# oxygen hours: red under 12 h, blinking under 6 h
+	stats[2]["label"].modulate.a = 1.0 if (GameState.oxygen_h >= Config.data["oxygen"]["blink_below_h"] or blink) else 0.25
 	storm_icon.visible = GameState.storm_state == "warning"
 	storm_icon.modulate.a = 0.5 + 0.5 * sin(Time.get_ticks_msec() / 120.0)
 	if notice_timer > 0.0:

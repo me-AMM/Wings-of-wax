@@ -35,6 +35,7 @@ var science_hist: Dictionary = {}  # day -> science slider level (for the resear
 var in_shadow := false
 var blackout := false
 var blackout_hours := 0.0
+var o2_warned := false             # the low-oxygen warning was shown (reset when the reserve recovers)
 var tray_planted := false
 var tray_growth := 0
 var tray_high_days := 0
@@ -109,6 +110,7 @@ func new_game() -> void:
 	in_shadow = false
 	blackout = false
 	blackout_hours = 0.0
+	o2_warned = false
 	tray_planted = false
 	tray_growth = 0
 	tray_high_days = 0
@@ -281,11 +283,18 @@ func _step(dt: float) -> void:
 		else:
 			base_pack = maxf(0.0, base_pack + net * dt / kwh_per_pct)
 	# --- oxygen ---
-	if not (blackout and blackout_hours < cfg["power"]["blackout_o2_hold_hours"]):
+	if blackout and blackout_hours >= cfg["power"]["blackout_o2_hold_hours"]:
+		# the 24 h backup is used up: the reserve now falls 2 h per game hour
+		oxygen_h = maxf(0.0, oxygen_h - float(cfg["oxygen"]["blackout_drain_per_hour"]) * dt)
+	elif not blackout:
 		var rate: float = cfg["oxygen"]["change_per_day"][sliders[0]]
-		if blackout:
-			rate = minf(rate, cfg["oxygen"]["change_per_day"][0])
 		oxygen_h = clampf(oxygen_h + rate * dt / 24.0, 0.0, cfg["oxygen"]["max_h"])
+	# (during the first 24 h of a blackout the backup life support holds the reserve)
+	if oxygen_h < float(cfg["oxygen"]["warn_below_h"]) and not o2_warned:
+		o2_warned = true
+		notice.emit("oxygen_low")                # warning_low sound + HUD notice
+	elif oxygen_h >= float(cfg["oxygen"]["warn_below_h"]) + 2.0:
+		o2_warned = false
 	if oxygen_h <= 0.0:
 		damage(cfg["oxygen"]["empty_damage_per_hour"] * dt, "oxygen")
 	# --- storm over-time damage ---

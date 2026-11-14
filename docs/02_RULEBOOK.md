@@ -31,7 +31,7 @@ All values are game-scaled. Put them in data/config.json. docs/01_DECISIONS.md o
 - Each game hour: if panels make more than the base draws, the base runs on sunlight and the leftover charges the charger pack. If panels make less, the base pack covers the gap.
 - Medium sliders in clean sunlight leave 4 kW spare: the charger pack gains about 80% per day.
 - Swap = hold E for 2 s at the solar field; the packs trade places.
-- Below 10% charge: warning light. Base pack at 0% with no sunlight = blackout: backup life support holds oxygen for 24 game hours, everything else shuts off, sleep is blocked. Swapping in any charged pack ends it.
+- Below 10% charge: warning light. Base pack at 0% with no sunlight = blackout: backup life support holds oxygen for 24 game hours (then the reserve falls **2 h per game hour**, round 4), everything else shuts off, sleep is blocked. Swapping in any charged pack ends it.
 - Shadow check (48 h on packs, 240 kWh total): all low = 168 kWh (fits, 60% left); life support medium + rest low = 216 kWh (fits, 20% left); all medium = 288 kWh (blackout about 8 h before sunrise). Use as a test case.
 
 ## Dust

@@ -91,6 +91,8 @@ func check_host(host: String) -> void:
 	if host == "Title":
 		names.append("Start game")
 	for nm in names:
+		while Scenes.busy or Scenes.pending != "":          # let a running scene fade finish first
+			await get_tree().process_frame
 		fresh(host)
 		var panel = await open_panel(host)
 		var b := find_button(panel, nm)

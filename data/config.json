@@ -67,7 +67,10 @@
       0.0,
       12.0
     ],
-    "empty_damage_per_hour": 5.0
+    "empty_damage_per_hour": 5.0,
+    "blackout_drain_per_hour": 2.0,
+    "warn_below_h": 12.0,
+    "blink_below_h": 6.0
   },
   "water": {
     "start_l": 20.0,
