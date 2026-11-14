@@ -5,3 +5,4 @@ export_credentials.cfg
 .env
 *.key
 __pycache__/
+docs/video/
