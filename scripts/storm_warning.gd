@@ -74,6 +74,7 @@ func _ready() -> void:
 	result_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	result_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	root.add_child(result_label)
+	UIKit.ignore_mouse(root)
 	GameState.event.connect(_on_event)
 	_set_shown(false)
 	if GameState.storm_state == "warning":      # scene changed while a storm was coming

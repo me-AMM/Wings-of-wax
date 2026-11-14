@@ -141,7 +141,18 @@
     "extraction_skip": "E: skip",
     "mission_failed_banner": "MISSION FAILED - samples lost",
     "opens_during_storm": "Opens during a storm",
-    "shelter_closed": "The shelter only opens during a storm."
+    "shelter_closed": "The shelter only opens during a storm.",
+    "judge_t_jump": "Jumped to day %d",
+    "judge_t_storm": "%s storm started",
+    "judge_t_shadow": "Shadow started",
+    "judge_t_sunrise": "Sunrise: shadow over",
+    "judge_t_cargo": "Cargo lander landed",
+    "judge_t_mission": "Mission started",
+    "judge_t_refill": "Everything refilled",
+    "judge_t_speed_on": "Speed x4 ON",
+    "judge_t_speed_off": "Speed x4 OFF",
+    "judge_t_preset": "Preset: %s",
+    "judge_t_start": "Judge game started"
   },
   "notices": {
     "cargo_tomorrow": "Cargo lander arrives tomorrow at 07:00.",

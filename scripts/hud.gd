@@ -135,6 +135,7 @@ func _build() -> void:
 	fade_rect.modulate.a = 0.0
 	fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(fade_rect)
+	UIKit.ignore_mouse(root)
 
 func _icon(icon_name: String, pos: Vector2, parent: Control) -> TextureRect:
 	var ic := UIKit.icon(icon_name, 32)       # 32x32 derived icon, shown 1:1

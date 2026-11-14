@@ -15,8 +15,9 @@ func _btn(text: String, pos: Vector2, size: Vector2) -> Button:
 
 func _ready() -> void:
 	super._ready()
-	layer = 30
+	layer = 100                       # above every other UI layer
 	scale = Vector2(1, 1)
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	var root := Control.new()
 	add_child(root)
 	var dim := ColorRect.new()
@@ -79,30 +80,35 @@ func _ready() -> void:
 	day_slider.value_changed.connect(func(_v): _refresh())
 	root.add_child(day_slider)
 	var jump := _btn(Text.t("ui.judge_jump"), Vector2(ox + PW - M - 62, y), Vector2(62, 24))
-	jump.pressed.connect(func(): _do(func(): Judge.jump_to_day(int(day_slider.value)); Judge.go_outpost()))
+	jump.pressed.connect(func():
+		var d := int(day_slider.value)
+		_act(func(): Judge.jump_to_day(d); Judge.go_outpost(), Text.t("ui.judge_t_jump") % d))
 	root.add_child(jump)
-	# 3-column grid of buttons
+	# 3-column grid of buttons. Every button closes the panel (so you SEE the effect) and shows a confirmation toast.
 	var cw := (PW - 2 * M - 16.0) / 3.0
+	var sizes := {"small": Text.t("storm_names.small"), "medium": Text.t("storm_names.medium"), "large": Text.t("storm_names.large"), "finale": Text.t("storm_names.finale")}
 	var items := [
-		[Text.t("ui.judge_storm_small"), func(): Judge.trigger_storm("small"), true],
-		[Text.t("ui.judge_storm_medium"), func(): Judge.trigger_storm("medium"), true],
-		[Text.t("ui.judge_storm_large"), func(): Judge.trigger_storm("large"), true],
-		[Text.t("ui.judge_storm_finale"), func(): Judge.trigger_storm("finale"), true],
-		[Text.t("ui.judge_shadow"), func(): Judge.start_shadow(), true],
-		[Text.t("ui.judge_end_shadow"), func(): Judge.end_shadow(), true],
-		[Text.t("ui.judge_land"), func(): Judge.land_cargo(), true],
-		[Text.t("ui.judge_mission"), func(): Judge.start_mission(), false],
-		[Text.t("ui.judge_refill"), func(): Judge.refill_all(), true],
-		[Text.t("ui.judge_speed"), func(): Judge.toggle_speed(), true]]
+		[Text.t("ui.judge_storm_small"), func(): Judge.trigger_storm("small"), Text.t("ui.judge_t_storm") % sizes["small"]],
+		[Text.t("ui.judge_storm_medium"), func(): Judge.trigger_storm("medium"), Text.t("ui.judge_t_storm") % sizes["medium"]],
+		[Text.t("ui.judge_storm_large"), func(): Judge.trigger_storm("large"), Text.t("ui.judge_t_storm") % sizes["large"]],
+		[Text.t("ui.judge_storm_finale"), func(): Judge.trigger_storm("finale"), Text.t("ui.judge_t_storm") % sizes["finale"]],
+		[Text.t("ui.judge_shadow"), func(): Judge.start_shadow(), Text.t("ui.judge_t_shadow")],
+		[Text.t("ui.judge_end_shadow"), func(): Judge.end_shadow(), Text.t("ui.judge_t_sunrise")],
+		[Text.t("ui.judge_land"), func(): Judge.land_cargo(), Text.t("ui.judge_t_cargo")],
+		[Text.t("ui.judge_mission"), func(): Judge.start_mission(), Text.t("ui.judge_t_mission")],
+		[Text.t("ui.judge_refill"), func(): Judge.refill_all(), Text.t("ui.judge_t_refill")],
+		[Text.t("ui.judge_speed"), null, ""]]
 	var gy := y + 36.0
 	for i in items.size():
 		var b := _btn(items[i][0], Vector2(ox + M + (i % 3) * (cw + 8.0), gy + (i / 3) * 26.0), Vector2(cw, 24))
-		var cb: Callable = items[i][1]
-		var close_first: bool = items[i][2]
-		if i == 9:
-			b.toggle_mode = true
-			b.button_pressed = GameState.time_scale > 1.0
-		b.pressed.connect(func(): cb.call() if (i == 9 or close_first) else _do(cb))
+		if items[i][1] == null:                         # Speed x4 toggles and keeps the panel open
+			b.pressed.connect(func():
+				var on := Judge.toggle_speed()
+				Judge.toast(Text.t("ui.judge_t_speed_on") if on else Text.t("ui.judge_t_speed_off")))
+		else:
+			var cb: Callable = items[i][1]
+			var msg: String = items[i][2]
+			b.pressed.connect(func(): _act(cb, msg))
 		root.add_child(b)
 	# presets: full width
 	var py := gy + 4 * 26.0 + 6.0
@@ -113,11 +119,12 @@ func _ready() -> void:
 	for i in 3:
 		var b := _btn(presets[i][0], Vector2(ox + M, py + i * 26.0), Vector2(PW - 2 * M, 24))
 		var cb: Callable = presets[i][1]
-		b.pressed.connect(func(): _do(cb))
+		var msg: String = Text.t("ui.judge_t_preset") % presets[i][0]
+		b.pressed.connect(func(): _act(cb, msg))
 		root.add_child(b)
 	if from_title:
 		var start := _btn(Text.t("ui.judge_start_game"), Vector2(ox + M, py + 3 * 26.0), Vector2(PW - 2 * M, 24))
-		start.pressed.connect(func(): _do(func(): Judge.go_outpost()))
+		start.pressed.connect(func(): _act(func(): Judge.go_outpost(), Text.t("ui.judge_t_start")))
 		root.add_child(start)
 	_refresh()
 	day_slider.grab_focus()
@@ -125,10 +132,11 @@ func _ready() -> void:
 func _refresh() -> void:
 	day_label.text = "%s %d" % [Text.t("ui.judge_day_label"), int(day_slider.value)]
 
-# Run an action, closing the panel first (so scene changes start clean).
-func _do(cb: Callable) -> void:
+# Close the panel, run the action, confirm with a toast (Judge autoload: works in every scene).
+func _act(cb: Callable, msg: String) -> void:
 	close_modal()
 	cb.call()
+	Judge.toast(msg)
 
 func _unhandled_input(e: InputEvent) -> void:
 	if ready_for_input() and e is InputEventKey and e.pressed and e.keycode == KEY_ESCAPE:

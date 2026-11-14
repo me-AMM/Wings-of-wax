@@ -136,6 +136,8 @@ func _build_locks() -> void:
 
 # ------------------------------------------------------------------ visuals follow the state
 func _refresh_visuals() -> void:
+	if not is_inside_tree():
+		return
 	for it in get_tree().get_nodes_in_group("interactable"):
 		var sp: Sprite2D = it.get_node_or_null("Sprite2D")
 		if sp == null:

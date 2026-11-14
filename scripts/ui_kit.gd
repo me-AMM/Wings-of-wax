@@ -80,6 +80,13 @@ static func button_bg(width: float, state: String = "normal") -> NinePatchRect:
 	n.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return n
 
+# Make a node and all its children ignore the mouse (HUD, storm panel, banners must never swallow clicks).
+static func ignore_mouse(n: Node) -> void:
+	if n is Control:
+		n.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for c in n.get_children():
+		ignore_mouse(c)
+
 static func dim(alpha: float = 0.45) -> ColorRect:
 	var c := ColorRect.new()
 	c.color = Color(0.02, 0.03, 0.08, alpha)

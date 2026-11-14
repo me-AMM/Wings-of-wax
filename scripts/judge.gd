@@ -4,6 +4,9 @@ extends Node
 # While judge_mode is on, press J in any scene to open the panel.
 
 var panel: Node = null
+var last_toast := ""              # the last confirmation shown (judge_check reads it)
+var _toast_layer: CanvasLayer
+var _toast_label: Label
 
 func _unhandled_input(e: InputEvent) -> void:
 	if GameState.judge_mode and e is InputEventKey and e.pressed and not e.echo and e.keycode == KEY_J:
@@ -92,3 +95,22 @@ func _mission_day(d: int) -> void:
 	GameState.advance(1.2)          # 07:00: the cargo lander touches down
 	GameState.collect_cargo()
 	start_mission()
+
+# Confirmation message for every Judge button ("Jumped to day 8", "Medium storm started"). Lives in this autoload so it
+# works in every scene (Title, Outpost, Mission).
+func toast(text: String) -> void:
+	last_toast = text
+	if _toast_layer == null:
+		_toast_layer = CanvasLayer.new()
+		_toast_layer.layer = 110
+		add_child(_toast_layer)
+		_toast_label = UIKit.world_label("", 16, Color("F06FA8"))
+		_toast_label.position = Vector2(0, 8)
+		_toast_label.size = Vector2(640, 24)
+		_toast_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_toast_layer.add_child(_toast_label)
+	_toast_label.text = text
+	_toast_label.modulate.a = 1.0
+	var tw := create_tween()
+	tw.tween_interval(1.5)
+	tw.tween_property(_toast_label, "modulate:a", 0.0, 0.5)
