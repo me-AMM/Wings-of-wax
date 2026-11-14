@@ -12,6 +12,7 @@ Team **Wings of wax**: Ahmed Mohammed Mohammed Ahmed Taha, Mohamed Anas.
 | | |
 |---|---|
 | **Play in the browser** (desktop, keyboard) | https://me-amm.itch.io/lunar-post-survival |
+| **Play on GitHub Pages** (same build, no account) | https://me-amm.github.io/Wings-of-wax/ |
 | **30-second demo video** | https://youtu.be/eqXDSytL5EY |
 | **Project intro video** (local event application) | https://youtu.be/_21kd5jMerY |
 | **Project description (PDF)** | [docs/Project_Description.pdf](docs/Project_Description.pdf) |
