@@ -242,6 +242,9 @@ func finale_timing_case() -> void:
 	add_child(m)
 	for i in 3:
 		await get_tree().process_frame
+	for i in 5:
+		await get_tree().process_frame
+	check(m.arrow.visible, "finale: the yellow arrow shows at the start of the mission (points to %s)" % str(m._via_gap(m.finale_stone_pos)))
 	m.elapsed = 60.0                                   # long after the normal 25-40% point
 	await get_tree().process_frame
 	await get_tree().process_frame
