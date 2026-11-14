@@ -14,28 +14,80 @@ var vignette: TextureRect
 var sparkle_t := 3.0
 var panels: Array = []
 
-# One shared generated texture: a narrow dark ellipse, 25% alpha, soft edge.
-static func shadow_texture() -> Texture2D:
-	if _shadow_tex == null:
-		var img := Image.create(64, 16, false, Image.FORMAT_RGBA8)
-		for y in 16:
-			for x in 64:
-				var dx := (x + 0.5 - 32.0) / 32.0
-				var dy := (y + 0.5 - 8.0) / 8.0
-				var d := dx * dx + dy * dy
-				if d <= 1.0:
-					img.set_pixel(x, y, Color(0, 0, 0, 0.25 * (1.0 if d < 0.6 else (1.0 - d) / 0.4)))
-		_shadow_tex = ImageTexture.create_from_image(img)
-	return _shadow_tex
+const BAYER := [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5]    # 4x4 ordered dither, pixel-art soft edges
+const SHADOW_ALPHA := 0.45        # contact shadow core
+const SHADOW_FLAT := 0.25         # contact shadow height / width
+const DIRT_ALPHA := 0.30          # dark dirt patch under buildings
+const DIRT_WIDE := 1.18           # dirt patch width / ground-contact width
+static var _shadow_cache := {}
+static var _bases := {}
 
-# A contact shadow of the given width, drawn BEHIND its parent's sprite.
+# Visual base of every sprite (from assets_derived/bases.json, made by tools/make_derived.py)
+static func bases() -> Dictionary:
+	if _bases.is_empty():
+		var f := FileAccess.open("res://assets_derived/bases.json", FileAccess.READ)
+		if f != null:
+			_bases = JSON.parse_string(f.get_as_text())
+	return _bases
+
+# A flat dithered ellipse, drawn 1:1 so the dither stays crisp. Core alpha, then an ordered-dither edge.
+static func ellipse_texture(w: int, h: int, core: float, color: Color, seed_v: int = 0, rough: float = 0.0) -> Texture2D:
+	var key := "%d_%d_%s_%s_%d_%s" % [w, h, core, color.to_html(), seed_v, rough]
+	if _shadow_cache.has(key):
+		return _shadow_cache[key]
+	w = maxi(w, 4)
+	h = maxi(h, 2)
+	var img := Image.create(w, h, false, Image.FORMAT_RGBA8)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_v
+	var bumps: Array = []                 # irregular edge: a few sine bumps around the rim
+	for i in 3:
+		bumps.append([rng.randf_range(2.0, 5.0), rng.randf_range(0.0, TAU), rng.randf_range(0.04, 0.1) * rough])
+	for y in h:
+		for x in w:
+			var dx := (x + 0.5 - w * 0.5) / (w * 0.5)
+			var dy := (y + 0.5 - h * 0.5) / (h * 0.5)
+			var r := sqrt(dx * dx + dy * dy)
+			var ang := atan2(dy, dx)
+			var lim := 1.0
+			for bmp in bumps:
+				lim -= bmp[2] * (0.5 + 0.5 * sin(ang * round(bmp[0]) + bmp[1]))
+			if r > lim:
+				continue
+			var t := r / lim                          # 0 centre .. 1 rim
+			var k := 1.0 if t < 0.55 else 1.0 - (t - 0.55) / 0.45
+			var a := core
+			if k < 1.0:                               # dithered soft edge: pixel on or off, never blurred
+				if k * 16.0 <= BAYER[(y % 4) * 4 + (x % 4)]:
+					continue
+				a = core * 0.75
+			img.set_pixel(x, y, Color(color.r, color.g, color.b, a))
+	var tex := ImageTexture.create_from_image(img)
+	_shadow_cache[key] = tex
+	return tex
+
+# A contact shadow sprite of the given width (flat, dark core, dithered edge), centred on its position.
 static func make_shadow(width: float) -> Sprite2D:
 	var s := Sprite2D.new()
 	s.name = "Shadow"
-	s.texture = shadow_texture()
-	s.scale = Vector2(maxf(width, 8.0) / 64.0, 0.8)
+	var w := int(maxf(width, 8.0))
+	s.texture = ellipse_texture(w, int(round(w * SHADOW_FLAT)), SHADOW_ALPHA, Color(0.02, 0.02, 0.05))
 	s.show_behind_parent = true
 	return s
+
+# Where a node's sprite really touches the ground: {pos (local to the node), width}. Null if unknown.
+static func sprite_base(sp: Node2D) -> Dictionary:
+	if not (sp is Sprite2D) or sp.texture == null:
+		return {}
+	var b: Dictionary = bases().get(sp.texture.resource_path, {})
+	if b.is_empty():
+		return {}
+	var top_left: Vector2 = sp.position + sp.offset
+	if sp.centered:
+		top_left -= sp.texture.get_size() * 0.5
+	var cx: float = (b["left"] + b["right"] + 1) * 0.5
+	return {"pos": top_left + Vector2(cx, b["bottom"] + 1), "width": float(b["right"] - b["left"] + 1),
+		"bbox": float(b["bbox_r"] - b["bbox_l"] + 1)}
 
 static func dot_texture() -> Texture2D:
 	if _dot_tex == null:
@@ -54,8 +106,8 @@ func setup(host_node: Node, player_node: Node2D, kind: String) -> void:
 	host = host_node
 	player = player_node
 	# 1. contact shadow under the player
-	var ps := make_shadow(22.0)
-	ps.position = Vector2(0, -1)
+	var ps := make_shadow(20.0)
+	ps.position = Vector2(0, -2)          # overlaps the boots (feet are on the origin)
 	player.add_child(ps)
 	player.move_child(ps, 0)
 	# 2. camera smoothing (the project snaps 2D transforms to whole pixels, so the picture stays crisp)
@@ -99,34 +151,45 @@ func _update_vignette() -> void:
 	if vignette != null:
 		vignette.modulate = Color(0.2, 0.3, 0.75) if GameState.in_shadow else Color(1.0, 0.72, 0.4)
 
-# every building and prop of the Outpost gets a soft contact shadow, about 60% of its footprint width
+# GROUNDING: every building, prop and rock of the Outpost gets a dark dithered dirt patch and a contact shadow,
+# both centred on the sprite's real visual base (bases.json) and drawn on the ground layer, under every sprite.
+# (Node origins sit below the visual base on purpose: footprints reach down to the origin so y-sort is right.)
 func _shadows_for_buildings() -> void:
 	var world: Node = host.get_node_or_null("World")
-	if world == null:
+	var ground: Node = host.get_node_or_null("Ground")
+	if world == null or ground == null:
 		return
+	var dirt_layer := Node2D.new()
+	dirt_layer.name = "DirtPatches"
+	ground.add_child(dirt_layer)
+	var shadow_layer := Node2D.new()
+	shadow_layer.name = "ContactShadows"
+	ground.add_child(shadow_layer)
 	for n in world.get_children():
 		var sp: Sprite2D = n.get_node_or_null("Sprite2D")
-		if sp == null or n.name in ["Pad"]:
+		if sp == null:
 			continue
-		var shape: CollisionPolygon2D = n.get_node_or_null("Footprint/Shape")
-		var width: float = sp.texture.get_size().x * 0.5
-		var y := -2.0
-		if shape != null:
-			var minx := 1e9
-			var maxx := -1e9
-			var maxy := -1e9
-			for p in shape.polygon:
-				minx = minf(minx, p.x)
-				maxx = maxf(maxx, p.x)
-				maxy = maxf(maxy, p.y)
-			width = (maxx - minx) * 0.6
-			y = maxy - 2.0
-		var s := make_shadow(width)
-		s.position = Vector2(0, y)
-		n.add_child(s)
-		n.move_child(s, 0)
 		if n.name in ["Panel0", "Panel1", "Panel2", "Panel3"]:
 			panels.append(n)
+		var b := sprite_base(sp)
+		if b.is_empty() or n.name == "Pad":          # the pad is flat: no shadow
+			continue
+		var base: Vector2 = n.position + b["pos"]
+		var w: float = b["width"]
+		var seed_v := hash(String(n.name))
+		var dw := int(w * DIRT_WIDE + 6)
+		var dirt := Sprite2D.new()
+		dirt.texture = ellipse_texture(dw, int(dw * 0.36), DIRT_ALPHA, Color(0.10, 0.09, 0.09), seed_v, 1.0)
+		dirt.position = base + Vector2(0, -2)
+		dirt_layer.add_child(dirt)
+		var s := make_shadow(w * 1.04)
+		s.show_behind_parent = false
+		s.position = base + Vector2(0, -3)          # overlaps the bottom 3-4 px of the sprite: no gap
+		shadow_layer.add_child(s)
+		# follow the node if it is hidden (locked or not landed yet)
+		n.visibility_changed.connect(func(): dirt.visible = n.visible; s.visible = n.visible)
+		dirt.visible = n.visible
+		s.visible = n.visible
 
 # slow blinking lights on the charger, the recycler and the lab
 func _blinking_lights() -> void:

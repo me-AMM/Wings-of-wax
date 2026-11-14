@@ -1,0 +1,322 @@
+{
+ "res://assets/sprites/buildings/charger_empty.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 41,
+  "left": 18,
+  "right": 45,
+  "bbox_l": 17,
+  "bbox_r": 47,
+  "top": 5
+ },
+ "res://assets/sprites/buildings/charger_full.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 59,
+  "left": 17,
+  "right": 45,
+  "bbox_l": 17,
+  "bbox_r": 49,
+  "top": 5
+ },
+ "res://assets/sprites/buildings/greenhouse.png": {
+  "w": 128,
+  "h": 128,
+  "bottom": 94,
+  "left": 32,
+  "right": 62,
+  "bbox_l": 7,
+  "bbox_r": 116,
+  "top": 31
+ },
+ "res://assets/sprites/buildings/habitat.png": {
+  "w": 192,
+  "h": 192,
+  "bottom": 169,
+  "left": 45,
+  "right": 138,
+  "bbox_l": 22,
+  "bbox_r": 169,
+  "top": 20
+ },
+ "res://assets/sprites/buildings/landing_pad.png": {
+  "w": 192,
+  "h": 192,
+  "bottom": 169,
+  "left": 69,
+  "right": 122,
+  "bbox_l": 27,
+  "bbox_r": 164,
+  "top": 29
+ },
+ "res://assets/sprites/buildings/science_lab.png": {
+  "w": 192,
+  "h": 192,
+  "bottom": 155,
+  "left": 49,
+  "right": 142,
+  "bbox_l": 22,
+  "bbox_r": 169,
+  "top": 43
+ },
+ "res://assets/sprites/buildings/shelter.png": {
+  "w": 128,
+  "h": 128,
+  "bottom": 103,
+  "left": 20,
+  "right": 107,
+  "bbox_l": 5,
+  "bbox_r": 122,
+  "top": 25
+ },
+ "res://assets/sprites/buildings/solar_clean.png": {
+  "w": 128,
+  "h": 64,
+  "bottom": 53,
+  "left": 16,
+  "right": 110,
+  "bbox_l": 8,
+  "bbox_r": 118,
+  "top": 17
+ },
+ "res://assets/sprites/buildings/solar_dust25.png": {
+  "w": 128,
+  "h": 64,
+  "bottom": 53,
+  "left": 16,
+  "right": 110,
+  "bbox_l": 8,
+  "bbox_r": 118,
+  "top": 17
+ },
+ "res://assets/sprites/buildings/solar_dust50.png": {
+  "w": 128,
+  "h": 64,
+  "bottom": 53,
+  "left": 16,
+  "right": 110,
+  "bbox_l": 8,
+  "bbox_r": 118,
+  "top": 17
+ },
+ "res://assets/sprites/buildings/solar_dust75.png": {
+  "w": 128,
+  "h": 64,
+  "bottom": 53,
+  "left": 16,
+  "right": 110,
+  "bbox_l": 8,
+  "bbox_r": 118,
+  "top": 17
+ },
+ "res://assets/sprites/buildings/water_recycler.png": {
+  "w": 128,
+  "h": 128,
+  "bottom": 125,
+  "left": 52,
+  "right": 76,
+  "bbox_l": 24,
+  "bbox_r": 104,
+  "top": 2
+ },
+ "res://assets/sprites/props/antenna.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 54,
+  "left": 28,
+  "right": 35,
+  "bbox_l": 28,
+  "bbox_r": 35,
+  "top": 9
+ },
+ "res://assets/sprites/props/cargo_crate.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 60,
+  "left": 23,
+  "right": 40,
+  "bbox_l": 4,
+  "bbox_r": 59,
+  "top": 3
+ },
+ "res://assets/sprites/props/cargo_lander.png": {
+  "w": 128,
+  "h": 128,
+  "bottom": 103,
+  "left": 61,
+  "right": 78,
+  "bbox_l": 24,
+  "bbox_r": 104,
+  "top": 31
+ },
+ "res://assets/sprites/props/crew_lander.png": {
+  "w": 192,
+  "h": 192,
+  "bottom": 179,
+  "left": 74,
+  "right": 124,
+  "bbox_l": 31,
+  "bbox_r": 162,
+  "top": 15
+ },
+ "res://assets/sprites/props/forecast_board.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 58,
+  "left": 23,
+  "right": 39,
+  "bbox_l": 13,
+  "bbox_r": 47,
+  "top": 9
+ },
+ "res://assets/sprites/props/radish_empty.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 53,
+  "left": 20,
+  "right": 46,
+  "bbox_l": 2,
+  "bbox_r": 60,
+  "top": 17
+ },
+ "res://assets/sprites/props/radish_growing.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 59,
+  "left": 20,
+  "right": 46,
+  "bbox_l": 2,
+  "bbox_r": 60,
+  "top": 17
+ },
+ "res://assets/sprites/props/radish_ready.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 56,
+  "left": 20,
+  "right": 46,
+  "bbox_l": 2,
+  "bbox_r": 60,
+  "top": 6
+ },
+ "res://assets/sprites/props/radish_sprout.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 53,
+  "left": 20,
+  "right": 46,
+  "bbox_l": 2,
+  "bbox_r": 60,
+  "top": 17
+ },
+ "res://assets/sprites/props/slider_console.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 61,
+  "left": 21,
+  "right": 38,
+  "bbox_l": 14,
+  "bbox_r": 49,
+  "top": 1
+ },
+ "res://assets/sprites/tiles/boulder_wall.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 63,
+  "left": 0,
+  "right": 63,
+  "bbox_l": 0,
+  "bbox_r": 63,
+  "top": 0
+ },
+ "res://assets/sprites/tiles/crater_large.png": {
+  "w": 192,
+  "h": 192,
+  "bottom": 181,
+  "left": 82,
+  "right": 120,
+  "bbox_l": 6,
+  "bbox_r": 185,
+  "top": 10
+ },
+ "res://assets/sprites/tiles/crater_small.png": {
+  "w": 128,
+  "h": 128,
+  "bottom": 107,
+  "left": 37,
+  "right": 91,
+  "bbox_l": 10,
+  "bbox_r": 118,
+  "top": 20
+ },
+ "res://assets/sprites/tiles/ground_1.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 63,
+  "left": 0,
+  "right": 63,
+  "bbox_l": 0,
+  "bbox_r": 63,
+  "top": 0
+ },
+ "res://assets/sprites/tiles/ground_2.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 63,
+  "left": 0,
+  "right": 63,
+  "bbox_l": 0,
+  "bbox_r": 63,
+  "top": 0
+ },
+ "res://assets/sprites/tiles/ground_3.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 63,
+  "left": 0,
+  "right": 63,
+  "bbox_l": 0,
+  "bbox_r": 63,
+  "top": 0
+ },
+ "res://assets/sprites/tiles/ground_dark.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 63,
+  "left": 0,
+  "right": 63,
+  "bbox_l": 0,
+  "bbox_r": 63,
+  "top": 0
+ },
+ "res://assets/sprites/tiles/path.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 63,
+  "left": 0,
+  "right": 63,
+  "bbox_l": 0,
+  "bbox_r": 63,
+  "top": 0
+ },
+ "res://assets/sprites/tiles/rocks_1.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 47,
+  "left": 9,
+  "right": 55,
+  "bbox_l": 8,
+  "bbox_r": 56,
+  "top": 14
+ },
+ "res://assets/sprites/tiles/rocks_2.png": {
+  "w": 64,
+  "h": 64,
+  "bottom": 53,
+  "left": 15,
+  "right": 56,
+  "bbox_l": 6,
+  "bbox_r": 58,
+  "top": 10
+ }
+}
