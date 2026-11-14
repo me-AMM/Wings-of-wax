@@ -43,7 +43,12 @@ func _ready() -> void:
 	if GameState.day_intro_pending:
 		GameState.emit_day_intro()
 	hud.show_day_splash()
+	player.position = GameState.outpost_spawn
+	GameState.outpost_spawn = Vector2(640, 492)
 	_refresh_visuals()
+	if GameState.pending_shelter:
+		GameState.pending_shelter = false
+		call_deferred("do_shelter")
 
 # ------------------------------------------------------------------ building the extras
 func _build_prompt() -> void:

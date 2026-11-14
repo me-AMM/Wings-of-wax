@@ -3,7 +3,7 @@
 - [x] M0 Setup (project.godot, import, git init, Web export proven)
 - [x] M1 Rules core (data files, GameState, tools/sim_check.gd passes, day_snapshots.json)
 - [x] M2 Outpost slice, days 1-4 (record footage point)
-- [ ] M3 Missions (rock, ice dig, finale, lab, research, stars)
+- [x] M3 Missions (rock, ice dig, finale, lab, research, stars)
 - [ ] M4 Storms and real data (donki_events.json, StormWarning, shelter, forecast board)
 - [ ] M5 Whole game (shadow days, endings, title/select/story/credits, Judge panel)
 - [ ] M6 Polish (audio wiring, info cards, HUD readability, juice)
