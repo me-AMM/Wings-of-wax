@@ -16,3 +16,5 @@ sim_check (godot --headless --path . -s tools/sim_check.gd): all 32 days match d
 
 Session note: M0-M7 built. Checks: sim_check, collision_check, ui_check pass. Web build in build/web, served on port 8060.
 Embed on itch.io at 1280x720 (integer 2x scale).
+
+Final round (09:50): compliance (watermark, AI statement, WAV metadata, code headers), Space Weather Log, Fact log, What you learned, kids' checklist and guided days 1-3, Video mode, docs/screenshots, reviewer fixes. All headless checks pass (sim, collision, ui, flow, judge, save, o2, audio).
