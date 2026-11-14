@@ -8,6 +8,23 @@ var panel: Node = null
 var last_toast := ""              # the last confirmation shown (judge_check reads it)
 var _toast_layer: CanvasLayer
 var _toast_label: Label
+# Walk speed (Judge mode only): multiplies the player's walking speed and walk animation. Game time, timers, suit air
+# and storm countdowns are NOT changed (Speed x4 is separate). Never saved; the title screen resets it to 1x.
+const WALK_STEPS := [1.0, 1.5, 2.0, 3.0]
+var walk_index := 0
+
+func walk_mult() -> float:
+	return WALK_STEPS[walk_index] if GameState.judge_mode else 1.0
+
+func walk_text() -> String:
+	return Text.t("ui.judge_walk") % ("%sx" % str(WALK_STEPS[walk_index]).trim_suffix(".0"))
+
+func set_walk(i: int) -> void:
+	walk_index = clampi(i, 0, WALK_STEPS.size() - 1)
+
+# the Judge panel button: 1x -> 1.5x -> 2x -> 3x -> 1x
+func cycle_walk() -> void:
+	set_walk((walk_index + 1) % WALK_STEPS.size())
 
 func _unhandled_input(e: InputEvent) -> void:
 	if GameState.judge_mode and e is InputEventKey and e.pressed and not e.echo and e.keycode == KEY_J:
@@ -15,6 +32,10 @@ func _unhandled_input(e: InputEvent) -> void:
 			panel.close_modal()        # J toggles the panel
 		else:
 			open_panel()
+	# [ and ] step the walk speed down / up
+	if GameState.judge_mode and e is InputEventKey and e.pressed and not e.echo and e.keycode in [KEY_BRACKETLEFT, KEY_BRACKETRIGHT]:
+		set_walk(walk_index + (1 if e.keycode == KEY_BRACKETRIGHT else -1))
+		toast(walk_text())
 
 func open_panel(from_title := false) -> void:
 	if panel != null and is_instance_valid(panel):

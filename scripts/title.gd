@@ -16,6 +16,7 @@ func _ready() -> void:
 	GameState.clock_running = false
 	GameState.judge_mode = false             # back on the title: judge mode is over
 	GameState.time_scale = 1.0
+	Judge.set_walk(0)                         # walk speed back to 1x
 	GameState.auto_endings = true
 	var bg: TextureRect = $Background
 	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE

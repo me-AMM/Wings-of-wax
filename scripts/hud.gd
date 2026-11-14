@@ -96,7 +96,7 @@ func _build() -> void:
 	storm_icon.visible = false
 	blackout_icon = _icon("icon_blackout", Vector2(532, strip_height + 2), root)
 	blackout_icon.visible = false
-	judge_label = _text(Vector2(440, strip_height + 6), 12, root, UIStyle.JUDGE)     # small, under the strip
+	judge_label = _text(Vector2(340, strip_height + 6), 12, root, UIStyle.JUDGE)     # small, under the strip, left of the sky icons
 	judge_label.text = Text.t("ui.judge_label")
 	judge_label.visible = false
 	# Fact log: a "?" button at the right end of the strip (also the F key); reopens every info card seen so far
@@ -195,6 +195,8 @@ func _process(delta: float) -> void:
 	shown_health = move_toward(shown_health, GameState.health, delta * 70.0)
 	health_bar.set_frac(shown_health / 100.0)
 	health_num.text = str(int(ceil(GameState.health)))
+	if judge_label.visible:
+		judge_label.text = Text.t("ui.judge_label") + "  " + Judge.walk_text()     # e.g. "JUDGE MODE  Walk 2x"
 	health_num.modulate = UIStyle.ACCENT if GameState.health < 30.0 else Color.WHITE
 	_hurt_tick(delta)
 	var blink := int(Time.get_ticks_msec() / 300) % 2 == 0

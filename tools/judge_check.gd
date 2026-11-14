@@ -50,6 +50,8 @@ func open_panel(host: String) -> Node:
 	return Judge.panel
 
 func find_button(panel: Node, text: String) -> Button:
+	if text == "Walk":
+		return panel.find_child("WalkSpeed", true, false)
 	for b in panel.find_children("*", "Button", true, false):
 		if b.text == text:
 			return b
@@ -87,7 +89,7 @@ func _ready() -> void:
 
 # One button at a time, always from a fresh host scene.
 func check_host(host: String) -> void:
-	var names := ["<", ">", "Jump", "Storm S", "Storm M", "Storm L", "Storm X", "Shadow", "Sunrise", "Cargo", "Mission", "Refill", "Speed x4",
+	var names := ["<", ">", "Jump", "Storm S", "Storm M", "Storm L", "Storm X", "Shadow", "Sunrise", "Cargo", "Mission", "Refill", "Speed x4", "Walk",
 		Text.t("ui.judge_preset_storm_mission"), Text.t("ui.judge_preset_shadow"), Text.t("ui.judge_preset_big_storm"), "Close"]
 	if host == "Title":
 		names.append("Start game")
@@ -179,6 +181,22 @@ func press_and_assert(host: String, nm: String, b: Button, panel: Node) -> Strin
 			await frames(2)
 			if first != 4.0 or GameState.time_scale != 1.0:
 				return "time scale %s then %s" % [first, GameState.time_scale]
+		"Walk":
+			Judge.set_walk(0)
+			var seen := []
+			for i in 4:
+				b.pressed.emit()
+				await frames(1)
+				seen.append(Judge.WALK_STEPS[Judge.walk_index])
+			var t0 := GameState.time_scale
+			var was: bool = GameState.judge_mode
+			Judge.set_walk(3)
+			GameState.judge_mode = false
+			var normal := Judge.walk_mult()           # normal play is never affected
+			GameState.judge_mode = was
+			Judge.set_walk(0)
+			if seen != [1.5, 2.0, 3.0, 1.0] or normal != 1.0 or t0 != 1.0 or b.text != Judge.walk_text():
+				return "walk %s normal %s time %s" % [seen, normal, t0]
 		"Close":
 			b.pressed.emit()
 			await frames(3)

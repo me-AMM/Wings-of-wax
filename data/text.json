@@ -79,6 +79,7 @@
     "judge_mission": "Mission",
     "judge_refill": "Refill",
     "judge_speed": "Speed x4",
+    "judge_walk": "Walk %s",
     "judge_preset_storm_mission": "Storm during a mission (day 8)",
     "judge_preset_shadow": "Shadow day (day 11)",
     "judge_preset_big_storm": "Big storm (day 24)",

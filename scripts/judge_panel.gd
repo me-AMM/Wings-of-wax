@@ -119,6 +119,14 @@ func _ready() -> void:
 		GameState.video_mode = not GameState.video_mode
 		Judge.toast(Text.t("ui.judge_t_video_on") if GameState.video_mode else Text.t("ui.judge_t_video_off")))
 	root.add_child(vb)
+	# Walk speed: cycles 1x / 1.5x / 2x / 3x and keeps the panel open (also [ and ])
+	var wb := _btn(Judge.walk_text(), Vector2(ox + M + 2 * (cw + 8.0), gy + 3 * 26.0), Vector2(cw, 24))
+	wb.name = "WalkSpeed"
+	wb.pressed.connect(func():
+		Judge.cycle_walk()
+		wb.text = Judge.walk_text()
+		Judge.toast(Judge.walk_text()))
+	root.add_child(wb)
 	var py := gy + 4 * 26.0 + 6.0
 	var presets := [
 		[Text.t("ui.judge_preset_storm_mission"), func(): Judge.preset_storm_in_mission()],

@@ -39,7 +39,7 @@ func _physics_process(delta: float) -> void:
 	var dir := Vector2.ZERO
 	if not frozen and GameState.modal_count == 0:
 		dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")   # already normalised
-	velocity = dir * speed
+	velocity = dir * speed * Judge.walk_mult()          # Judge mode walk speed (1x in normal play)
 	if dir != Vector2.ZERO:
 		if absf(dir.x) > absf(dir.y):
 			facing = "right" if dir.x > 0 else "left"
@@ -60,7 +60,7 @@ func _play(clip: String) -> void:
 	if sprite.animation != clip:
 		sprite.play(clip)
 	# walking animation follows the walking speed (8 fps at the old 55 px/s -> about 12)
-	sprite.speed_scale = Config.data["player"]["walk_anim_fps_scale"] if clip.begins_with("walk") else 1.0
+	sprite.speed_scale = Config.data["player"]["walk_anim_fps_scale"] * Judge.walk_mult() if clip.begins_with("walk") else 1.0
 
 # Play the interact (or dig) animation once for a moment.
 func play_action(clip: String = "interact_front", seconds: float = 0.6) -> void:
