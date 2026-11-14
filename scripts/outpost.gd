@@ -121,11 +121,17 @@ func _build_locks() -> void:
 		it.add_child(ic)
 		var lb := UIKit.world_label("", 12)
 		lb.position = c + Vector2(-80, 22)
-		lb.size = Vector2(160, 16)
+		lb.size = Vector2(160, 18)
 		lb.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		lb.z_index = 50
 		it.add_child(lb)
-		locks[it] = {"icon": ic, "label": lb}
+		var back := ColorRect.new()                      # small dark panel behind the lock label
+		back.color = Color(0.04, 0.05, 0.1, 0.7)
+		back.position = lb.position + Vector2(10, -1)
+		back.size = Vector2(140, 20)
+		back.z_index = 49
+		it.add_child(back)
+		locks[it] = {"icon": ic, "label": lb, "back": back}
 
 # ------------------------------------------------------------------ visuals follow the state
 func _refresh_visuals() -> void:
@@ -148,6 +154,7 @@ func _refresh_visuals() -> void:
 		if locks.has(it):
 			locks[it]["icon"].visible = not open
 			locks[it]["label"].visible = not open
+			locks[it]["back"].visible = not open
 			locks[it]["label"].text = "%s %d" % [Text.t("ui.opens_on_day"), it.unlock_day()]
 	crate.visible = not GameState.cargo_waiting.is_empty()
 	_set_solid(lander_body, _lander_on_pad())
@@ -272,7 +279,12 @@ func _update_prompt() -> void:
 		prompt.visible = false
 		return
 	prompt.visible = true
-	prompt.position = current.position + current.prompt_offset
+	# keep the prompt inside the visible screen (below the HUD strip)
+	var view: Rect2 = get_viewport().get_canvas_transform().affine_inverse() * get_viewport().get_visible_rect()
+	var pp: Vector2 = current.position + current.prompt_offset
+	pp.x = clampf(pp.x, view.position.x + 110.0, view.end.x - 110.0)
+	pp.y = clampf(pp.y, view.position.y + 66.0, view.end.y - 70.0)
+	prompt.position = pp
 	prompt_label.text = _prompt_text(current)
 	prompt_key.visible = current.is_open()
 	prompt_bar.size.x = 32.0 * (hold_t / current.hold) if (hold_active and current.hold > 0.0) else 0.0

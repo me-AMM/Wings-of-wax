@@ -81,7 +81,7 @@ static func button_bg(width: float, state: String = "normal") -> NinePatchRect:
 	n.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return n
 
-static func dim(alpha: float = 0.55) -> ColorRect:
+static func dim(alpha: float = 0.45) -> ColorRect:
 	var c := ColorRect.new()
 	c.color = Color(0.02, 0.03, 0.08, alpha)
 	c.size = Vector2(320, 180)
@@ -92,16 +92,23 @@ static func dim(alpha: float = 0.55) -> ColorRect:
 static func button(text: String, width: float = 120.0) -> Button:
 	var b := Button.new()
 	b.text = text
-	b.custom_minimum_size = Vector2(maxf(width, 38.0), 32)
+	# width = text + 24 px, minimum 96 (real pixels)
+	var f: Font = ThemeDB.get_project_theme().default_font if ThemeDB.get_project_theme() != null else ThemeDB.fallback_font
+	var tw: float = f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x
+	b.custom_minimum_size = Vector2(maxf(maxf(width, 96.0), tw + 24.0), 32)
 	b.size = b.custom_minimum_size
 	for state in ["normal", "hover", "pressed", "focus"]:
 		var sb := StyleBoxTexture.new()
 		sb.texture = Art.tex("button_" + ("hover" if state == "focus" else state))
 		sb.texture_margin_left = 17
 		sb.texture_margin_right = 17
+		sb.content_margin_top = 1.0 if state == "pressed" else 0.0
 		b.add_theme_stylebox_override(state, sb)
-	b.add_theme_font_size_override("font_size", 8)
+	b.add_theme_font_size_override("font_size", 16)
 	b.add_theme_color_override("font_color", Color.WHITE)
+	b.add_theme_color_override("font_pressed_color", Color("FFD23F"))
+	b.add_theme_constant_override("outline_size", 1)
+	b.add_theme_constant_override("h_separation", 0)
 	b.add_theme_color_override("font_hover_color", Color("FFD23F"))
 	b.add_theme_color_override("font_focus_color", Color("FFD23F"))
 	return b

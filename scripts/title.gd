@@ -1,16 +1,19 @@
 extends Control
-# Title screen: Start and Judge mode. (Start goes to character select once that scene exists.)
+# Title screen: Start and Judge mode. The 320x180 art is shown at exactly 2x (Nearest); buttons are real 640x360 pixels.
 
 func _ready() -> void:
-	scale = Vector2(2, 2)     # 320x180 art shown at exactly 2x
 	GameState.clock_running = false
 	GameState.judge_mode = false
-	var start := UIKit.button(Text.t("ui.start"), 96)
-	start.position = Vector2(112, 112)
+	var bg: TextureRect = $Background
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_SCALE
+	bg.size = Vector2(640, 360)
+	var start := UIKit.button(Text.t("ui.start"), 160)
+	start.position = Vector2(240, 224)
 	start.pressed.connect(_on_start)
 	add_child(start)
-	var judge := UIKit.button(Text.t("ui.judge_mode"), 96)
-	judge.position = Vector2(112, 142)
+	var judge := UIKit.button(Text.t("ui.judge_mode"), 160)
+	judge.position = Vector2(240, 268)
 	judge.pressed.connect(_on_judge)
 	add_child(judge)
 	start.grab_focus()

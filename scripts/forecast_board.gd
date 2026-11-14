@@ -1,28 +1,30 @@
 extends Control
-# ForecastBoard: full screen in the lab. Free to read. At storm watch medium/high it names the next
-# storm, its day, and the real flare it is modelled on (NASA DONKI). E or Esc goes back.
+# ForecastBoard: full screen in the lab (320x180 art at exactly 2x). Free to read. At storm watch medium/high it
+# names the next storm, its day, and the real flare it is modelled on (NASA DONKI). E or Esc goes back.
 
 func _ready() -> void:
-	scale = Vector2(2, 2)
 	GameState.clock_running = false
 	var bg := TextureRect.new()
 	bg.texture = Art.tex("forecast_screen")
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_SCALE
+	bg.size = Vector2(640, 360)
 	add_child(bg)
-	var title := UIKit.label(Text.t("ui.board_title"), 12, Color("FFD23F"))
-	title.position = Vector2(20, 14)
+	var title := UIKit.world_label(Text.t("ui.board_title"), 24, Color("FFD23F"))
+	title.position = Vector2(40, 28)
 	add_child(title)
-	var body := UIKit.label(_message(), 10)
-	body.position = Vector2(20, 50)
-	UIKit.box(body, 280, 90)
+	var body := UIKit.world_label(_message(), 24)
+	body.position = Vector2(40, 100)
+	body.size = Vector2(560, 100)
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(body)
-	var real := UIKit.label(_real_line(), 8, Color(0.75, 0.85, 1.0))
-	real.position = Vector2(20, 120)
-	UIKit.box(real, 280, 24)
+	var real := UIKit.world_label(_real_line(), 16, Color(0.75, 0.85, 1.0))
+	real.position = Vector2(40, 230)
+	real.size = Vector2(560, 44)
 	real.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(real)
-	var back := UIKit.label(Text.t("ui.board_back"), 9)
-	back.position = Vector2(250, 160)
+	var back := UIKit.world_label(Text.t("ui.board_back"), 16)
+	back.position = Vector2(500, 320)
 	add_child(back)
 
 # The next storm (day, entry) from today on, or {}.

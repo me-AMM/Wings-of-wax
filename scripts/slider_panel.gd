@@ -79,7 +79,7 @@ func _refresh() -> void:
 	made_l.text = "%s %.1f kW" % [Text.t("ui.power_made"), GameState.panel_kw()]
 	used_l.text = "%s %.1f kW" % [Text.t("ui.power_used"), GameState.draw_kw()]
 	var h := GameState.base_hours_left()
-	hours_l.text = "" if h >= 99.0 else "%s: %d %s" % [Text.t("ui.pack_base"), int(h), Text.t("ui.hours_at_settings")]
+	hours_l.text = "" if h >= 99.0 else "%s: %d %s" % [Text.t("ui.pack_base"), int(h), Text.t("ui.hours_left")]
 
 func _unhandled_input(e: InputEvent) -> void:
 	if not ready_for_input():
