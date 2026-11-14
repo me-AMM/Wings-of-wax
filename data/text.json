@@ -191,7 +191,17 @@
     "learned": "What you learned",
     "title_log": "Space Weather Log",
     "source_donki": "NASA DONKI",
-    "source_noaa": "NOAA / ESA"
+    "source_noaa": "NOAA / ESA",
+    "power_sentence_ok": "Using %.1f of %.1f kW. Spare power charges your pack.",
+    "power_sentence_bad": "Using %.1f of %.1f kW. Your base pack is draining!",
+    "power_sentence_dark": "Panels make 0 kW. Your packs run everything.",
+    "goals": "Today",
+    "goal_eat": "Eat",
+    "goal_drink": "Drink",
+    "goal_radish": "Water radishes",
+    "goal_sleep": "Sleep",
+    "goal_later": "(day %d)",
+    "skip_tutorial": "Skip tutorial (K)"
   },
   "notices": {
     "cargo_tomorrow": "Cargo lander arrives tomorrow at 07:00.",
@@ -440,5 +450,13 @@
     "flrID",
     "Source",
     "Survived"
-  ]
+  ],
+  "tutorial": {
+    "eat": "Walk to the HABITAT door and press E. Choose Eat.",
+    "drink": "Walk to the WATER RECYCLER and press E to drink.",
+    "radish": "Go to the GREENHOUSE tray and press E to plant and water.",
+    "sliders": "Press E at the POWER CONSOLE to try the sliders.",
+    "sleep": "Evening? Press E at the HABITAT and choose Sleep.",
+    "done": "Great job! Keep doing these every day."
+  }
 }

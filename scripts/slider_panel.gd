@@ -56,8 +56,9 @@ func _ready() -> void:
 	var pi := UIKit.icon("icon_sun", 14)
 	pi.position = Vector2(22, 136)
 	root.add_child(pi)
-	made_l = UIKit.label("", 9)
+	made_l = UIKit.label("", 8)
 	made_l.position = Vector2(38, 134)
+	UIKit.box(made_l, 262, 14)
 	root.add_child(made_l)
 	var ui_i := UIKit.icon("icon_pack", 14)
 	ui_i.position = Vector2(22, 152)
@@ -71,14 +72,27 @@ func _ready() -> void:
 	_refresh()
 
 func _refresh() -> void:
+	GameState.sliders_tried = true
 	hilite.position = Vector2(20, row_y0 + sel * row_h)
 	for i in 4:
 		var lvl: int = GameState.sliders[i]
 		var cx: float = track_x + ZONE_X[lvl] * track_scale
 		knobs[i].position = Vector2(cx - 16.0 * track_scale, row_y0 + i * row_h)
 		kw_labels[i].text = "%.1f kW" % GameState.slider_kw(i)
-	made_l.text = "%s %.1f kW" % [Text.t("ui.power_made"), GameState.panel_kw()]
-	used_l.text = "%s %.1f kW" % [Text.t("ui.power_used"), GameState.draw_kw()]
+		kw_labels[i].modulate = [Color("5FC96B"), Color("FFD23F"), Color("FF8080")][lvl]       # low / medium / high
+	# one plain sentence: green = spare power charges the pack, yellow = almost nothing spare, red = draining
+	var made := GameState.panel_kw()
+	var used := GameState.draw_kw()
+	if made <= 0.0:
+		made_l.text = Text.t("ui.power_sentence_dark")
+		made_l.modulate = Color("FF8080")
+	elif used <= made:
+		made_l.text = Text.t("ui.power_sentence_ok") % [used, made]
+		made_l.modulate = Color("5FC96B") if made - used >= 1.0 else Color("FFD23F")
+	else:
+		made_l.text = Text.t("ui.power_sentence_bad") % [used, made]
+		made_l.modulate = Color("FF8080")
+	used_l.text = ""
 	var h := GameState.base_hours_left()
 	hours_l.text = "" if h >= 99.0 else "%s: %d %s" % [Text.t("ui.pack_base"), int(h), Text.t("ui.hours_left")]
 

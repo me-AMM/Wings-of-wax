@@ -46,6 +46,9 @@ func _ready() -> void:
 	polish = load("res://scripts/polish.gd").new()
 	add_child(polish)
 	polish.setup(self, player, "outpost")
+	var tut = load("res://scripts/tutorial.gd").new()
+	tut.outpost = self
+	add_child(tut)
 	player.stepped.connect(func(p):
 		_effect("dust_puff", p + Vector2(0, -2), 0.5, false)
 		Audio.play("step"))
@@ -343,7 +346,9 @@ func _clamp_locks() -> void:
 		d["label"].size = Vector2(tw + 8.0, 18.0)
 		d["back"].size = Vector2(tw + 12.0, 16.0)
 		c.x = clampf(c.x, view.position.x + tw / 2.0 + 12.0, view.end.x - tw / 2.0 - 12.0)
-		c.y = clampf(c.y, view.position.y + 56.0, view.end.y - 70.0)
+		c.y = clampf(c.y, view.position.y + 72.0, view.end.y - 70.0)        # below the HUD strip and the Facts button
+		if c.x - tw / 2.0 < view.position.x + 160.0 and c.y < view.position.y + 150.0:
+			c.y = view.position.y + 150.0 + 24.0 * (idx % 2)                  # never over the daily checklist (and never on top of each other)
 		d["label"].global_position = c - Vector2(tw / 2.0 + 4.0, 0)
 		d["back"].global_position = d["label"].global_position + Vector2(-4, -1)
 
