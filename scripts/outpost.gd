@@ -33,6 +33,8 @@ func _ready() -> void:
 	_build_prompt()
 	_build_lander()
 	_build_locks()
+	for b in get_tree().get_nodes_in_group("blocker"):
+		player.blockers.append(b.rect())
 	GameState.event.connect(_on_event)
 	GameState.card.connect(func(k): pending_cards.append(k))
 	GameState.changed.connect(_refresh_visuals)

@@ -7,6 +7,7 @@ extends Node2D
 
 var sprite: AnimatedSprite2D
 var facing := "front"
+var blockers: Array = []     # Rect2 footprints the player cannot enter (set by the Outpost)
 var frozen := false          # true while a menu is open or during fades
 
 func _ready() -> void:
@@ -27,11 +28,22 @@ func _physics_process(delta: float) -> void:
 			facing = "right" if dir.x > 0 else "left"
 		else:
 			facing = "front" if dir.y > 0 else "back"
-		position += dir * speed * delta
-		position = position.clamp(world_min, world_max)
+		var step := dir * speed * delta
+		var nx := (position + Vector2(step.x, 0)).clamp(world_min, world_max)
+		if not _blocked(nx):
+			position = nx
+		var ny := (position + Vector2(0, step.y)).clamp(world_min, world_max)
+		if not _blocked(ny):
+			position = ny
 		_play("walk_" + facing)
 	else:
 		_play("idle_" + facing)
+
+func _blocked(p: Vector2) -> bool:
+	for r in blockers:
+		if r.has_point(p):
+			return true
+	return false
 
 func _play(clip: String) -> void:
 	if sprite.animation != clip:

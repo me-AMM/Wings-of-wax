@@ -30,18 +30,20 @@ def node(name, typ, parent=None, **props):
         lines.append(f"{k} = {v}")
     nodes.append("\n".join(lines))
 
-def building(name, still, x, y, kind, radius=48, hold=0.0, unlock="", prompt="", index=0, poff=(0, -40), parent="World"):
+def building(name, still, x, y, kind, radius=48, hold=0.0, unlock="", prompt="", index=0, poff=(0, -40), parent="World", fp=None):
     w, h = stills[still]["size"]
+    if fp is None:
+        fp = (int(w * 0.7), 18)
     node(name, "Node2D", parent, position=f"Vector2({x}, {y})", script=script("interactable"),
          kind=f'"{kind}"', index=index, radius=float(radius), hold=float(hold),
-         unlock_key=f'"{unlock}"', prompt_key=f'"{prompt}"', prompt_offset=f"Vector2({poff[0]}, {poff[1]})")
+         unlock_key=f'"{unlock}"', footprint=f"Vector2({fp[0]}, {fp[1]})", prompt_key=f'"{prompt}"', prompt_offset=f"Vector2({poff[0]}, {poff[1]})")
     node("Sprite2D", "Sprite2D", f"{parent}/{name}", texture=tex(still), centered="false",
          offset=f"Vector2({-w // 2}, {-h})")
 
-def decor(name, still, x, y, parent="World"):
+def decor(name, still, x, y, parent="World", fp=(30, 10)):
     w, h = stills[still]["size"]
-    node(name, "Sprite2D", parent, position=f"Vector2({x}, {y})", texture=tex(still), centered="false",
-         offset=f"Vector2({-w // 2}, {-h})")
+    node(name, "Node2D", parent, position=f"Vector2({x}, {y})", script=script("blocker"), footprint=f"Vector2({fp[0]}, {fp[1]})")
+    node("Sprite2D", "Sprite2D", f"{parent}/{name}", texture=tex(still), centered="false", offset=f"Vector2({-w // 2}, {-h})")
 
 def tiled(name, still, x, y, w, h, parent):
     node(name, "TextureRect", parent, layout_mode=0, offset_left=float(x), offset_top=float(y),
@@ -68,7 +70,8 @@ while n < 26:
         node(f"Patch{n}", "Sprite2D", "Ground", position=f"Vector2({x}, {y})", texture=tex(rng.choice(["ground_2", "ground_3"])), centered="false")
         n += 1
 for i, (cx, cy) in enumerate([(200, 700), (1050, 820), (260, 300)]):
-    node(f"Crater{i}", "Sprite2D", "Ground", position=f"Vector2({cx}, {cy})", texture=tex("crater_small"))
+    node(f"Crater{i}", "Node2D", "Ground", position=f"Vector2({cx}, {cy + 24})", script=script("blocker"), footprint="Vector2(84, 40)")
+    node("Sprite2D", "Sprite2D", f"Ground/Crater{i}", position="Vector2(0, -24)", texture=tex("crater_small"))
 # boulder wall around the map edge
 tiled("WallTop", "boulder_wall", 0, 0, W, 64, "Ground")
 tiled("WallBottom", "boulder_wall", 0, H - 64, W, 64, "Ground")
@@ -79,15 +82,15 @@ node("World", "Node2D", ".", y_sort_enabled="true")
 # --- buildings (position = bottom centre; hold = seconds to hold E) ---
 building("Habitat", "habitat", 640, 440, "habitat", 62, 0, "habitat", "ui.habitat", poff=(0, -24))
 building("Recycler", "water_recycler", 470, 440, "recycler", 55, 0, "recycler", "ui.drink", poff=(0, -24))
-building("Tray", "radish_empty", 330, 504, "tray", 40, 0, "greenhouse", "", poff=(0, -40))
+building("Tray", "radish_empty", 330, 504, "tray", 40, 0, "greenhouse", "", poff=(0, -40), fp=(28, 8))
 building("Greenhouse", "greenhouse", 330, 440, "greenhouse", 0.0, 0, "greenhouse", "")
 for i in range(4):
-    building(f"Panel{i}", "solar_clean", 300 + 130 * i, 200, "panel", 56, 2.0, "solar", "ui.clean_panel", i, poff=(0, -30))
+    building(f"Panel{i}", "solar_clean", 300 + 130 * i, 200, "panel", 56, 2.0, "solar", "ui.clean_panel", i, poff=(0, -30), fp=(116, 14))
 building("Console", "slider_console", 830, 200, "console", 40, 0, "solar", "ui.sliders", poff=(0, -50))
 building("Charger", "charger_full", 910, 200, "charger", 38, 2.0, "solar", "ui.swap_packs", poff=(0, -50))
 building("Lab", "science_lab", 940, 440, "lab", 62, 0, "lab", "ui.lab_process", poff=(0, -24))
 building("Board", "forecast_board", 1130, 440, "board", 40, 0, "lab", "ui.forecast_board", poff=(0, -50))
-building("Pad", "landing_pad", 640, 780, "pad", 70, 0, "pad", "", poff=(0, -120))
+building("Pad", "landing_pad", 640, 780, "pad", 70, 0, "pad", "", poff=(0, -120), fp=(0, 0))
 building("Shelter", "shelter", 1130, 660, "shelter", 60, 0, "shelter", "ui.enter_shelter", poff=(0, -40))
 building("CrewLander", "crew_lander", 900, 780, "crew_lander", 70, 0, "", "ui.crew_lander", poff=(0, -60))
 decor("Antenna", "antenna", 790, 390)
