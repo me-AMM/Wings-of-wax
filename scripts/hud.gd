@@ -21,6 +21,7 @@ var storm_icon: TextureRect
 
 func _ready() -> void:
 	layer = 10
+	scale = Vector2(2, 2)
 	_build()
 	GameState.changed.connect(refresh)
 	GameState.notice.connect(push_notice)

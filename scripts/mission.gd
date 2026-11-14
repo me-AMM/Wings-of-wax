@@ -3,13 +3,13 @@ extends Node2D
 # Walk out, do the job, reach the flag, come back to the base (shelter). Suit air runs out!
 # Everything you may want to tweak is an exported variable below. Positions are in pixels.
 
-@export var world_size := Vector2(800, 420)
-@export var base_pos := Vector2(70, 230)
+@export var world_size := Vector2(1400, 700)
+@export var base_pos := Vector2(110, 380)
 @export var base_radius := 56.0
-@export var flag_pos := Vector2(730, 200)
-@export var sample_positions: Array[Vector2] = [Vector2(240, 150), Vector2(440, 330), Vector2(560, 100)]
-@export var ice_pos := Vector2(330, 190)
-@export var crater_centers: Array[Vector2] = [Vector2(390, 290), Vector2(620, 160)]
+@export var flag_pos := Vector2(1280, 330)
+@export var sample_positions: Array[Vector2] = [Vector2(420, 200), Vector2(700, 560), Vector2(1000, 150)]
+@export var ice_pos := Vector2(560, 300)
+@export var crater_centers: Array[Vector2] = [Vector2(560, 470), Vector2(930, 330)]
 @export var crater_radius := 58.0
 @export var pick_radius := 30.0
 @export var flag_radius := 28.0
@@ -144,11 +144,11 @@ func _build_player() -> void:
 	prompt.z_index = 200
 	var key := Sprite2D.new()
 	key.texture = Art.tex("icon_ekey")
-	key.scale = Vector2(0.4, 0.4)
+	key.scale = Vector2(0.5, 0.5)
 	prompt.add_child(key)
-	prompt_label = UIKit.label("", 8)
-	prompt_label.position = Vector2(-60, 10)
-	prompt_label.size = Vector2(120, 12)
+	prompt_label = UIKit.label("", 12)
+	prompt_label.position = Vector2(-100, 18)
+	prompt_label.size = Vector2(200, 16)
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	prompt.add_child(prompt_label)
 	prompt.visible = false
@@ -159,6 +159,7 @@ func _build_ui() -> void:
 	add_child(hud)
 	var ui := CanvasLayer.new()
 	ui.layer = 11
+	ui.scale = Vector2(2, 2)
 	add_child(ui)
 	var ic := UIKit.icon("icon_oxygen", 14)
 	ic.position = Vector2(4, 36)

@@ -3,6 +3,7 @@ extends Control
 # storm, its day, and the real flare it is modelled on (NASA DONKI). E or Esc goes back.
 
 func _ready() -> void:
+	scale = Vector2(2, 2)
 	GameState.clock_running = false
 	var bg := TextureRect.new()
 	bg.texture = Art.tex("forecast_screen")

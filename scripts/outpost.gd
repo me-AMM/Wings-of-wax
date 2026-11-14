@@ -59,16 +59,16 @@ func _build_prompt() -> void:
 	add_child(prompt)
 	prompt_key = Sprite2D.new()
 	prompt_key.texture = Art.tex("icon_ekey")
-	prompt_key.scale = Vector2(0.4, 0.4)
+	prompt_key.scale = Vector2(0.5, 0.5)
 	prompt.add_child(prompt_key)
-	prompt_label = UIKit.label("", 8)
-	prompt_label.position = Vector2(-60, 10)
-	prompt_label.size = Vector2(120, 12)
+	prompt_label = UIKit.label("", 12)
+	prompt_label.position = Vector2(-100, 18)
+	prompt_label.size = Vector2(200, 16)
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	prompt.add_child(prompt_label)
 	prompt_bar = ColorRect.new()
 	prompt_bar.color = Color("FFD23F")
-	prompt_bar.position = Vector2(-12, 24)
+	prompt_bar.position = Vector2(-16, 38)
 	prompt_bar.size = Vector2(0, 3)
 	prompt.add_child(prompt_bar)
 
@@ -101,12 +101,12 @@ func _build_locks() -> void:
 		var ic := Sprite2D.new()
 		ic.texture = Art.tex("icon_lock")
 		ic.position = c
-		ic.scale = Vector2(0.5, 0.5)
+		ic.scale = Vector2(0.75, 0.75)
 		ic.z_index = 50
 		it.add_child(ic)
-		var lb := UIKit.label("", 8)
-		lb.position = c + Vector2(-50, 14)
-		lb.size = Vector2(100, 12)
+		var lb := UIKit.label("", 12)
+		lb.position = c + Vector2(-80, 22)
+		lb.size = Vector2(160, 16)
 		lb.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		lb.z_index = 50
 		it.add_child(lb)
@@ -254,7 +254,7 @@ func _update_prompt() -> void:
 	prompt.position = current.position + current.prompt_offset
 	prompt_label.text = _prompt_text(current)
 	prompt_key.visible = current.is_open()
-	prompt_bar.size.x = 24.0 * (hold_t / current.hold) if (hold_active and current.hold > 0.0) else 0.0
+	prompt_bar.size.x = 32.0 * (hold_t / current.hold) if (hold_active and current.hold > 0.0) else 0.0
 
 func _reset_hold() -> void:
 	hold_t = 0.0

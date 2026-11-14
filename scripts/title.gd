@@ -2,6 +2,7 @@ extends Control
 # Title screen: Start and Judge mode. (Start goes to character select once that scene exists.)
 
 func _ready() -> void:
+	scale = Vector2(2, 2)     # 320x180 art shown at exactly 2x
 	GameState.clock_running = false
 	GameState.judge_mode = false
 	var start := UIKit.button(Text.t("ui.start"), 96)

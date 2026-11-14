@@ -7,6 +7,7 @@ var _age := 0.0
 
 func _ready() -> void:
 	layer = 20
+	scale = Vector2(2, 2)      # UI is authored in 320x180 units; the view is 640x360
 	is_open = true
 	GameState.modal_count += 1
 

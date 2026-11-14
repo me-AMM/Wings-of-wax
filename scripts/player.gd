@@ -8,16 +8,20 @@ extends Node2D
 var sprite: AnimatedSprite2D
 var facing := "front"
 var blockers: Array = []     # Rect2 footprints the player cannot enter (set by the Outpost)
-var frozen := false          # true while a menu is open or during fades
+var frozen := false
+signal stepped(pos: Vector2)     # every puff_distance pixels walked (dust puff)
+var puff_distance := 96.0
+var walked := 0.0          # true while a menu is open or during fades
 
 func _ready() -> void:
-	speed = Config.data["player"]["walk_speed"]
+	speed = Config.data["player"]["player_speed"]
 	sprite = AnimatedSprite2D.new()
 	sprite.sprite_frames = Art.astronaut_frames(GameState.astronaut)
 	sprite.centered = false
 	sprite.offset = -Art.anchor("astronaut_a_walk_front")     # feet on the origin
 	add_child(sprite)
 	sprite.play("idle_front")
+	puff_distance = Config.data["player"]["puff_distance"]
 
 func _physics_process(delta: float) -> void:
 	var dir := Vector2.ZERO
@@ -35,6 +39,10 @@ func _physics_process(delta: float) -> void:
 		var ny := (position + Vector2(0, step.y)).clamp(world_min, world_max)
 		if not _blocked(ny):
 			position = ny
+		walked += step.length()
+		if walked >= puff_distance:
+			walked = 0.0
+			stepped.emit(position)
 		_play("walk_" + facing)
 	else:
 		_play("idle_" + facing)
@@ -48,6 +56,8 @@ func _blocked(p: Vector2) -> bool:
 func _play(clip: String) -> void:
 	if sprite.animation != clip:
 		sprite.play(clip)
+	# walking animation speed follows the walking speed (8 fps at the old 55 px/s)
+	sprite.speed_scale = Config.data["player"]["walk_anim_fps_scale"] if clip.begins_with("walk") else 1.0
 
 # Play the interact (or dig) animation once for a moment.
 func play_action(clip: String = "interact_front", seconds: float = 0.6) -> void:

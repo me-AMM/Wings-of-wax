@@ -29,7 +29,7 @@ Asset index: assets/manifest.json (paths, sizes, frame lists, fps, anchors, 9-sl
 - The editor may be open while you write files; the owner refocuses it to reload.
 
 ## Hard rules
-- Display: 320x180 viewport, window 1280x720 (x4), stretch mode viewport, default texture filter Nearest, no mipmaps, snap 2D transforms to pixel. Renderer: Compatibility (web export).
+- Display: 640x360 viewport, window 1280x720 (x2); 320x180 UI/art is shown at exactly 2x, stretch mode viewport, default texture filter Nearest, no mipmaps, snap 2D transforms to pixel. Renderer: Compatibility (web export).
 - All game state lives in ONE autoload (GameState). The day script is DATA (data/*.json). Every event (storm, lander, shadow, harvest) is one function that the schedule and the Judge panel both call.
 - No magic numbers in scenes: numbers live in data/config.json or one constants script, matching docs/02_RULEBOOK.md.
 - All player-visible text lives in data/text.json (English). No hardcoded strings in scenes.

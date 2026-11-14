@@ -14,7 +14,11 @@ func tex(still_name: String) -> Texture2D:
 		return _cache[still_name]
 	var entry = manifest.get("stills", {}).get(still_name)
 	var t: Texture2D = null
-	if entry != null:
+	if still_name.begins_with("icon_"):          # 32x32 box-downscaled copies (resized by script)
+		var dp := "res://assets_derived/icons32/" + still_name + ".png"
+		if ResourceLoader.exists(dp):
+			t = load(dp)
+	if t == null and entry != null:
 		t = load("res://assets/" + entry["path"])
 	if t == null:
 		push_warning("Missing sprite: " + still_name)

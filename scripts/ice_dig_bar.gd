@@ -18,6 +18,7 @@ var age := 0.0
 
 func _ready() -> void:
 	layer = 15
+	scale = Vector2(2, 2)
 	var root := Control.new()
 	add_child(root)
 	root.add_child(UIKit.panel(Vector2(48, 104), Vector2(224, 68)))

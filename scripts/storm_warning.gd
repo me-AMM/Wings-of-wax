@@ -18,6 +18,7 @@ var result_t := 0.0
 
 func _ready() -> void:
 	layer = 12
+	scale = Vector2(2, 2)
 	root = Control.new()
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)

@@ -91,5 +91,5 @@
     "habitat": 1, "greenhouse": 2, "recycler": 2, "gym": 2,
     "solar": 3, "pad": 4, "lab": 4, "shelter": 4
   },
-  "player": { "walk_speed": 55.0 }
+  "player": { "player_speed": 85.0, "walk_anim_fps_scale": 1.5, "puff_distance": 96.0 }
 }

@@ -15,7 +15,7 @@ func _process(_d: float) -> void:
 		gs.advance(1.2)   # lander at 07:00
 	if n == 80:
 		for it in get_tree().get_nodes_in_group("interactable"):
-			if it.kind in ["", "greenhouse", "crew_lander"]:
+			if it.kind in ["", "greenhouse", "crew_lander", "board"]:
 				continue
 			print("interact ", it.kind)
 			o.do_interact(it)
