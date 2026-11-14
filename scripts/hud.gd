@@ -6,7 +6,7 @@ extends CanvasLayer
 
 @export var strip_height := 36.0
 @export var first_cell := 140.0      # clock cell ("DAY 32 06:00" in Silkscreen 16)
-@export var cell_widths: Array[float] = [58.0, 76.0, 70.0, 70.0, 70.0, 84.0]   # icon 32 + value, fixed so digits never jitter
+@export var cell_widths: Array[float] = [58.0, 76.0, 70.0, 68.0, 68.0, 82.0]   # icon 32 + value, fixed so digits never jitter
 @export var notice_seconds := 4.0
 
 var sky_icon: TextureRect
@@ -21,6 +21,15 @@ var fade_rect: ColorRect
 var splash: Label
 var judge_label: Label
 var storm_icon: TextureRect
+var health_num: Label
+var heart_icon: TextureRect
+var flash: ColorRect
+var banner_panel: ColorRect
+var banner_label: Label
+var shown_health := 100.0
+var hurt_acc := 0.0
+var hurt_timer := 0.0
+var hurt_reason := ""
 var blackout_icon: TextureRect
 
 func _ready() -> void:
@@ -28,6 +37,8 @@ func _ready() -> void:
 	_build()
 	GameState.changed.connect(refresh)
 	GameState.notice.connect(push_notice)
+	GameState.event.connect(_on_game_event)
+	shown_health = GameState.health
 	refresh()
 
 func _build() -> void:
@@ -62,10 +73,15 @@ func _build() -> void:
 		x += cell_widths[i]
 	# health: heart + red bar (bar_frame + fill)
 	var hx := x
-	_icon("icon_heart", Vector2(hx, 2), root)
+	heart_icon = _icon("icon_heart", Vector2(hx, 2), root)
 	health_bar = HudBar.new().setup(640.0 - hx - 38.0, Color("E5484D"))
 	health_bar.position = Vector2(hx + 34, 10)
 	root.add_child(health_bar)
+	health_num = UIKit.world_label("100", 16)         # the Health number sits on its bar
+	health_num.position = Vector2(hx + 34, 8)
+	health_num.size = Vector2(640.0 - hx - 38.0, 20)
+	health_num.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	root.add_child(health_num)
 	# blinking storm icon under the strip
 	storm_icon = _icon("icon_storm", Vector2(568, strip_height + 2), root)
 	storm_icon.visible = false
@@ -88,6 +104,24 @@ func _build() -> void:
 	notice_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	notice_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	notice_panel.add_child(notice_label)
+	# red damage flash and the big MISSION FAILED banner
+	flash = ColorRect.new()
+	flash.color = Color(1, 0.1, 0.1, 0.0)
+	flash.size = Vector2(640, 360)
+	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(flash)
+	banner_panel = ColorRect.new()
+	banner_panel.color = Color(0.45, 0.05, 0.08, 0.9)
+	banner_panel.position = Vector2(20, 130)
+	banner_panel.size = Vector2(600, 64)
+	banner_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	banner_panel.visible = false
+	root.add_child(banner_panel)
+	banner_label = UIKit.world_label("", 24)
+	banner_label.position = Vector2(0, 16)
+	banner_label.size = Vector2(600, 32)
+	banner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	banner_panel.add_child(banner_label)
 	# day splash and fade (above everything)
 	splash = UIKit.world_label("", 48)
 	splash.position = Vector2(0, 130)
@@ -117,7 +151,6 @@ func _text(pos: Vector2, px: int, parent: Control, color: Color = Color.WHITE) -
 func refresh() -> void:
 	clock_label.text = "%s %d %s" % [Text.t("ui.day"), GameState.day, GameState.clock_text()]
 	sky_icon.texture = Art.tex("icon_moon" if GameState.in_shadow else "icon_sun")
-	health_bar.set_frac(GameState.health / 100.0)
 	for s in stats:
 		s["label"].text = s["get"].call()
 	var red := Color("FF8080")
@@ -129,6 +162,12 @@ func refresh() -> void:
 	judge_label.visible = GameState.judge_mode
 
 func _process(delta: float) -> void:
+	# the Health bar animates down (and up) instead of jumping
+	shown_health = move_toward(shown_health, GameState.health, delta * 70.0)
+	health_bar.set_frac(shown_health / 100.0)
+	health_num.text = str(int(ceil(GameState.health)))
+	health_num.modulate = Color("FF8080") if GameState.health < 30.0 else Color.WHITE
+	_hurt_tick(delta)
 	var blink := int(Time.get_ticks_msec() / 300) % 2 == 0
 	var low: float = Config.data["power"]["low_pack_warn_pct"]
 	stats[3]["icon"].texture = Art.tex("icon_pack_low" if (GameState.base_pack < low and blink) else "icon_pack")
@@ -183,3 +222,65 @@ func fade_from_black(seconds: float = 0.6) -> Signal:
 	var tw := create_tween()
 	tw.tween_property(fade_rect, "modulate:a", 0.0, seconds)
 	return tw.finished
+
+# ---------------------------------------------------------------- damage feedback
+func _on_game_event(ev_name: String, data: Dictionary) -> void:
+	if ev_name == "hurt":
+		hurt_acc += data["amount"]
+		if data.get("reason", "") != "":
+			hurt_reason = data["reason"]
+	elif ev_name == "mission_end" and not data["success"]:
+		show_banner(Text.t("ui.mission_failed_banner"), 2.0)
+
+# Damage arrives in many small pieces (storm over time, empty oxygen): show it in chunks of 3 or more.
+func _hurt_tick(delta: float) -> void:
+	if hurt_acc <= 0.0:
+		return
+	hurt_timer += delta
+	if hurt_timer >= 0.35 and hurt_acc >= 3.0:
+		_show_hurt(hurt_acc, hurt_reason)
+		hurt_acc = 0.0
+		hurt_timer = 0.0
+		hurt_reason = ""
+	elif hurt_timer >= 3.0:
+		hurt_acc = 0.0                           # tiny damage that never adds up: no effect
+		hurt_timer = 0.0
+
+func _show_hurt(amount: float, reason: String) -> void:
+	# red flash 0.3 s
+	flash.color.a = 0.35
+	create_tween().tween_property(flash, "color:a", 0.0, 0.3)
+	# short screen shake (camera offset)
+	var cam := get_viewport().get_camera_2d()
+	if cam != null:
+		var tw := create_tween()
+		for i in 6:
+			tw.tween_property(cam, "offset", Vector2(randf_range(-5, 5), randf_range(-5, 5)), 0.04)
+		tw.tween_property(cam, "offset", Vector2.ZERO, 0.04)
+	# the heart shakes
+	var hp := heart_icon.position
+	var th := create_tween()
+	for i in 5:
+		th.tween_property(heart_icon, "position", hp + Vector2(randf_range(-4, 4), randf_range(-3, 3)), 0.04)
+	th.tween_property(heart_icon, "position", hp, 0.04)
+	# floating "-30" above the player
+	var pl := get_tree().get_first_node_in_group("player")
+	var at := Vector2(320, 180)
+	if pl != null:
+		at = get_viewport().get_canvas_transform() * pl.global_position + Vector2(-20, -100)
+	var l := UIKit.world_label("-%d" % int(round(amount)), 24, Color("FF5050"))
+	l.position = at
+	add_child(l)
+	var tf := create_tween()
+	tf.set_parallel(true)
+	tf.tween_property(l, "position:y", at.y - 50.0, 1.2)
+	tf.tween_property(l, "modulate:a", 0.0, 1.2).set_delay(0.4)
+	tf.chain().tween_callback(l.queue_free)
+	if reason != "" and Text.data.get("damage", {}).has(reason):
+		say(Text.t("damage." + reason))
+
+func show_banner(text: String, seconds: float) -> void:
+	banner_label.text = text
+	banner_panel.visible = true
+	await get_tree().create_timer(seconds).timeout
+	banner_panel.visible = false

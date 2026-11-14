@@ -133,14 +133,15 @@
       "small": 20,
       "medium": 30
     },
-    "later_hours": 4.0,
+    "later_hours": 1.0,
     "shelter_damage_big": 5.0,
     "mission_storm_scale": 0.4,
     "mission_storm_min_s": 20,
     "mission_warning_range": [
       0.25,
       0.4
-    ]
+    ],
+    "large_unsheltered_hit": 40
   },
   "missions": {
     "length_s": 90,

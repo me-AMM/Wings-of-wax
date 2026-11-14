@@ -128,9 +128,11 @@ func _unhandled_input(e: InputEvent) -> void:
 		_muted = not _muted
 		AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), _muted)
 
-func _on_event(ev_name: String, _data: Dictionary) -> void:
+func _on_event(ev_name: String, data: Dictionary) -> void:
 	match ev_name:
-		"hurt": play("hurt")
+		"hurt":
+			if data.get("amount", 0.0) >= 1.0:
+				play("hurt")
 		"shadow": play("shadow_start")
 		"sunrise": play("sunrise")
 		"day_start": play("day_start")

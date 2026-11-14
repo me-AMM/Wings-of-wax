@@ -150,6 +150,10 @@ func play_day(d: int) -> void:
 		if storm == null or not storm["in_mission"]:
 			gs.process_samples()
 	if storm != null:
+		var wait := 0
+		while gs.storm_state != "warning" and gs.hour < 29.0 and wait < 200:    # the shelter opens only during a storm
+			gs.advance(0.25)
+			wait += 1
 		gs.shelter_until_day_end()
 		return
 	if gs.hour < 22.0:

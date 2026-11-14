@@ -28,6 +28,11 @@ func _ready() -> void:
 	for case in [[8, "ice", "medium"], [20, "rock", "small"], [24, "ice", "large"]]:
 		for in_time in [true, false]:
 			await storm_case(case[0], case[1], case[2], in_time)
+	# ---------------- damage in the Outpost and in a mission, every storm size
+	for size in ["small", "medium", "large"]:
+		for host in ["Outpost", "Mission"]:
+			await damage_case(size, host)
+	await shelter_lock_case()
 	# ---------------- finale paths (scenes)
 	await finale_case(true)
 	await finale_case(false)
@@ -62,6 +67,7 @@ func storm_case(d: int, kind: String, size: String, in_time: bool) -> void:
 			check(GameState.pending_research.size() == r0 + 1 and GameState.health <= hp0, tag + ": samples kept, small damage only")
 		else:
 			check(GameState.pending_research.size() == r0 and GameState.missions_failed == 1, tag + ": mission failed, samples lost")
+			check(absf(GameState.health - hp0 * 0.6) < 2.5, tag + ": AND 40%% of current Health lost (%.0f -> %.0f)" % [hp0, GameState.health])
 	else:
 		check(GameState.pending_research.size() == r0 + 1, tag + ": samples kept")
 		if in_time:
@@ -94,3 +100,40 @@ func finale_case(sheltered: bool) -> void:
 		GameState.advance(GameState.storm_total_h + 0.3)  # countdown ends outside the shelter
 		check(await wait_scene("EndingFailed", 10.0), tag + ": reaches EndingFailed")
 		check(not GameState.finale_cleared, tag + ": no crew lander")
+
+func damage_case(size: String, host: String) -> void:
+	GameState.new_game()
+	GameState.auto_endings = false
+	var scene: Node = load("res://scenes/%s.tscn" % host).instantiate()
+	add_child(scene)
+	for i in 3:
+		await get_tree().process_frame
+	GameState.in_shelter = false
+	GameState.start_storm_warning(size, "small1", -1.0, host == "Mission")
+	var hp0 := GameState.health
+	GameState.advance(GameState.storm_total_h + 1.6)       # countdown, then the damage over time
+	var limit: float = {"small": 0.75, "medium": 0.6, "large": 0.62}[size]
+	check(GameState.health < hp0 * limit, "%s storm in the %s outside the shelter: Health %.0f -> %.0f" % [size, host, hp0, GameState.health])
+	GameState.modal_count = 0
+	scene.queue_free()
+	await get_tree().process_frame
+
+func shelter_lock_case() -> void:
+	GameState.new_game()
+	GameState.auto_endings = false
+	Judge.jump_to_day(8)
+	var scene: Node = load("res://scenes/Outpost.tscn").instantiate()
+	add_child(scene)
+	for i in 3:
+		await get_tree().process_frame
+	var sh: Interactable = scene.get_node("World/Shelter")
+	check(not sh.is_open(), "shelter is LOCKED when no storm is active")
+	var h0 := GameState.hour
+	var d0 := GameState.day
+	await scene.do_shelter()
+	check(GameState.hour == h0 and GameState.day == d0 and not GameState.slept_today, "entering a locked shelter does nothing (no day skip, no free sleep)")
+	check(not GameState.enter_shelter(), "GameState.enter_shelter() refuses without a storm")
+	Judge.trigger_storm("small")
+	check(sh.is_open(), "shelter OPENS during a storm warning (Judge storm button)")
+	scene.queue_free()
+	await get_tree().process_frame

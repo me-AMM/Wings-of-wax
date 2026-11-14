@@ -14,6 +14,7 @@ var facing := "front"
 var frozen := false          # true while a menu is open or during fades
 
 func _ready() -> void:
+	add_to_group("player")
 	speed = Config.data["player"]["player_speed"]
 	puff_distance = Config.data["player"]["puff_distance"]
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING

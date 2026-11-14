@@ -60,6 +60,7 @@ var storm_hit_hour := 0.0          # scheduled hit (outside missions), 0 = none
 var storm_warned := false
 var later_damage_pct := 0.0        # storm damage still to be applied over time
 var later_left_h := 0.0
+var later_base := 0.0              # Health when the storm hit: the over-time part is a % of it, spread evenly
 var player_name := "Nova"
 var astronaut := "a"               # "a" or "b"
 var judge_mode := false
@@ -199,11 +200,11 @@ func today() -> Dictionary:
 func is_unlocked(building: String) -> bool:
 	return day >= cfg["unlock_day"].get(building, 1)
 
-func damage(amount: float) -> void:
+func damage(amount: float, reason := "") -> void:
 	if amount <= 0.0 or game_over:
 		return
 	health = maxf(0.0, health - amount)
-	event.emit("hurt", {"amount": amount})
+	event.emit("hurt", {"amount": amount, "reason": reason})
 	if health <= 0.0:
 		finish_game("failed")
 	changed.emit()
@@ -281,11 +282,11 @@ func _step(dt: float) -> void:
 			rate = minf(rate, cfg["oxygen"]["change_per_day"][0])
 		oxygen_h = clampf(oxygen_h + rate * dt / 24.0, 0.0, cfg["oxygen"]["max_h"])
 	if oxygen_h <= 0.0:
-		damage(cfg["oxygen"]["empty_damage_per_hour"] * dt)
+		damage(cfg["oxygen"]["empty_damage_per_hour"] * dt, "oxygen")
 	# --- storm over-time damage ---
 	if later_left_h > 0.0:
 		var chunk := minf(dt, later_left_h)
-		damage(health * (later_damage_pct / 100.0) * chunk / later_left_h)
+		damage(later_base * (later_damage_pct / 100.0) * chunk / float(cfg["storms"]["later_hours"]), "storm")
 		later_left_h -= chunk
 	# --- timed events and storm countdown ---
 	_run_queue()
@@ -362,13 +363,13 @@ func _end_day() -> void:
 				tray_ready = true
 	# health rules
 	if not slept_today:
-		damage(cfg["time"]["no_sleep_damage"])
+		damage(cfg["time"]["no_sleep_damage"], "no_sleep")
 	no_drink_days = 0 if drank_today else no_drink_days + 1
 	no_meal_days = 0 if ate_today else no_meal_days + 1
 	if no_drink_days >= cfg["health"]["no_drink_days"]:
-		damage(cfg["health"]["no_drink_damage"])
+		damage(cfg["health"]["no_drink_damage"], "no_water")
 	if no_meal_days >= cfg["health"]["no_meal_days"]:
-		damage(cfg["health"]["no_meal_damage"])
+		damage(cfg["health"]["no_meal_damage"], "no_food")
 	# gym cap
 	var since := day - last_gym_day
 	health_cap = 100.0
@@ -579,10 +580,14 @@ func storm_hit() -> Dictionary:
 			res["damage_pct"] = 5.0
 		else:
 			res["failed"] = true
+			var hit: float = cfg["storms"]["large_unsheltered_hit"]       # mission failed AND 40% of current health
+			damage(health * hit / 100.0, "storm")
+			res["damage_pct"] = hit
 	elif not in_shelter:
 		var now: float = cfg["storms"]["unsheltered_now_pct"][size]
 		var later: float = cfg["storms"]["unsheltered_later_pct"][size]
-		damage(health * now / 100.0)
+		later_base = health
+		damage(health * now / 100.0, "storm")
 		later_damage_pct = later
 		later_left_h = cfg["storms"]["later_hours"]
 		res["damage_pct"] = now + later
@@ -606,16 +611,21 @@ func storm_hit() -> Dictionary:
 	return res
 
 # Shelter: forced sleep until the day ends, counts as that day's sleep. Scenes stop the player.
-func enter_shelter() -> void:
+# The shelter only works during a storm warning: no free sleep, no skipping the day. Returns true if you got in.
+func enter_shelter() -> bool:
+	if storm_state != "warning":
+		return false
 	in_shelter = true
 	if not slept_today:
 		slept_today = true
 		heal(cfg["health"]["sleep_heal"][sliders[2]])
 	event.emit("shelter_enter", {})
+	return true
 
 # Sleep through the rest of the day in the shelter (storm hits during this advance).
 func shelter_until_day_end() -> void:
-	enter_shelter()
+	if not enter_shelter():
+		return
 	advance(DAY_END - hour)
 
 # ---------------------------------------------------------------- missions and research

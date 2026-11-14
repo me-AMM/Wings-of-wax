@@ -138,7 +138,10 @@
     "exit_marker": "Exit",
     "hold_exit": "Hold E: leave",
     "storm_run_outpost": "Storm coming! Get back and reach the shelter!",
-    "extraction_skip": "E: skip"
+    "extraction_skip": "E: skip",
+    "mission_failed_banner": "MISSION FAILED - samples lost",
+    "opens_during_storm": "Opens during a storm",
+    "shelter_closed": "The shelter only opens during a storm."
   },
   "notices": {
     "cargo_tomorrow": "Cargo lander arrives tomorrow at 07:00.",
@@ -361,5 +364,13 @@
   },
   "extraction": [
     "The crew lander is here. Time to go home, astronaut!"
-  ]
+  ],
+  "damage": {
+    "no_sleep": "No sleep! Health -10",
+    "no_water": "No water for 2 days! Health -10",
+    "no_food": "No food for 3 days! Health -10",
+    "suit": "Suit out of air! Health -30",
+    "oxygen": "Oxygen reserve empty!",
+    "storm": "Storm damage!"
+  }
 }

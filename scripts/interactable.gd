@@ -14,6 +14,8 @@ func _ready() -> void:
 	add_to_group("interactable")
 
 func is_open() -> bool:
+	if kind == "shelter":                       # the shelter opens only while a storm warning is active
+		return GameState.storm_state == "warning"
 	return unlock_key == "" or GameState.is_unlocked(unlock_key)
 
 func unlock_day() -> int:

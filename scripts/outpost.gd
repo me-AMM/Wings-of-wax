@@ -156,7 +156,7 @@ func _refresh_visuals() -> void:
 			locks[it]["icon"].visible = not open
 			locks[it]["label"].visible = not open
 			locks[it]["back"].visible = not open
-			locks[it]["label"].text = "%s %d" % [Text.t("ui.opens_on_day"), it.unlock_day()]
+			locks[it]["label"].text = _lock_text(it)
 	crate.visible = not GameState.cargo_waiting.is_empty()
 	_set_solid(lander_body, _lander_on_pad())
 	if _lander_on_pad() and not lander_sprite.is_playing():
@@ -278,9 +278,14 @@ func _find_nearest() -> void:
 		_reset_hold()
 	current = best
 
+func _lock_text(it: Interactable) -> String:
+	if it.kind == "shelter":
+		return Text.t("ui.opens_during_storm")
+	return "%s %d" % [Text.t("ui.opens_on_day"), it.unlock_day()]
+
 func _prompt_text(it: Interactable) -> String:
 	if not it.is_open():
-		return "%s %d" % [Text.t("ui.opens_on_day"), it.unlock_day()]
+		return _lock_text(it)
 	match it.kind:
 		"tray":
 			if GameState.tray_ready:
@@ -323,7 +328,7 @@ func _handle_input(delta: float) -> void:
 		return
 	if not current.is_open():
 		if Input.is_action_just_pressed("interact"):
-			hud.toast("%s %d" % [Text.t("ui.opens_on_day"), current.unlock_day()])
+			hud.toast(Text.t("ui.shelter_closed") if current.kind == "shelter" else _lock_text(current))
 		return
 	if current.hold <= 0.0:
 		if Input.is_action_just_pressed("interact"):
@@ -440,6 +445,9 @@ func do_gym() -> void:
 
 # Shelter: forced sleep until the day ends (counts as the day's sleep).
 func do_shelter() -> void:
+	if GameState.storm_state != "warning":
+		hud.toast(Text.t("ui.shelter_closed"))
+		return
 	busy = true
 	Audio.play("shelter_door")
 	await hud.fade_to_black(0.6)

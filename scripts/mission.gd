@@ -447,7 +447,7 @@ func _start_dig(it: Dictionary) -> void:
 		_update_objective())
 
 func _suit_out() -> void:
-	GameState.damage(Config.data["health"]["suit_empty_damage"])
+	GameState.damage(Config.data["health"]["suit_empty_damage"], "suit")
 	Audio.play("hurt")
 	_end(false, "ui.suit_empty")
 
