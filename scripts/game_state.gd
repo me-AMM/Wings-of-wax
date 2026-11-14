@@ -501,8 +501,8 @@ func land_cargo() -> void:
 	var add: float = cfg["dust"]["lander_add_pct"]
 	for i in 4:
 		dust[i] = minf(cfg["dust"]["max_pct"], dust[i] + add)
-	var r := 0
-	var w := 0
+	var r := 2           # (Judge "land cargo" on a day without a lander brings a small default)
+	var w := 3
 	if d["lander"] != null:
 		r = d["lander"]["rations"]
 		w = d["lander"]["water"]

@@ -115,7 +115,15 @@
     "board_back": "E: back",
     "board_real": "Like the real flare: %s, %s",
     "storm_countdown": "Particles arrive in",
-    "storm_finale_note": "the brightest X-ray flare ever measured"
+    "storm_finale_note": "the brightest X-ray flare ever measured",
+    "judge_storm_finale": "Finale storm",
+    "judge_jump": "Jump",
+    "judge_start_game": "Start game",
+    "judge_close": "Close",
+    "judge_hint": "Judge mode: press J any time to open this panel. Runs earn no stars.",
+    "judge_day_label": "Day",
+    "judge_presets": "Presets",
+    "judge_end_shadow": "Sunrise"
   },
   "notices": {
     "cargo_tomorrow": "Cargo lander arrives tomorrow at 07:00.",

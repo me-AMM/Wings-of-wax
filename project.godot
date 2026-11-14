@@ -1,10 +1,17 @@
-; Engine configuration file (written by the builder; the editor may rewrite it)
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
 config_version=5
 
 [application]
 
 config/name="Junior Astronaut Mission Trainer"
-run/main_scene="res://scenes/Outpost.tscn"
+run/main_scene="res://scenes/Title.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://assets/sprites/icons/icon_star_full.png"
 
@@ -15,6 +22,7 @@ Art="*res://scripts/art.gd"
 Text="*res://scripts/text.gd"
 Audio="*res://scripts/audio.gd"
 GameState="*res://scripts/game_state.gd"
+Judge="*res://scripts/judge.gd"
 
 [display]
 
@@ -69,9 +77,8 @@ mute={
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-textures/canvas_textures/default_texture_filter=0
 2d/snap/snap_2d_transforms_to_pixel=true
 2d/snap/snap_2d_vertices_to_pixel=true
-textures/vram_compression/import_etc2_astc=false

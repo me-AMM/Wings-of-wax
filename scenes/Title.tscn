@@ -15,12 +15,3 @@ layout_mode = 0
 offset_right = 320.0
 offset_bottom = 180.0
 texture = ExtResource("1")
-
-[node name="Hint" type="Label" parent="."]
-layout_mode = 0
-offset_left = 80.0
-offset_top = 160.0
-offset_right = 240.0
-offset_bottom = 176.0
-text = "M0 test: press E"
-horizontal_alignment = 1

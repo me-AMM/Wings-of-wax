@@ -53,3 +53,40 @@ static func dim(alpha: float = 0.55) -> ColorRect:
 	c.size = Vector2(320, 180)
 	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return c
+
+# A real Button (mouse + keyboard focus) drawn with the button art (3-slice, margin 17, height 32).
+static func button(text: String, width: float = 120.0) -> Button:
+	var b := Button.new()
+	b.text = text
+	b.custom_minimum_size = Vector2(maxf(width, 38.0), 32)
+	b.size = b.custom_minimum_size
+	for state in ["normal", "hover", "pressed", "focus"]:
+		var sb := StyleBoxTexture.new()
+		sb.texture = Art.tex("button_" + ("hover" if state == "focus" else state))
+		sb.texture_margin_left = 17
+		sb.texture_margin_right = 17
+		b.add_theme_stylebox_override(state, sb)
+	b.add_theme_font_size_override("font_size", 10)
+	b.add_theme_color_override("font_color", Color.WHITE)
+	b.add_theme_color_override("font_hover_color", Color("FFD23F"))
+	b.add_theme_color_override("font_focus_color", Color("FFD23F"))
+	return b
+
+# Small flat debug button (Judge panel).
+static func flat_button(text: String, rect: Rect2) -> Button:
+	var b := Button.new()
+	b.text = text
+	b.clip_text = true
+	b.custom_minimum_size = rect.size
+	b.position = rect.position
+	b.size = rect.size
+	b.add_theme_font_size_override("font_size", 8)
+	for state in ["normal", "hover", "pressed", "focus"]:
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = {"normal": Color("1F2438"), "hover": Color("3D4560"), "pressed": Color("2F5BE0"), "focus": Color("3D4560")}[state]
+		sb.border_color = Color("A3ABC2")
+		sb.set_border_width_all(1)
+		sb.content_margin_top = 1
+		sb.content_margin_bottom = 1
+		b.add_theme_stylebox_override(state, sb)
+	return b
