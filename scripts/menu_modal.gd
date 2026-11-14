@@ -42,6 +42,15 @@ func build() -> void:
 		sub.position = Vector2(bx + 38, by + 9)
 		UIKit.box(sub, menu_width - 28.0 - 50.0, 12)
 		sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		# a long reason: drop to the small size, and if it still does not fit, put it under the label
+		var f: Font = sub.get_theme_font("font")
+		var room := (menu_width - 28.0 - 50.0) * 2.0
+		if f.get_string_size(sub.text, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x > room:
+			sub.add_theme_font_size_override("font_size", 12)
+			if f.get_string_size(sub.text, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x > room:
+				sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+				lb.position.y = by + 4
+				sub.position.y = by + 16
 		root.add_child(sub)
 		rows.append({"bg": bg, "label": lb, "sub": sub})
 	_refresh()

@@ -36,6 +36,7 @@ func _ready() -> void:
 	await shelter_lock_case()
 	await audio_case()
 	await large_fatal_case()
+	await finale_timing_case()
 	await retry_case(false)
 	await retry_case(true)
 	# ---------------- finale paths (scenes)
@@ -230,3 +231,29 @@ func retry_case(judge: bool) -> void:
 	check(FileAccess.get_md5(Save.path) == h0, "%s: the save file is unchanged by the death and the retry" % tag)
 	DirAccess.remove_absolute(Save.path)
 	Save.path = "user://save.json"
+
+# Finale: the storm warning starts only when the stone is taken, and gives the full 72 s to get back and shelter.
+func finale_timing_case() -> void:
+	GameState.new_game()
+	GameState.auto_endings = false
+	Judge.jump_to_day(32)
+	GameState.mission_kind = "finale"
+	var m: Node = load("res://scenes/Mission.tscn").instantiate()
+	add_child(m)
+	for i in 3:
+		await get_tree().process_frame
+	m.elapsed = 60.0                                   # long after the normal 25-40% point
+	await get_tree().process_frame
+	await get_tree().process_frame
+	check(GameState.storm_state == "none", "finale: no storm before the stone is taken")
+	for it in m.items:
+		if it["type"] == "stone":
+			m.player.position = it["pos"]
+			m.target = it
+			m._use_target()
+	await get_tree().process_frame
+	await get_tree().process_frame
+	check(GameState.storm_state == "warning" and absf(GameState.storm_total_h * 10.0 - 72.0) < 0.5, "finale: taking the stone starts the 72 s storm countdown (%.0f s)" % (GameState.storm_total_h * 10.0))
+	GameState.modal_count = 0
+	m.queue_free()
+	await get_tree().process_frame

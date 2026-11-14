@@ -20,7 +20,7 @@ const PauseMenuScript := preload("res://scripts/pause_menu.gd")
 @export var gap_bottom := Vector2(860, 1060)      # y range of the gap in barriers 1 and 3
 @export var gap_top := Vector2(50, 250)           # y range of the gap in barriers 2 and 4
 @export var finale_stone_pos := Vector2(1220, 600)   # between walls 2 and 3
-@export var pick_radius := 30.0
+@export var pick_radius := 40.0
 @export var flag_radius := 28.0
 @export var dark_tint := Color(0.3, 0.34, 0.58)
 
@@ -346,7 +346,10 @@ func _process(delta: float) -> void:
 
 func _storm_logic() -> void:
 	var st = GameState.today()["storm"]
-	if st != null and st["in_mission"] and not storm_started and elapsed >= storm_at:
+	# finale: the huge flare is spotted the moment you take the stone ("grab the stone and run to the shelter");
+	# other missions: at a random point between 25% and 40% of the mission
+	var due: bool = waypoint_reached if kind == "finale" else elapsed >= storm_at
+	if st != null and st["in_mission"] and not storm_started and due:
 		_start_storm(st)
 	if GameState.storm_state == "warning":
 		storm_label.text = ""                  # the storm panel in the corner already says "Get to shelter!"
