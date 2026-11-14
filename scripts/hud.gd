@@ -39,8 +39,8 @@ func _build() -> void:
 	var ci := UIKit.icon("icon_clock", 14)
 	ci.position = Vector2(3, 2)
 	root.add_child(ci)
-	clock_label = UIKit.label("", 10)
-	clock_label.position = Vector2(19, -2)
+	clock_label = UIKit.label("", 12)
+	clock_label.position = Vector2(19, -3)
 	root.add_child(clock_label)
 	sky_icon = UIKit.icon("icon_sun", 14)
 	sky_icon.position = Vector2(124, 2)
@@ -65,8 +65,8 @@ func _build() -> void:
 		var ic := UIKit.icon(defs[i][0], 14)
 		ic.position = Vector2(x, 17)
 		root.add_child(ic)
-		var lb := UIKit.label("", 9)
-		lb.position = Vector2(x + 15, 13)
+		var lb := UIKit.label("", 12)
+		lb.position = Vector2(x + 15, 12)
 		root.add_child(lb)
 		stats.append({"icon": ic, "label": lb, "get": defs[i][1]})
 	# notice line
@@ -78,7 +78,7 @@ func _build() -> void:
 	root.add_child(notice_panel)
 	notice_label = UIKit.label("", 9, Color("FFD23F"))
 	notice_label.position = Vector2(6, 4)
-	notice_label.size = Vector2(308, 16)
+	UIKit.box(notice_label, 308, 16)
 	notice_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	notice_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	notice_panel.add_child(notice_label)
@@ -94,7 +94,7 @@ func _build() -> void:
 	# day splash and fade (above everything)
 	splash = UIKit.label("", 24, Color.WHITE)
 	splash.position = Vector2(0, 70)
-	splash.size = Vector2(320, 40)
+	UIKit.box(splash, 320, 40)
 	splash.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	splash.modulate.a = 0.0
 	root.add_child(splash)
@@ -146,7 +146,7 @@ func say(text: String) -> void:
 func toast(text: String, color: Color = Color.WHITE) -> void:
 	var l := UIKit.label(text, 10, color)
 	l.position = Vector2(0, 100)
-	l.size = Vector2(320, 14)
+	UIKit.box(l, 320, 14)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	add_child(l)
 	var tw := create_tween()

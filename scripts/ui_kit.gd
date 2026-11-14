@@ -4,13 +4,47 @@ extends RefCounted
 
 const FONT := 10
 
+# Text sizes are snapped to the pixel font's clean sizes (virtual units; UI layers are drawn at 2x):
+# 6 = small (12 px real), 8 = body (16), 12 = heading (24), 16 = title (32), 24 = splash (48).
+static func snap_size(size: int) -> int:
+	if size <= 7:
+		return 6
+	if size <= 10:
+		return 8
+	if size <= 13:
+		return 12
+	if size <= 18:
+		return 16
+	return 24
+
+# UI label for the 2x UI layers: the font is rendered at 2x its virtual size and the label is drawn at scale 0.5,
+# so glyphs are crisp at the font's real pixel size (no blurry upscaled text). Position stays in virtual units;
+# set the box with UIKit.box(label, w, h) (virtual units).
 static func label(text: String, size: int = FONT, color: Color = Color.WHITE) -> Label:
 	var l := Label.new()
 	l.text = text
-	l.add_theme_font_size_override("font_size", size)
+	l.add_theme_font_size_override("font_size", snap_size(size) * 2)
 	l.add_theme_color_override("font_color", color)
-	l.add_theme_color_override("font_outline_color", Color(0.04, 0.05, 0.1))
-	l.add_theme_constant_override("outline_size", 3)
+	l.add_theme_constant_override("outline_size", 1)
+	l.add_theme_constant_override("shadow_offset_x", 1)
+	l.add_theme_constant_override("shadow_offset_y", 1)
+	l.scale = Vector2(0.5, 0.5)
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return l
+
+static func box(l: Control, w: float, h: float) -> void:
+	l.size = Vector2(w, h) * 2.0
+	l.custom_minimum_size = l.size
+
+# Label for the world (scale 1, real pixels): prompts and lock labels above buildings.
+static func world_label(text: String, px: int = 12, color: Color = Color.WHITE) -> Label:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_size_override("font_size", px)
+	l.add_theme_color_override("font_color", color)
+	l.add_theme_constant_override("outline_size", 1)
+	l.add_theme_constant_override("shadow_offset_x", 1)
+	l.add_theme_constant_override("shadow_offset_y", 1)
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return l
 
@@ -66,7 +100,7 @@ static func button(text: String, width: float = 120.0) -> Button:
 		sb.texture_margin_left = 17
 		sb.texture_margin_right = 17
 		b.add_theme_stylebox_override(state, sb)
-	b.add_theme_font_size_override("font_size", 10)
+	b.add_theme_font_size_override("font_size", 8)
 	b.add_theme_color_override("font_color", Color.WHITE)
 	b.add_theme_color_override("font_hover_color", Color("FFD23F"))
 	b.add_theme_color_override("font_focus_color", Color("FFD23F"))
@@ -86,7 +120,9 @@ static func flat_button(text: String, rect: Rect2) -> Button:
 		sb.bg_color = {"normal": Color("1F2438"), "hover": Color("3D4560"), "pressed": Color("2F5BE0"), "focus": Color("3D4560")}[state]
 		sb.border_color = Color("A3ABC2")
 		sb.set_border_width_all(1)
-		sb.content_margin_top = 1
-		sb.content_margin_bottom = 1
+		sb.content_margin_top = 0
+		sb.content_margin_bottom = 0
+		sb.content_margin_left = 4
+		sb.content_margin_right = 4
 		b.add_theme_stylebox_override(state, sb)
 	return b

@@ -62,7 +62,7 @@ func _build_prompt() -> void:
 	prompt_key.texture = Art.tex("icon_ekey")
 	prompt_key.scale = Vector2(0.5, 0.5)
 	prompt.add_child(prompt_key)
-	prompt_label = UIKit.label("", 12)
+	prompt_label = UIKit.world_label("", 12)
 	prompt_label.position = Vector2(-100, 18)
 	prompt_label.size = Vector2(200, 16)
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -119,7 +119,7 @@ func _build_locks() -> void:
 		ic.scale = Vector2(0.75, 0.75)
 		ic.z_index = 50
 		it.add_child(ic)
-		var lb := UIKit.label("", 12)
+		var lb := UIKit.world_label("", 12)
 		lb.position = c + Vector2(-80, 22)
 		lb.size = Vector2(160, 16)
 		lb.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

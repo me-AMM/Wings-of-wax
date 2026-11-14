@@ -7,7 +7,10 @@ var panel: Node = null
 
 func _unhandled_input(e: InputEvent) -> void:
 	if GameState.judge_mode and e is InputEventKey and e.pressed and not e.echo and e.keycode == KEY_J:
-		open_panel()
+		if panel != null and is_instance_valid(panel):
+			panel.close_modal()        # J toggles the panel
+		else:
+			open_panel()
 
 func open_panel(from_title := false) -> void:
 	if panel != null and is_instance_valid(panel):

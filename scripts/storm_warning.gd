@@ -53,12 +53,12 @@ func _ready() -> void:
 	root.add_child(count_label)
 	real_label = UIKit.label("", 8, Color(1, 0.9, 0.9))
 	real_label.position = Vector2(0, 68)
-	real_label.size = Vector2(320, 12)
+	UIKit.box(real_label, 320, 12)
 	real_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	root.add_child(real_label)
 	result_label = UIKit.label("", 11, Color.WHITE)
 	result_label.position = Vector2(0, 100)
-	result_label.size = Vector2(320, 40)
+	UIKit.box(result_label, 320, 40)
 	result_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	result_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	root.add_child(result_label)

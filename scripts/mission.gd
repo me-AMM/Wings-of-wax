@@ -193,7 +193,7 @@ func _build_player() -> void:
 	key.texture = Art.tex("icon_ekey")
 	key.scale = Vector2(0.5, 0.5)
 	prompt.add_child(key)
-	prompt_label = UIKit.label("", 12)
+	prompt_label = UIKit.world_label("", 12)
 	prompt_label.position = Vector2(-100, 18)
 	prompt_label.size = Vector2(200, 16)
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -222,12 +222,12 @@ func _build_ui() -> void:
 	ui.add_child(obj_label)
 	storm_label = UIKit.label("", 10, Color("FF8080"))
 	storm_label.position = Vector2(0, 80)
-	storm_label.size = Vector2(320, 14)
+	UIKit.box(storm_label, 320, 14)
 	storm_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ui.add_child(storm_label)
 	crater_label = UIKit.label(Text.t("ui.in_crater"), 8, Color("FFD23F"))
 	crater_label.position = Vector2(0, 140)
-	crater_label.size = Vector2(320, 12)
+	UIKit.box(crater_label, 320, 12)
 	crater_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	crater_label.visible = false
 	ui.add_child(crater_label)

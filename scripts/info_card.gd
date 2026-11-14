@@ -22,14 +22,12 @@ func _ready() -> void:
 	root.add_child(title_l)
 	body_l = UIKit.label("", 9)
 	body_l.position = Vector2(34, 62)
-	body_l.custom_minimum_size = Vector2(250, 0)
-	body_l.size = Vector2(250, 60)
+	UIKit.box(body_l, 250, 60)
 	body_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	root.add_child(body_l)
 	src_l = UIKit.label("", 8, Color(0.65, 0.7, 0.85))
 	src_l.position = Vector2(34, 128)
-	src_l.custom_minimum_size = Vector2(220, 0)
-	src_l.size = Vector2(220, 20)
+	UIKit.box(src_l, 220, 20)
 	src_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	root.add_child(src_l)
 	var ek := UIKit.icon("icon_ekey", 20)

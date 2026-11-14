@@ -13,12 +13,12 @@ func _ready() -> void:
 	add_child(title)
 	var body := UIKit.label(_message(), 10)
 	body.position = Vector2(20, 50)
-	body.size = Vector2(280, 90)
+	UIKit.box(body, 280, 90)
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(body)
 	var real := UIKit.label(_real_line(), 8, Color(0.75, 0.85, 1.0))
 	real.position = Vector2(20, 120)
-	real.size = Vector2(280, 24)
+	UIKit.box(real, 280, 24)
 	real.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(real)
 	var back := UIKit.label(Text.t("ui.board_back"), 9)
