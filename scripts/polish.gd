@@ -22,11 +22,19 @@ const DIRT_WIDE := 1.18           # dirt patch width / ground-contact width
 # POLAR SUN: at the south pole the Sun circles low on the horizon, so shadows are long and turn once a day.
 const SUN_ALPHA := 0.27           # long shadow darkness
 const SUN_LENGTH := 1.5           # shadow length / object height
+const SUN_MAX := 44.0             # longest shadow in px (big domes would cast a huge grey blob otherwise)
 const SUN_FLAT := 0.55            # top-down view squashes the north-south part of the direction
 const SUN_PHASE := 0.0            # turn the whole clock (radians) if the shadows point the wrong way at 06:00
 var sun_group: CanvasGroup        # all long shadows: drawn as one layer, so overlaps never get darker
 var sun_items: Array = []         # [shadow Sprite2D, node] pairs
 var player_sun: Sprite2D
+# BOOT PRINTS: the astronaut leaves a small print every PRINT_STEP px that fades over PRINT_FADE s (outpost only)
+const PRINT_STEP := 10.0
+const PRINT_FADE := 30.0
+const PRINT_MAX := 120            # oldest prints are removed first (keeps the Web build cheap)
+var print_layer: Node2D
+var last_print := Vector2.INF
+var print_side := 1.0
 static var _shadow_cache := {}
 static var _bases := {}
 
@@ -137,7 +145,13 @@ func setup(host_node: Node, player_node: Node2D, kind: String) -> void:
 	GameState.changed.connect(_update_vignette)
 	_update_vignette()
 	if kind == "outpost":
+		_baked_ground()
 		_shadows_for_buildings()
+		if sun_group != null:                         # one layer: the astronaut's shadow never doubles a building's
+			player.remove_child(player_sun)
+			player_sun.show_behind_parent = false
+			player_sun.modulate = Color(0.02, 0.02, 0.06)
+			sun_group.add_child(player_sun)
 		_blinking_lights()
 
 func _build_vignette() -> void:
@@ -165,6 +179,49 @@ func _build_vignette() -> void:
 func _update_vignette() -> void:
 	if vignette != null:
 		vignette.modulate = Color(0.2, 0.3, 0.75) if GameState.in_shadow else Color(1.0, 0.72, 0.4)
+
+# GROUND: one baked image (tools/make_ground.py) replaces the tiled ground, the hard-edged path rectangles and the
+# ground patches. Craters and boulder walls stay. If the image is missing, the old ground is kept.
+func _baked_ground() -> void:
+	var ground: Node = host.get_node_or_null("Ground")
+	var tex: Texture2D = load("res://assets_derived/ground_outpost.png") if ResourceLoader.exists("res://assets_derived/ground_outpost.png") else null
+	if ground == null or tex == null:
+		return
+	for c in ground.get_children():
+		if c.name == "GroundFill" or String(c.name).begins_with("Path") or String(c.name).begins_with("Patch"):
+			c.visible = false
+	var g := Sprite2D.new()
+	g.name = "BakedGround"
+	g.texture = tex
+	g.centered = false
+	ground.add_child(g)
+	ground.move_child(g, 0)
+	print_layer = Node2D.new()
+	print_layer.name = "BootPrints"
+	ground.add_child(print_layer)
+
+func _boot_prints() -> void:
+	if print_layer == null or player == null:
+		return
+	var feet := player.global_position
+	if last_print == Vector2.INF:
+		last_print = feet
+		return
+	if feet.distance_to(last_print) < PRINT_STEP:
+		return
+	var dir := (feet - last_print).normalized()
+	last_print = feet
+	print_side = -print_side                          # left, right, left...
+	var side := Vector2(-dir.y, dir.x) * 2.0 * print_side
+	var bp := Sprite2D.new()
+	bp.texture = ellipse_texture(4, 2, 0.35, Color(0.05, 0.05, 0.08))
+	bp.position = (feet + side).round()
+	print_layer.add_child(bp)
+	var tw := bp.create_tween()
+	tw.tween_property(bp, "modulate:a", 0.0, PRINT_FADE)
+	tw.tween_callback(bp.queue_free)
+	if print_layer.get_child_count() > PRINT_MAX:
+		print_layer.get_child(0).queue_free()
 
 # GROUNDING: every building, prop and rock of the Outpost gets a dark dithered dirt patch and a contact shadow,
 # both centred on the sprite's real visual base (bases.json) and drawn on the ground layer, under every sprite.
@@ -213,7 +270,9 @@ func _shadows_for_buildings() -> void:
 		ls.position = base
 		ls.modulate = Color(0.02, 0.02, 0.06)
 		sun_group.add_child(ls)
-		sun_items.append([ls, sp])
+		var hb: Dictionary = bases().get(sp.texture.resource_path, {})
+		var height: float = float(hb.get("bottom", 32) - hb.get("top", 0) + 1)
+		sun_items.append([ls, sp, minf(SUN_LENGTH, SUN_MAX / height)])
 		# follow the node if it is hidden (locked or not landed yet)
 		n.visibility_changed.connect(func(): dirt.visible = n.visible; s.visible = n.visible; ls.visible = n.visible)
 		dirt.visible = n.visible
@@ -249,13 +308,13 @@ func sun_dir() -> Vector2:
 
 func _update_sun() -> void:
 	var on := not GameState.in_shadow       # shadow days: the Sun is blocked, no long shadows
-	var skew_axis := -sun_dir() * SUN_LENGTH  # a pixel h above the base lands h * SUN_LENGTH along the direction
+	var d := -sun_dir()                       # a pixel h above the base lands h * length along the direction
 	if sun_group != null:
 		sun_group.visible = on
 		for it in sun_items:
 			var ls: Sprite2D = it[0]
 			ls.texture = it[1].texture           # follows texture swaps (dusty panels, empty charger)
-			ls.transform = Transform2D(Vector2(1, 0), skew_axis, ls.position)
+			ls.transform = Transform2D(Vector2(1, 0), d * it[2], ls.position)
 	if player_sun != null:
 		player_sun.visible = on
 		var ps: AnimatedSprite2D = null
@@ -266,10 +325,14 @@ func _update_sun() -> void:
 			player_sun.texture = ps.sprite_frames.get_frame_texture(ps.animation, ps.frame)
 			player_sun.offset = ps.offset
 			player_sun.flip_h = ps.flip_h
-			player_sun.transform = Transform2D(Vector2(1, 0), skew_axis, Vector2.ZERO)
+			var origin := Vector2.ZERO
+			if player_sun.get_parent() == sun_group:      # in the shared layer: follow the player's feet
+				origin = player.global_position
+			player_sun.transform = Transform2D(Vector2(1, 0), d * SUN_LENGTH, origin)
 
 func _process(delta: float) -> void:
 	_update_sun()
+	_boot_prints()
 	# an occasional sparkle on a solar panel
 	if panels.is_empty() or GameState.in_shadow:
 		return
