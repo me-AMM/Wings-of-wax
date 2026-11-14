@@ -5,7 +5,17 @@ A 2D top-down game for kids 7-12, made for the **NASA Space Apps Challenge 2026 
 water, food and health, collect samples, hide from solar storms, and survive the crater-rim shadow days.
 Godot 4.7.2 (GDScript), web export for itch.io.
 
-**Play:** itch.io link goes here (placeholder).
+Team **Wings of wax**: Ahmed Mohammed Mohammed Ahmed Taha, Mohamed Anas.
+
+![Storm during a mission, labelled with the real flare it copies (contains AI-generated art, Pixel Lab)](docs/screenshots/03_storm_mission_real_flare.png)
+
+| | |
+|---|---|
+| **Play in the browser** (desktop, keyboard) | https://me-amm.itch.io/lunar-post-survival |
+| **30-second demo video** | https://youtu.be/eqXDSytL5EY |
+| **Project intro video** (local event application) | https://youtu.be/_21kd5jMerY |
+| **Project description (PDF)** | [docs/Project_Description.pdf](docs/Project_Description.pdf) |
+| **Research report with all sources** | [docs/Lunar_Outpost_Research_Report.pdf](docs/Lunar_Outpost_Research_Report.pdf) |
 
 **Short on time?** Click **Judge mode** on the title screen and jump to day 8 (storm during a mission), day 11 (shadow) or day 24 (big storm). Press **J** any time in Judge mode to reopen the panel.
 
