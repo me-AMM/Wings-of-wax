@@ -25,9 +25,9 @@ var crate: Sprite2D
 var locks := {}               # Interactable -> {icon, label}
 var prompt: Node2D
 var prompt_label: Label
-var prompt_key: Sprite2D
+var prompt_key: TextureRect
 var prompt_bar: ColorRect
-var prompt_back: ColorRect
+var prompt_back: Panel
 
 func _ready() -> void:
 	GameState.clock_running = true
@@ -59,29 +59,26 @@ func _ready() -> void:
 	_refresh_visuals()
 
 # ------------------------------------------------------------------ building the extras
+# Interaction prompt: ONE compact line, E icon + verb, in a 16 px high 55% black box above the interactable.
 func _build_prompt() -> void:
 	prompt = Node2D.new()
 	prompt.z_index = 200
 	prompt.visible = false
 	add_child(prompt)
-	prompt_back = ColorRect.new()                       # small dark panel behind the key icon and the verb
-	prompt_back.color = Color(0.04, 0.05, 0.1, 0.78)
-	prompt_back.position = Vector2(-90, -14)
-	prompt_back.size = Vector2(180, 56)
+	prompt_back = UIKit.dark_box()
+	prompt_back.size = Vector2(60, 16)
 	prompt.add_child(prompt_back)
-	prompt_key = Sprite2D.new()
-	prompt_key.texture = Art.tex("icon_ekey")
-	prompt_key.scale = Vector2(0.5, 0.5)
+	prompt_key = UIKit.icon("icon_ekey", 16)          # the 32 px icon shown at half size
+	prompt_key.position = Vector2(0, 0)
 	prompt.add_child(prompt_key)
-	prompt_label = UIKit.world_label("", 12)
-	prompt_label.position = Vector2(-100, 18)
-	prompt_label.size = Vector2(200, 16)
-	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	prompt_label = UIKit.world_label("", 16)
+	prompt_label.position = Vector2(18, -2)
+	prompt_label.size = Vector2(100, 18)
 	prompt.add_child(prompt_label)
-	prompt_bar = ColorRect.new()
+	prompt_bar = ColorRect.new()                      # hold progress: a thin line along the bottom of the box
 	prompt_bar.color = Color("FFD23F")
-	prompt_bar.position = Vector2(-16, 38)
-	prompt_bar.size = Vector2(0, 3)
+	prompt_bar.position = Vector2(0, 14)
+	prompt_bar.size = Vector2(0, 2)
 	prompt.add_child(prompt_bar)
 
 func _build_lander() -> void:
@@ -136,10 +133,9 @@ func _build_locks() -> void:
 		lb.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		lb.z_index = 50
 		it.add_child(lb)
-		var back := ColorRect.new()                      # small dark panel behind the lock label
-		back.color = Color(0.04, 0.05, 0.1, 0.7)
+		var back := UIKit.dark_box()                      # same compact style as the prompt
 		back.position = lb.position + Vector2(-4, -1)
-		back.size = Vector2(168, 20)
+		back.size = Vector2(168, 16)
 		back.z_index = 49
 		it.add_child(back)
 		locks[it] = {"icon": ic, "label": lb, "back": back}
@@ -338,7 +334,7 @@ func _clamp_locks() -> void:
 		var font: Font = d["label"].get_theme_font("font")
 		var tw: float = font.get_string_size(d["label"].text, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x
 		d["label"].size = Vector2(tw + 8.0, 18.0)
-		d["back"].size = Vector2(tw + 16.0, 20.0)
+		d["back"].size = Vector2(tw + 12.0, 16.0)
 		c.x = clampf(c.x, view.position.x + tw / 2.0 + 12.0, view.end.x - tw / 2.0 - 12.0)
 		c.y = clampf(c.y, view.position.y + 56.0, view.end.y - 70.0)
 		d["label"].global_position = c - Vector2(tw / 2.0 + 4.0, 0)
@@ -351,16 +347,33 @@ func _update_prompt() -> void:
 	if not current.is_open():                           # a locked building shows its lock label only
 		prompt.visible = false
 		return
+	var txt := _prompt_text(current)
+	if txt == "":
+		prompt.visible = false
+		return
 	prompt.visible = true
-	# keep the prompt inside the visible screen (below the HUD strip)
+	var font: Font = prompt_label.get_theme_font("font")
+	var tw: float = font.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x
+	var w := tw + 12.0 + 18.0                           # text + 12 px, plus the 16 px key icon
+	prompt_label.text = txt
+	prompt_label.size = Vector2(tw + 4.0, 18.0)
+	prompt_back.size = Vector2(w, 16.0)
+	prompt_key.position = Vector2(4, 0)
+	prompt_label.position = Vector2(24, -2)
+	# 10 px above the top edge of the interactable (its sprite), centred
+	var sp: Sprite2D = current.get_node_or_null("Sprite2D")
+	var top_y: float = current.global_position.y + (sp.offset.y if sp != null else -48.0)
+	var pos := Vector2(current.global_position.x - w / 2.0, top_y - 10.0 - 16.0)
+	# never over the player's head
+	var head := Rect2(player.global_position + Vector2(-14, -64), Vector2(28, 64))
+	if Rect2(pos, Vector2(w, 16)).intersects(head):
+		pos.y = head.position.y - 24.0
+	# keep inside the visible screen (below the HUD strip)
 	var view: Rect2 = get_viewport().get_canvas_transform().affine_inverse() * get_viewport().get_visible_rect()
-	var pp: Vector2 = current.position + current.prompt_offset
-	pp.x = clampf(pp.x, view.position.x + 110.0, view.end.x - 110.0)
-	pp.y = clampf(pp.y, view.position.y + 66.0, view.end.y - 70.0)
-	prompt.position = pp
-	prompt_label.text = _prompt_text(current)
-	prompt_key.visible = current.is_open()
-	prompt_bar.size.x = 32.0 * (hold_t / current.hold) if (hold_active and current.hold > 0.0) else 0.0
+	pos.x = clampf(pos.x, view.position.x + 6.0, view.end.x - w - 6.0)
+	pos.y = clampf(pos.y, view.position.y + 56.0, view.end.y - 60.0)
+	prompt.position = pos
+	prompt_bar.size.x = w * (hold_t / current.hold) if (hold_active and current.hold > 0.0) else 0.0
 
 func _reset_hold() -> void:
 	hold_t = 0.0

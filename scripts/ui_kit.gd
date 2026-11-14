@@ -87,6 +87,16 @@ static func ignore_mouse(n: Node) -> void:
 	for c in n.get_children():
 		ignore_mouse(c)
 
+# Compact dark box for prompts and lock labels: 55% black, 2 px rounded corners.
+static func dark_box() -> Panel:
+	var p := Panel.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0, 0, 0, 0.55)
+	sb.set_corner_radius_all(2)
+	p.add_theme_stylebox_override("panel", sb)
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return p
+
 static func dim(alpha: float = 0.45) -> ColorRect:
 	var c := ColorRect.new()
 	c.color = Color(0.02, 0.03, 0.08, alpha)
