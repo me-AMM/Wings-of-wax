@@ -43,6 +43,8 @@ var prompt_label: Label
 var low_sound_t := 0.0
 
 func _ready() -> void:
+	Audio.outdoor = true
+	Audio.ambience({"suit_breath": 1.0})
 	kind = GameState.mission_kind if GameState.mission_kind != "" else "rock"
 	suit_total = GameState.suit_seconds()
 	suit_left = suit_total
@@ -187,6 +189,7 @@ func _build_player() -> void:
 	cam.limit_right = int(world_size.x)
 	cam.limit_bottom = int(world_size.y)
 	player.add_child(cam)
+	player.stepped.connect(func(_p): Audio.play("step"))
 	player.add_child(load("res://scripts/flashlight.gd").new())
 	prompt = Node2D.new()
 	prompt.z_index = 200

@@ -5,8 +5,8 @@
 - [x] M2 Outpost slice, days 1-4 (record footage point)
 - [x] M3 Missions (rock, ice dig, finale, lab, research, stars)
 - [x] M4 Storms and real data (donki_events.json, StormWarning, shelter, forecast board)
-- [ ] M5 (Judge panel done; character select, story, endings, credits, shadow visuals left) Whole game (shadow days, endings, title/select/story/credits, Judge panel)
-- [ ] M6 Polish (audio wiring, info cards, HUD readability, juice)
+- [x] M5
+- [x] M6 (audio wired + fallback sounds, day-4 cards via day script) Polish (audio wiring, info cards, HUD readability, juice)
 - [ ] M7 Release (web export test, README, credits, final commit)
 
 Last session note:

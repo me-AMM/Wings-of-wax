@@ -35,7 +35,10 @@ func _ready() -> void:
 	_build_lander()
 	_build_locks()
 	player.add_child(load("res://scripts/flashlight.gd").new())
-	player.stepped.connect(func(p): _effect("dust_puff", p + Vector2(0, -2), 0.5, false))
+	Audio.outdoor = false
+	player.stepped.connect(func(p):
+		_effect("dust_puff", p + Vector2(0, -2), 0.5, false)
+		Audio.play("step"))
 	add_child(load("res://scripts/debug_overlay.gd").new())
 	GameState.event.connect(_on_event)
 	GameState.card.connect(func(k): GameState.card_queue.append(k))
@@ -223,7 +226,25 @@ func _effect(anim: String, pos: Vector2, scl: float = 1.0, loop_once_timer: bool
 			s.queue_free()
 
 # ------------------------------------------------------------------ every frame
+var amb_t := 0.0
+
+# Ambience volumes by distance: suit breath outside, habitat hum near the habitat, recycler hum near the recycler.
+func _update_ambience(delta: float) -> void:
+	amb_t -= delta
+	if amb_t > 0.0:
+		return
+	amb_t = 0.25
+	var levels := {"suit_breath": 0.6}
+	for it in get_tree().get_nodes_in_group("interactable"):
+		var d: float = player.position.distance_to(it.position)
+		if it.name == "Habitat":
+			levels["hab_hum"] = clampf(1.0 - d / 260.0, 0.0, 1.0)
+		elif it.name == "Recycler" and GameState.sliders[0] >= 1:
+			levels["recycler_hum"] = clampf(1.0 - d / 200.0, 0.0, 1.0)
+	Audio.ambience(levels)
+
 func _process(delta: float) -> void:
+	_update_ambience(delta)
 	GameState.clock_running = GameState.modal_count == 0 and not busy
 	player.frozen = busy
 	_show_cards(delta)
@@ -318,6 +339,7 @@ func _handle_input(delta: float) -> void:
 		if hold_t >= current.hold:
 			hold_done = true
 			hold_active = false
+			Audio.play("interact_done")
 			do_interact(current)
 	elif not Input.is_action_pressed("interact"):
 		_reset_hold()
