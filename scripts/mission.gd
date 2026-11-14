@@ -119,7 +119,7 @@ func _build_world() -> void:
 	# the exit marker: a flat landing pad at the start (walkable), with a label
 	_sprite("landing_pad", base_pos + Vector2(0, 96), ground)
 	var ex := UIKit.world_label(Text.t("ui.exit_marker"), 16, Color("FFD23F"))
-	ex.position = base_pos + Vector2(-60, -118)
+	ex.position = base_pos + Vector2(-60, 100)
 	ex.size = Vector2(120, 20)
 	ex.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ground.add_child(ex)

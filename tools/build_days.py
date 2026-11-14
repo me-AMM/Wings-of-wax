@@ -51,7 +51,7 @@ cards = {
 notices = {
     3: ["cargo_tomorrow"], 4: ["storm_watch_tip"], 7: ["eat_before_mission"], 9: ["shadow_11_12"],
     16: ["last_water"], 19: ["eat_before_mission"], 21: ["shadow_25_26"],
-    23: ["storm_tomorrow"], 26: ["water_low_tip"],
+    23: ["storm_tomorrow"], 26: ["water_low_tip"], 32: ["final_mission"],
 }
 # forecast board messages (text keys), what the lab board says on that day
 forecast = {6: "fc_medium_8", 19: "fc_small_20", 21: "fc_large_24", 31: "fc_finale"}

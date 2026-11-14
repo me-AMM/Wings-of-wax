@@ -634,7 +634,9 @@
    "event": "finale"
   },
   "cards": [],
-  "notices": [],
+  "notices": [
+   "final_mission"
+  ],
   "forecast": "",
   "expect": {
    "meals": 4,

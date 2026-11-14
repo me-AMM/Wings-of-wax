@@ -12,7 +12,11 @@ var rows: Array = []
 func build() -> void:
 	var root := Control.new()
 	add_child(root)
-	root.add_child(UIKit.dim())
+	var dim := UIKit.dim()
+	dim.mouse_filter = Control.MOUSE_FILTER_STOP          # clicks never reach the buttons behind the menu
+	dim.gui_input.connect(_on_click)
+	root.add_child(dim)
+	get_viewport().gui_release_focus()                     # keyboard belongs to this menu, not to buttons behind it
 	var h := 34.0 + items.size() * 32.0 + 10.0
 	var x := (320.0 - menu_width) / 2.0
 	var y := (180.0 - h) / 2.0
@@ -54,7 +58,7 @@ func _unhandled_input(e: InputEvent) -> void:
 	elif e.is_action_pressed("move_up"):
 		sel = (sel - 1 + items.size()) % items.size()
 		_refresh()
-	elif e.is_action_pressed("interact"):
+	elif e.is_action_pressed("interact") or e.is_action_pressed("ui_accept"):
 		var it: Dictionary = items[sel]
 		if it.get("enabled", true):
 			close_modal()
@@ -64,6 +68,25 @@ func _unhandled_input(e: InputEvent) -> void:
 			Audio.play("ui_click")
 	elif e is InputEventKey and e.pressed and e.keycode == KEY_ESCAPE:
 		close_modal()
+	elif e.is_action_pressed("ui_up") or e.is_action_pressed("ui_down") or e.is_action_pressed("ui_left") or e.is_action_pressed("ui_right") or e.is_action_pressed("ui_focus_next"):
+		pass                                                   # swallow: no focus moves behind the menu
 	else:
 		return
 	get_viewport().set_input_as_handled()
+
+# Mouse: a click on a row picks it (rows are in 320x180 units, the layer is drawn at 2x).
+func _on_click(e: InputEvent) -> void:
+	if not (e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT) or not ready_for_input():
+		return
+	var p: Vector2 = e.position
+	for i in rows.size():
+		var bg: Control = rows[i]["bg"]
+		if Rect2(bg.position, bg.size).has_point(p):
+			sel = i
+			_refresh()
+			var it: Dictionary = items[i]
+			if it.get("enabled", true):
+				close_modal()
+				if it.has("call"):
+					it["call"].call()
+			return

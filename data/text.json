@@ -204,7 +204,8 @@
     "skip_tutorial": "Skip tutorial (K)",
     "judge_video": "Video mode",
     "judge_t_video_on": "Video mode ON (clean screen)",
-    "judge_t_video_off": "Video mode OFF"
+    "judge_t_video_off": "Video mode OFF",
+    "health_word": "health"
   },
   "notices": {
     "cargo_tomorrow": "Cargo lander arrives tomorrow at 07:00.",
@@ -222,7 +223,8 @@
     "cargo_landed": "A cargo lander has landed on the pad.",
     "sunrise": "The panels see the Sun again.",
     "shadow_start": "A crater-rim shadow covers the panels. Save power!",
-    "day_dust_warn": "Dust is covering the panels. Clean them."
+    "day_dust_warn": "Dust is covering the panels. Clean them.",
+    "final_mission": "Final day! Go to the LANDING PAD and press E to find the rare stone."
   },
   "forecast": {
     "fc_none": "The Sun is quiet. No storm expected.",
@@ -461,5 +463,9 @@
     "sliders": "Press E at the POWER CONSOLE to try the sliders.",
     "sleep": "Evening? Press E at the HABITAT and choose Sleep.",
     "done": "Great job! Keep doing these every day."
-  }
+  },
+  "ending_failed_health": [
+    "Your health ran out.",
+    "Eat, drink, sleep and hide in the shelter during storms. Try again!"
+  ]
 }

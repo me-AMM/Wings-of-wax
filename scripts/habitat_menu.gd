@@ -30,12 +30,12 @@ func _ready() -> void:
 			"call": func(): _eat("radish")})
 	# Sleep
 	var sw := gs.can_sleep()
-	items.append({"icon": "icon_sleep", "text": Text.t("ui.sleep"), "sub": Text.t(sw) if sw != "" else "+%d" % int(Config.data["health"]["sleep_heal"][gs.sliders[2]]),
+	items.append({"icon": "icon_sleep", "text": Text.t("ui.sleep"), "sub": Text.t(sw) if sw != "" else "+%d %s" % [int(Config.data["health"]["sleep_heal"][gs.sliders[2]]), Text.t("ui.health_word")],
 		"enabled": sw == "", "call": func(): outpost.do_sleep()})
 	# Gym (opens on day 2)
 	if gs.is_unlocked("gym"):
 		var gw := gs.can_gym()
-		items.append({"icon": "icon_gym", "text": Text.t("ui.gym"), "sub": Text.t(gw) if gw != "" else "+5",
+		items.append({"icon": "icon_gym", "text": Text.t("ui.gym"), "sub": Text.t(gw) if gw != "" else "+5 " + Text.t("ui.health_word"),
 			"enabled": gw == "", "call": func(): outpost.do_gym()})
 	build()
 

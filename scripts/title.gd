@@ -51,6 +51,11 @@ func _ready() -> void:
 	msg_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	msg_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(msg_l)
+	var gt := UIKit.world_label(Text.t("game_title"), 24, Color("FFD23F"))     # the game's name on the title screen
+	gt.position = Vector2(0, 150)
+	gt.size = Vector2(640, 32)
+	gt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	add_child(gt)
 	var ai := UIKit.world_label(Text.t("ui.ai_statement"), 8)      # AI statement (challenge rules)
 	ai.position = Vector2(8, 334)
 	ai.size = Vector2(624, 12)
@@ -81,7 +86,7 @@ func _on_start() -> void:
 			{"icon": "icon_heart", "text": Text.t("ui.yes"), "sub": Text.t("ui.new_game_sub"), "call": _begin_new},
 			{"icon": "icon_lock", "text": Text.t("ui.no")}]
 		m.sel = 1
-		m.menu_width = 250.0
+		m.menu_width = 280.0
 		add_child(m)
 		m.build()
 	else:
@@ -105,6 +110,8 @@ func _on_judge() -> void:
 	Judge.open_panel(true)
 
 func _unhandled_input(e: InputEvent) -> void:
+	if GameState.modal_count > 0:
+		return                                   # a dialog is open: it owns the keyboard
 	var f := get_viewport().gui_get_focus_owner()
 	if e.is_action_pressed("interact") and f is Button:
 		f.pressed.emit()

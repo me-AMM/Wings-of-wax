@@ -52,7 +52,7 @@ func _ready() -> void:
 	day_label.position = Vector2(ox + M + 30, y + 2)
 	day_label.custom_minimum_size = Vector2(64, 20)
 	root.add_child(day_label)
-	var nxt := _btn(">", Vector2(ox + M + 96, y), Vector2(24, 24))
+	var nxt := _btn(">", Vector2(ox + M + 108, y), Vector2(24, 24))
 	nxt.pressed.connect(func(): day_slider.value += 1)
 	root.add_child(nxt)
 	day_slider = HSlider.new()
@@ -60,8 +60,8 @@ func _ready() -> void:
 	day_slider.max_value = 32
 	day_slider.step = 1
 	day_slider.value = GameState.day
-	day_slider.position = Vector2(ox + M + 128, y + 4)
-	day_slider.size = Vector2(PW - 2 * M - 128 - 70, 16)
+	day_slider.position = Vector2(ox + M + 140, y + 4)
+	day_slider.size = Vector2(PW - 2 * M - 140 - 70, 16)
 	var track := StyleBoxFlat.new()          # visible track: 4 px high, light colour
 	track.bg_color = Color("A3ABC2")
 	track.content_margin_top = 2

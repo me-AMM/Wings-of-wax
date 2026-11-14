@@ -5,7 +5,7 @@ const PauseMenuScript := preload("res://scripts/pause_menu.gd")
 # This script: finds the nearest thing to use, shows the E prompt, runs actions, landers, dust, tint.
 
 @export var card_delay := 2.0             # seconds after a day starts before info cards pop up
-@export var lander_point := Vector2(640, 752)   # where the cargo lander touches down (feet)
+@export var lander_point := Vector2(708, 752)   # right half of the pad, so the path down the middle stays free   # where the cargo lander touches down (feet)
 @export var shadow_tint := Color(0.38, 0.42, 0.7)
 
 @onready var world: Node2D = $World
@@ -122,6 +122,7 @@ func _build_lander() -> void:
 	lander.add_child(crate)
 
 func _build_locks() -> void:
+	_extend_footprints()
 	for it in get_tree().get_nodes_in_group("interactable"):
 		if not (it.name in ["Recycler", "Greenhouse", "Console", "Lab", "Pad", "Shelter"]):
 			continue               # one lock per building (the tray shares the greenhouse lock)
@@ -553,3 +554,22 @@ func _unhandled_input(e: InputEvent) -> void:
 		m.hud = hud
 		add_child(m)
 		get_viewport().set_input_as_handled()
+
+func _extend_footprints() -> void:
+	for nm in ["Habitat", "Recycler", "Lab", "Shelter", "Board", "Console", "Charger", "CrewLander"]:
+		var shape: CollisionPolygon2D = get_node_or_null("World/%s/Footprint/Shape" % nm)
+		if shape == null:
+			continue
+		var pts := shape.polygon
+		var miny := 1e9
+		var maxy := -1e9
+		for p in pts:
+			miny = minf(miny, p.y)
+			maxy = maxf(maxy, p.y)
+		if maxy >= -1.0:
+			continue
+		var mid := (miny + maxy) / 2.0
+		var out := PackedVector2Array()
+		for p in pts:
+			out.append(Vector2(p.x, p.y - maxy - 1.0) if p.y > mid else p)     # lower half moved down to the origin
+		shape.polygon = out

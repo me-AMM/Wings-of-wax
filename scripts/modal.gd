@@ -17,7 +17,7 @@ func _process(delta: float) -> void:
 
 # Ignore input for a moment so the key that opened us does not also act inside.
 func ready_for_input() -> bool:
-	return is_open and _age > 0.15
+	return is_open and _age > 0.3        # a quick double tap of E does not also pick the first item
 
 func close_modal() -> void:
 	if not is_open:

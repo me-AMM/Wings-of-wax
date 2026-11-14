@@ -85,6 +85,8 @@ func _build() -> void:
 	health_num.position = Vector2(hx + 34, 8)
 	health_num.size = Vector2(640.0 - hx - 38.0, 20)
 	health_num.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	health_num.add_theme_constant_override("outline_size", 4)
+	health_num.add_theme_color_override("font_outline_color", Color(0, 0, 0))
 	root.add_child(health_num)
 	# blinking storm icon under the strip
 	storm_icon = _icon("icon_storm", Vector2(568, strip_height + 2), root)
@@ -188,7 +190,7 @@ func _process(delta: float) -> void:
 	shown_health = move_toward(shown_health, GameState.health, delta * 70.0)
 	health_bar.set_frac(shown_health / 100.0)
 	health_num.text = str(int(ceil(GameState.health)))
-	health_num.modulate = Color("FF8080") if GameState.health < 30.0 else Color.WHITE
+	health_num.modulate = Color("FFD23F") if GameState.health < 30.0 else Color.WHITE
 	_hurt_tick(delta)
 	var blink := int(Time.get_ticks_msec() / 300) % 2 == 0
 	var low: float = Config.data["power"]["low_pack_warn_pct"]
