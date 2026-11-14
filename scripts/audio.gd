@@ -22,6 +22,12 @@ func _ready() -> void:
 	_make_bus("SFX")
 	_make_bus("Outdoor")
 	_make_bus("Ambience")
+	_make_bus("Alarm")
+	# mix: SFX -6 dB, Ambience -18 dB, the storm alarm and storm hit (Alarm bus) the loudest at 0 dB
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("SFX"), -6.0)
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Outdoor"), -6.0)
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Ambience"), -18.0)
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Alarm"), 0.0)
 	var out_idx := AudioServer.get_bus_index("Outdoor")
 	if AudioServer.get_bus_effect_count(out_idx) == 0:
 		var lp := AudioEffectLowPassFilter.new()
@@ -29,6 +35,7 @@ func _ready() -> void:
 		AudioServer.add_bus_effect(out_idx, lp)
 	for i in 8:
 		var p := AudioStreamPlayer.new()
+		p.playback_type = AudioServer.PLAYBACK_TYPE_STREAM      # real streams: bus effects (low-pass) and loops work on the web too
 		add_child(p)
 		_pool.append(p)
 	for n in ["suit_breath", "hab_hum", "recycler_hum"]:
@@ -36,6 +43,7 @@ func _ready() -> void:
 		if s != null:
 			_loopify(s)
 			var p := AudioStreamPlayer.new()
+			p.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
 			p.stream = s
 			p.bus = "Ambience"
 			p.volume_db = -80.0
@@ -84,9 +92,9 @@ func play(sound_name: String) -> void:
 	for p in _pool:
 		if not p.playing:
 			p.stream = s
-			p.bus = "Outdoor" if outdoor else "SFX"
-			p.pitch_scale = randf_range(0.92, 1.08) if sound_name == "step" else 1.0
-			p.volume_db = -14.0 if sound_name in ["step", "countdown_tick"] else (0.0 if sound_name in ["storm_warning", "storm_hit"] else -6.0)
+			p.bus = "Alarm" if sound_name in ["storm_warning", "storm_hit"] else ("Outdoor" if outdoor else "SFX")
+			p.pitch_scale = randf_range(0.92, 1.08) if sound_name == "step" else 1.0       # steps vary by 8%
+			p.volume_db = -6.0 if sound_name == "step" else (-8.0 if sound_name == "countdown_tick" else 0.0)
 			p.play()
 			return
 
@@ -100,8 +108,9 @@ func loop(sound_name: String, on: bool) -> void:
 			return
 		_loopify(s)
 		var p := AudioStreamPlayer.new()
+		p.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
 		p.stream = s
-		p.bus = "SFX"
+		p.bus = "Alarm" if sound_name == "storm_warning" else "SFX"
 		add_child(p)
 		p.play()
 		_loops[sound_name] = p
@@ -119,7 +128,7 @@ func _process(delta: float) -> void:
 		var target: float = 0.0 if storm else float(_levels.get(n, 0.0))
 		var a: Dictionary = _amb[n]
 		a["vol"] = move_toward(a["vol"], target, delta * 1.5)
-		a["player"].volume_db = linear_to_db(maxf(a["vol"], 0.0001)) - 10.0
+		a["player"].volume_db = linear_to_db(maxf(a["vol"], 0.0001))      # the Ambience bus is at -18 dB
 	if not storm and _loops.has("storm_warning"):
 		loop("storm_warning", false)
 
