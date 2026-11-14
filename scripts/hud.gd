@@ -6,8 +6,8 @@ extends CanvasLayer
 # Also: notice line at the bottom, floating toasts, day splash, black fade, blinking storm icon.
 
 @export var strip_height := 36.0
-@export var first_cell := 140.0      # clock cell ("DAY 32 06:00" in Silkscreen 16)
-@export var cell_widths: Array[float] = [58.0, 76.0, 70.0, 68.0, 68.0, 82.0]   # icon 32 + value, fixed so digits never jitter
+@export var first_cell := 138.0      # clock cell ("DAY 32 06:00" in Silkscreen 16)
+@export var cell_widths: Array[float] = [56.0, 74.0, 68.0, 66.0, 66.0, 80.0]   # icon 32 + value, fixed so digits never jitter
 @export var notice_seconds := 4.0
 
 var sky_icon: TextureRect
@@ -69,35 +69,39 @@ func _build() -> void:
 	var x := first_cell
 	for i in defs.size():
 		var ic := _icon(defs[i][0], Vector2(x, 2), root)
-		var lb := _text(Vector2(x + 34, 8), 16, root)
-		lb.custom_minimum_size = Vector2(cell_widths[i] - 34.0, 20)
+		var lb := _text(Vector2(x + 32, 8), 16, root)
+		lb.custom_minimum_size = Vector2(cell_widths[i] - 32.0, 20)
 		if i == 4:
 			lb.add_theme_color_override("font_color", UIStyle.INFO)    # spare pack on the charger
 		stats.append({"icon": ic, "label": lb, "get": defs[i][1]})
 		x += cell_widths[i]
-	# health: heart + red bar (bar_frame + fill)
+	# health: heart, the number BESIDE it, a thin red bar under the number, then the Facts "?" button.
+	# Everything ends SAFE px from the right edge.
 	var hx := x
 	heart_icon = _icon("icon_heart", Vector2(hx, 2), root)
-	health_bar = HudBar.new().setup(640.0 - hx - 38.0, UIStyle.DANGER)
-	health_bar.position = Vector2(hx + 34, 10)
-	root.add_child(health_bar)
-	health_num = UIKit.world_label("100", 16)         # the Health number sits on its bar
-	health_num.position = Vector2(hx + 34, 8)
-	health_num.size = Vector2(640.0 - hx - 38.0, 20)
+	var num_w := 36.0
+	health_num = UIKit.world_label("100", 16)
+	health_num.position = Vector2(hx + 32, 6)
+	health_num.size = Vector2(num_w, 20)
 	health_num.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	health_num.add_theme_constant_override("outline_size", 4)
 	health_num.add_theme_color_override("font_outline_color", Color(0, 0, 0))
 	root.add_child(health_num)
+	health_bar = HudBar.new().setup(num_w, UIStyle.DANGER)
+	health_bar.position = Vector2(hx + 32, 26)
+	health_bar.scale = Vector2(1, 0.5)               # thin bar under the number
+	root.add_child(health_bar)
 	# blinking storm icon under the strip
 	storm_icon = _icon("icon_storm", Vector2(568, strip_height + 2), root)
 	storm_icon.visible = false
 	blackout_icon = _icon("icon_blackout", Vector2(532, strip_height + 2), root)
 	blackout_icon.visible = false
-	judge_label = _text(Vector2(4, 298), 16, root, UIStyle.JUDGE)
+	judge_label = _text(Vector2(440, strip_height + 6), 12, root, UIStyle.JUDGE)     # small, under the strip
 	judge_label.text = Text.t("ui.judge_label")
 	judge_label.visible = false
-	# Fact log: reopens every info card seen so far (also the F key)
-	var fb := UIKit.flat_button(Text.t("ui.fact_log"), Rect2(440, strip_height + 6, 84, 18))
+	# Fact log: a "?" button at the right end of the strip (also the F key); reopens every info card seen so far
+	var fb := UIKit.flat_button(Text.t("ui.fact_icon"), Rect2(640.0 - UIStyle.SAFE - 20.0, 8, 20, 20))
+	fb.tooltip_text = Text.t("ui.fact_log")
 	fb.focus_mode = Control.FOCUS_NONE
 	fb.pressed.connect(open_fact_log)
 	root.add_child(fb)

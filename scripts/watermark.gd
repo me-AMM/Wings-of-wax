@@ -17,7 +17,7 @@ func _ready() -> void:
 	label.add_theme_constant_override("outline_size", 2)
 	label.modulate.a = 0.6                        # about 60% opacity
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	label.position = Vector2(300, 344)
+	label.position = Vector2(640 - 6 - 336, 360 - 6 - 14)     # 6 px safe margin, nothing cut off
 	label.size = Vector2(336, 14)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(label)

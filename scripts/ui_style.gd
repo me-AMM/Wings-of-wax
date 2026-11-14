@@ -16,6 +16,7 @@ const BODY := 16
 const TITLE := 24
 # spacing (4 px grid)
 const PAD := 8
+const SAFE := 6.0          # safe margin from every screen edge (watermark, JUDGE MODE label, panels)
 const GAP := 4
 const RADIUS := 2
 # motion

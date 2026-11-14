@@ -77,6 +77,8 @@ def main():
     px = img.load()
     n1, n2 = value_noise(SEED, 96), value_noise(SEED + 1, 40)
     edge = value_noise(SEED + 2, 9)
+    edge2 = value_noise(SEED + 3, 28)          # bigger lumps on path borders
+    tone = value_noise(SEED + 4, 220)          # large, soft light/dark areas (+-5%)
     is_path = [[False] * W for _ in range(H)]
     for y in range(H):
         for x in range(W):
@@ -90,11 +92,12 @@ def main():
                 if x0 - 8 <= x < x1 + 8 and y0 - 8 <= y < y1 + 8:
                     d = max(d, min(x - x0, x1 - 1 - x, y - y0, y1 - 1 - y))
             if d > -8:
-                lim = edge(x, y) * 9.0 - 5.0
+                lim = edge(x, y) * 7.0 + edge2(x, y) * 8.0 - 8.0
                 if d > lim + 1 or (d > lim - 1 and b + 0.5 > 0.5 - (d - lim) * 0.25):
                     c = path[x % 64, y % 64]
                     is_path[y][x] = True
-            px[x, y] = c
+            k = 1.0 + (tone(x, y) - 0.5) * 0.2
+            px[x, y] = (min(255, int(c[0] * k)), min(255, int(c[1] * k)), min(255, int(c[2] * k)), 255)
     rng = random.Random(SEED)
 
     def free(x, y, r):
@@ -156,11 +159,11 @@ def main():
                 x = int(ax + (bx - ax) * i / max(n, 1))
                 y = int(ay + (by - ay) * i / max(n, 1))
                 if kind == "cable":
-                    for (dx, dy) in ((0, 0), (1, 0), (0, 1), (1, 1)):
-                        if 0 <= x + dx < W and 0 <= y + dy < H:
-                            px[x + dx, y + dy] = (34, 32, 38, 255)
-                    if i % 3 == 0 and 0 <= y - 1 < H:
-                        px[x, y - 1] = (96, 92, 98, 255) if ay == by else px[x, y - 1]
+                    if 0 <= x < W and 0 <= y < H:
+                        px[x, y] = (62, 66, 84, 255)              # 1 px dark blue-grey cable
+                    hx, hy = (x, y - 1) if ay == by else (x - 1, y)
+                    if i % 2 == 0 and 0 <= hx < W and 0 <= hy < H:
+                        px[hx, hy] = (112, 118, 140, 255)         # dotted highlight
                 else:
                     for k, col in ((-1, (58, 60, 68, 255)), (0, (150, 154, 160, 255)), (1, (98, 100, 108, 255)), (2, (40, 40, 48, 255))):
                         xx, yy = (x, y + k) if ay == by else (x + k, y)

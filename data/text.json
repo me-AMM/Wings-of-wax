@@ -188,6 +188,8 @@
     "back_hint": "E / Esc: back",
     "log_hint": "L: Space Weather Log",
     "fact_log": "Facts (F)",
+    "fact_icon": "?",
+    "goals_hide": "(T)",
     "learned": "What you learned",
     "title_log": "Space Weather Log",
     "source_donki": "NASA DONKI",

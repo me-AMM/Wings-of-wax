@@ -10,24 +10,31 @@ var goal_label: Label
 var checks: Array = []          # [{key, label}]
 var skip_btn: Button
 var t := 0.0
+var panel: Control              # the TODAY checklist, docked under the HUD strip on the left
+var box: Control
+var collapsed := false          # T folds it to its heading
+const FADE_ALPHA := 0.4         # when the player walks behind the panel
 
 func _ready() -> void:
 	z_index = 300
 	layer = CanvasLayer.new()
 	layer.layer = 9                 # under the HUD strip layer (10), above the world
 	add_child(layer)
-	var box := UIKit.dark_box()
-	box.position = Vector2(4, 40)
+	panel = Control.new()
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(panel)
+	box = UIKit.dark_box()
+	box.position = Vector2(UIStyle.SAFE, 40)
 	box.size = Vector2(150, 78)
-	layer.add_child(box)
-	var head := UIKit.world_label(Text.t("ui.goals"), 16, UIStyle.ACCENT)
-	head.position = Vector2(10, 40)
-	layer.add_child(head)
+	panel.add_child(box)
+	var head := UIKit.world_label(Text.t("ui.goals") + " " + Text.t("ui.goals_hide"), 16, UIStyle.ACCENT)
+	head.position = Vector2(UIStyle.SAFE + 6, 40)
+	panel.add_child(head)
 	var y := 58.0
 	for k in ["eat", "drink", "radish", "sleep"]:
 		var l := UIKit.world_label("", 12)
-		l.position = Vector2(10, y)
-		layer.add_child(l)
+		l.position = Vector2(UIStyle.SAFE + 6, y)
+		panel.add_child(l)
 		checks.append({"key": k, "label": l})
 		y += 14.0
 	goal_label = UIKit.world_label("", 16, UIStyle.ACCENT)
@@ -35,7 +42,7 @@ func _ready() -> void:
 	goal_label.size = Vector2(640, 20)
 	goal_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	layer.add_child(goal_label)
-	skip_btn = UIKit.flat_button(Text.t("ui.skip_tutorial"), Rect2(4, 122, 150, 18))
+	skip_btn = UIKit.flat_button(Text.t("ui.skip_tutorial"), Rect2(UIStyle.SAFE, 122, 150, 18))
 	skip_btn.focus_mode = Control.FOCUS_NONE
 	skip_btn.pressed.connect(_skip)
 	layer.add_child(skip_btn)
@@ -46,6 +53,21 @@ func _skip() -> void:
 func _unhandled_input(e: InputEvent) -> void:
 	if e is InputEventKey and e.pressed and not e.echo and e.keycode == KEY_K:
 		_skip()
+	if e is InputEventKey and e.pressed and not e.echo and e.keycode == KEY_T:
+		collapsed = not collapsed
+		for c in checks:
+			c["label"].visible = not collapsed
+		box.size.y = 20.0 if collapsed else 78.0
+
+# fade the checklist to 40% while the astronaut is behind it, so it never hides the player
+func _fade_panel() -> void:
+	var pl: Node2D = outpost.get_node_or_null("World/Player") if outpost != null else null
+	if pl == null:
+		return
+	var sp: Vector2 = pl.get_global_transform_with_canvas().origin
+	var r := Rect2(box.position, box.size).grow(12)
+	var target := FADE_ALPHA if r.has_point(sp) or r.has_point(sp + Vector2(0, -24)) else 1.0
+	panel.modulate.a = move_toward(panel.modulate.a, target, 0.08)
 
 # which goal is next today, and which building it is at
 func _next_goal() -> Array:
@@ -66,6 +88,7 @@ func _next_goal() -> Array:
 
 func _process(delta: float) -> void:
 	t += delta
+	_fade_panel()
 	var gs := GameState
 	# checklist
 	for c in checks:
