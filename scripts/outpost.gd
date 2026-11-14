@@ -52,9 +52,6 @@ func _ready() -> void:
 	player.position = GameState.outpost_spawn
 	GameState.outpost_spawn = Vector2(640, 492)
 	_refresh_visuals()
-	if GameState.pending_shelter:
-		GameState.pending_shelter = false
-		call_deferred("do_shelter")
 
 # ------------------------------------------------------------------ building the extras
 func _build_prompt() -> void:
@@ -153,7 +150,7 @@ func _refresh_visuals() -> void:
 		elif it.kind == "charger":
 			sp.texture = Art.tex("charger_full" if GameState.spare_pack > 0.5 else "charger_empty")
 		elif it.kind == "crew_lander":
-			it.visible = GameState.day >= 32
+			it.visible = GameState.finale_cleared      # arrives only after the finale storm has passed
 			_set_solid(it.get_node_or_null("Footprint"), it.visible)
 		if locks.has(it):
 			locks[it]["icon"].visible = not open
@@ -383,10 +380,7 @@ func do_interact(it: Interactable) -> void:
 		"shelter":
 			do_shelter()
 		"crew_lander":
-			if GameState.mission_done_today and GameState.storm_state == "none":
-				GameState.finish_game("success")      # extraction: the crew lander takes you home
-			else:
-				hud.toast(Text.t("ui.crew_wait"))
+			pass                                      # nothing to do: it takes you home by itself
 
 func _use_tray() -> void:
 	if GameState.tray_ready:
@@ -452,4 +446,24 @@ func do_shelter() -> void:
 	GameState.shelter_until_day_end()
 	await get_tree().create_timer(0.6).timeout
 	await hud.fade_from_black(0.8)
+	if GameState.finale_cleared:                  # the finale storm passed while you were sheltered
+		_crew_touchdown()
+		return
 	busy = false
+
+# Finale: the crew lander comes down next to the pad, then the extraction scene, then the ending.
+func _crew_touchdown() -> void:
+	busy = true
+	_refresh_visuals()
+	var cl: Node2D = $World/CrewLander
+	var sp: Sprite2D = cl.get_node("Sprite2D")
+	sp.position.y = -360.0
+	var tw := create_tween()
+	tw.tween_property(sp, "position:y", 0.0, 2.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	await tw.finished
+	Audio.play("lander_touchdown")
+	_effect("dust_puff", cl.position + Vector2(-70, -4), 2.0, false)
+	_effect("dust_puff", cl.position + Vector2(70, -4), 2.0, false)
+	await get_tree().create_timer(1.4).timeout
+	await hud.fade_to_black(0.8)
+	get_tree().change_scene_to_file("res://scenes/Extraction.tscn")

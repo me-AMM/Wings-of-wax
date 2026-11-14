@@ -134,7 +134,11 @@
     "mission_complete_title": "Mission complete",
     "thanks": "Thank you for playing!",
     "not_endorsed": "This game is not endorsed by NASA.",
-    "blackout_icon": "Blackout"
+    "blackout_icon": "Blackout",
+    "exit_marker": "Exit",
+    "hold_exit": "Hold E: leave",
+    "storm_run_outpost": "Storm coming! Get back and reach the shelter!",
+    "extraction_skip": "E: skip"
   },
   "notices": {
     "cargo_tomorrow": "Cargo lander arrives tomorrow at 07:00.",
@@ -354,5 +358,8 @@
       "body": "On Space Shuttle mission STS-73, potato cuttings grew tiny potatoes in 16 days. Space farming started small.",
       "source": "NASA"
     }
-  }
+  },
+  "extraction": [
+    "The crew lander is here. Time to go home, astronaut!"
+  ]
 }

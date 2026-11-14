@@ -66,7 +66,8 @@ var judge_mode := false
 var modal_count := 0               # open overlays (clock pauses while > 0)
 var day_intro_pending := true      # cards/notices of this day not shown yet
 var mission_done_today := false
-var pending_shelter := false       # mission ended during a storm warning: go to the shelter
+var pending_mission := {}          # {kind, success} of a mission left during a storm; applied when the storm is resolved
+var finale_cleared := false        # the finale storm passed while sheltered: crew lander arrives, game ends
 var outpost_spawn := Vector2(640, 492)  # where the player appears when the Outpost opens
 var card_queue: Array = []          # info cards waiting to be shown (survives scene changes)
 var mission_kind := ""             # set by the Outpost when a mission starts
@@ -120,6 +121,8 @@ func new_game() -> void:
 	storm_state = "none"
 	storm_hit_hour = 0.0
 	storm_warned = false
+	pending_mission = {}
+	finale_cleared = false
 	later_damage_pct = 0.0
 	later_left_h = 0.0
 	judge_mode = false
@@ -137,6 +140,9 @@ func to_dict() -> Dictionary:
 	return d
 
 func from_dict(d: Dictionary) -> void:
+	var keep_auto := auto_endings          # runtime setting, not part of a saved state
+	pending_mission = {}
+	finale_cleared = false
 	for k in d:
 		var val = d[k]
 		if val is Array or val is Dictionary:
@@ -151,6 +157,7 @@ func from_dict(d: Dictionary) -> void:
 	science_hist = {}
 	for k in d.get("science_hist", {}):
 		science_hist[int(k)] = int(d["science_hist"][k])
+	auto_endings = keep_auto
 	changed.emit()
 
 # ---------------------------------------------------------------- helpers
@@ -232,7 +239,7 @@ func _process(delta: float) -> void:
 # Advance the game clock by `hours` (the rules run in steps of at most 0.25 h).
 func advance(hours: float) -> void:
 	var left := hours
-	while left > 0.00001 and not game_over:
+	while left > 0.00001 and not game_over and not finale_cleared:
 		var step := minf(left, 0.25)
 		var to_end := DAY_END - hour
 		if step > to_end:
@@ -541,22 +548,27 @@ func end_shadow() -> void:
 	event.emit("sunrise", {})
 	changed.emit()
 
-func storm_warning_seconds(size: String) -> float:
+# Warning length in real seconds. During missions it is scaled (x0.4, at least 20 s); outside missions it is docs/02.
+func storm_warning_seconds(size: String, in_mission := false) -> float:
 	var key := "warning_seconds_low" if sliders[3] == 0 else "warning_seconds_high"
-	return float(cfg["storms"][key][size])
+	var s := float(cfg["storms"][key][size])
+	if in_mission:
+		s = maxf(float(cfg["storms"]["mission_storm_min_s"]), s * float(cfg["storms"]["mission_storm_scale"]))
+	return s
 
 # Start a storm warning now. left_h = game hours until the hit (default: full warning length).
-func start_storm_warning(size: String, ev: String = "", left_h: float = -1.0) -> void:
+func start_storm_warning(size: String, ev: String = "", left_h: float = -1.0, in_mission := false) -> void:
 	storm_state = "warning"
 	storm_warned = true
 	storm_size = size
 	storm_event = ev
-	storm_total_h = storm_warning_seconds(size) / cfg["time"]["real_seconds_per_game_hour"]
+	storm_total_h = storm_warning_seconds(size, in_mission) / cfg["time"]["real_seconds_per_game_hour"]
 	storm_left_h = storm_total_h if left_h < 0.0 else left_h
 	event.emit("storm_warning", {"size": size, "event": ev, "left_h": storm_left_h, "total_h": storm_total_h})
 
-# The countdown reached zero. Damage depends on in_shelter (set by enter_shelter()).
-# Returns a result dict {sheltered, damage_pct, failed}.
+# The countdown reached zero. Damage depends on in_shelter (set by enter_shelter()). NOTHING clears a storm
+# automatically: it is resolved here, by the player being in the shelter or not.
+# Returns a result dict {sheltered, damage_pct, failed}. A mission left during the storm is applied afterwards.
 func storm_hit() -> Dictionary:
 	var size := storm_size
 	var res := {"sheltered": in_shelter, "damage_pct": 0.0, "failed": false, "size": size}
@@ -567,11 +579,6 @@ func storm_hit() -> Dictionary:
 			res["damage_pct"] = 5.0
 		else:
 			res["failed"] = true
-			missions_failed += 1
-			if size == "finale":
-				finish_game("failed")
-			elif mission_done_today and pending_research.size() > 0:
-				pending_research.pop_back()      # today's samples are lost
 	elif not in_shelter:
 		var now: float = cfg["storms"]["unsheltered_now_pct"][size]
 		var later: float = cfg["storms"]["unsheltered_later_pct"][size]
@@ -579,8 +586,22 @@ func storm_hit() -> Dictionary:
 		later_damage_pct = later
 		later_left_h = cfg["storms"]["later_hours"]
 		res["damage_pct"] = now + later
+	# apply the mission result that was waiting for this storm
+	if not pending_mission.is_empty():
+		var pm: Dictionary = pending_mission
+		pending_mission = {}
+		finish_mission(pm["kind"], pm["success"] and not res["failed"])
+	elif res["failed"] and size == "large" and mission_done_today and pending_research.size() > 0:
+		pending_research.pop_back()          # today's samples are lost
+		missions_failed += 1
 	event.emit("storm_hit", res)
 	event.emit("storm_clear", {})
+	if size == "finale":
+		if res["failed"]:
+			finish_game("failed")
+		else:
+			finale_cleared = true            # the clock stops; the Outpost plays the crew lander arrival
+			event.emit("finale_cleared", {})
 	changed.emit()
 	return res
 
@@ -625,6 +646,15 @@ func finish_mission(kind: String, success: bool) -> void:
 	mission_done_today = true
 	event.emit("mission_end", {"kind": kind, "success": success})
 	changed.emit()
+
+# Leaving a mission. During a storm warning the result waits until the storm is resolved; otherwise it applies now.
+func submit_mission(kind: String, success: bool) -> void:
+	mission_done_today = true
+	if storm_state == "warning":
+		pending_mission = {"kind": kind, "success": success}
+		changed.emit()
+	else:
+		finish_mission(kind, success)
 
 func process_samples() -> float:
 	var gained := 0.0

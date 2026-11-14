@@ -104,6 +104,8 @@ func play_full_game() -> void:
 	while not gs.game_over and guard < 40:
 		guard += 1
 		play_day(gs.day)
+		if gs.finale_cleared:                # day 32: the clock stops after the finale storm
+			gs._end_day()
 	recording = false
 
 func play_day(d: int) -> void:

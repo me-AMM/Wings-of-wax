@@ -20,19 +20,53 @@
     "clean_hold_s": 2.0,
     "clean_hours_per_group": 0.25,
     "slider_kw": {
-      "life": [2.0, 3.0, 4.0],
-      "food": [0.5, 1.0, 1.5],
-      "science": [0.5, 1.0, 2.0],
-      "watch": [0.5, 1.0, 1.5]
+      "life": [
+        2.0,
+        3.0,
+        4.0
+      ],
+      "food": [
+        0.5,
+        1.0,
+        1.5
+      ],
+      "science": [
+        0.5,
+        1.0,
+        2.0
+      ],
+      "watch": [
+        0.5,
+        1.0,
+        1.5
+      ]
     },
-    "start_sliders": [1, 1, 1, 0]
+    "start_sliders": [
+      1,
+      1,
+      1,
+      0
+    ]
   },
-  "shadow_days": [11, 12, 25, 26],
-  "dust": { "start_pct": 25.0, "lander_add_pct": 25.0, "max_pct": 75.0 },
+  "shadow_days": [
+    11,
+    12,
+    25,
+    26
+  ],
+  "dust": {
+    "start_pct": 25.0,
+    "lander_add_pct": 25.0,
+    "max_pct": 75.0
+  },
   "oxygen": {
     "max_h": 48.0,
     "start_h": 48.0,
-    "change_per_day": [-12.0, 0.0, 12.0],
+    "change_per_day": [
+      -12.0,
+      0.0,
+      12.0
+    ],
     "empty_damage_per_hour": 5.0
   },
   "water": {
@@ -40,7 +74,11 @@
     "max_l": 40.0,
     "drink_l": 2.5,
     "radish_l": 1.0,
-    "recycler_return": [0.0, 0.9, 0.98],
+    "recycler_return": [
+      0.0,
+      0.9,
+      0.98
+    ],
     "warn_below_l": 12.0
   },
   "food": {
@@ -54,42 +92,101 @@
     "start": 100.0,
     "meal_heal": 10.0,
     "gym_heal": 5.0,
-    "sleep_heal": [5.0, 10.0, 15.0],
+    "sleep_heal": [
+      5.0,
+      10.0,
+      15.0
+    ],
     "no_drink_days": 2,
     "no_drink_damage": 10.0,
     "no_meal_days": 3,
     "no_meal_damage": 10.0,
     "suit_empty_damage": 30.0,
     "gym_cooldown_days": 2,
-    "gym_cap_days": [7, 14],
-    "gym_cap_values": [90.0, 75.0]
+    "gym_cap_days": [
+      7,
+      14
+    ],
+    "gym_cap_values": [
+      90.0,
+      75.0
+    ]
   },
   "storms": {
-    "warning_seconds_low": { "small": 30, "medium": 60, "large": 90, "finale": 180 },
-    "warning_seconds_high": { "small": 90, "medium": 120, "large": 150, "finale": 180 },
-    "unsheltered_now_pct": { "small": 30, "medium": 50 },
-    "unsheltered_later_pct": { "small": 20, "medium": 30 },
+    "warning_seconds_low": {
+      "small": 30,
+      "medium": 60,
+      "large": 90,
+      "finale": 180
+    },
+    "warning_seconds_high": {
+      "small": 90,
+      "medium": 120,
+      "large": 150,
+      "finale": 180
+    },
+    "unsheltered_now_pct": {
+      "small": 30,
+      "medium": 50
+    },
+    "unsheltered_later_pct": {
+      "small": 20,
+      "medium": 30
+    },
     "later_hours": 4.0,
     "shelter_damage_big": 5.0,
-    "mission_warning_at_fraction": 0.35
+    "mission_storm_scale": 0.4,
+    "mission_storm_min_s": 20,
+    "mission_warning_range": [
+      0.25,
+      0.4
+    ]
   },
   "missions": {
     "length_s": 90,
     "game_hours_used": 9.0,
-    "suit_seconds": 120,
-    "suit_seconds_first": 180,
+    "suit_seconds": 100,
+    "suit_seconds_first": 140,
     "crater_speed_mult": 0.5,
     "crater_drain_mult": 1.25,
-    "types": { "1": "rock", "2": "ice", "3": "rock", "4": "ice", "5": "rock", "6": "ice", "7": "rock" }
+    "types": {
+      "1": "rock",
+      "2": "ice",
+      "3": "rock",
+      "4": "ice",
+      "5": "rock",
+      "6": "ice",
+      "7": "rock"
+    }
   },
   "research": {
-    "per_mission_pct": [10.0, 15.0, 20.0],
+    "per_mission_pct": [
+      10.0,
+      15.0,
+      20.0
+    ],
     "average_days": 4,
-    "star_thresholds": [20, 40, 60, 80, 100]
+    "star_thresholds": [
+      20,
+      40,
+      60,
+      80,
+      100
+    ]
   },
   "unlock_day": {
-    "habitat": 1, "greenhouse": 2, "recycler": 2, "gym": 2,
-    "solar": 3, "pad": 4, "lab": 4, "shelter": 4
+    "habitat": 1,
+    "greenhouse": 2,
+    "recycler": 2,
+    "gym": 2,
+    "solar": 3,
+    "pad": 4,
+    "lab": 4,
+    "shelter": 4
   },
-  "player": { "player_speed": 68.0, "walk_anim_fps_scale": 1.5, "puff_distance": 96.0 }
+  "player": {
+    "player_speed": 119.0,
+    "walk_anim_fps_scale": 2.1,
+    "puff_distance": 168.0
+  }
 }

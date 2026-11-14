@@ -1,16 +1,18 @@
 extends Node2D
 # Mission: ONE scene for rock/soil, ice dig and the finale stone (GameState.mission_kind).
-# Walk out, do the job, reach the flag, come back to the base (shelter). Suit air runs out!
+# Walk out, do the job, reach the flag, then come back to the EXIT marker at the start and hold E (2 s).
+# Suit air runs out! A yellow arrow points to the next target. A storm warning can start mid-mission; the countdown
+# belongs to GameState and keeps running when you return to the Outpost: you must then WALK to the shelter.
 # Everything you may want to tweak is an exported variable below. Positions are in pixels.
 
-@export var world_size := Vector2(1400, 700)
-@export var base_pos := Vector2(110, 380)
-@export var base_radius := 56.0
-@export var flag_pos := Vector2(1280, 330)
-@export var sample_positions: Array[Vector2] = [Vector2(420, 200), Vector2(700, 560), Vector2(1000, 150)]
-@export var ice_pos := Vector2(560, 300)
-@export var crater_centers: Array[Vector2] = [Vector2(560, 470), Vector2(930, 330)]
-@export var crater_radius := 58.0
+@export var world_size := Vector2(2240, 1120)
+@export var base_pos := Vector2(150, 560)             # exit marker = start
+@export var exit_radius := 70.0
+@export var exit_hold := 2.0
+@export var flag_pos := Vector2(2060, 560)
+@export var sample_positions: Array[Vector2] = [Vector2(820, 260), Vector2(1250, 900), Vector2(1760, 280)]
+@export var ice_pos := Vector2(900, 470)
+@export var crater_centers: Array[Vector2] = [Vector2(560, 540), Vector2(1080, 430), Vector2(1500, 640), Vector2(1900, 430), Vector2(1100, 840)]
 @export var pick_radius := 30.0
 @export var flag_radius := 28.0
 @export var dark_tint := Color(0.3, 0.34, 0.58)
@@ -19,20 +21,23 @@ var kind := "rock"
 var player: CharacterBody2D
 var hud: CanvasLayer
 var world: Node2D
-var items: Array = []             # {node, type, done}
+var ground: Node2D
+var items: Array = []             # {node, type, done, pos}
 var elapsed := 0.0
-var suit_total := 120.0
-var suit_left := 120.0
-var base_speed := 55.0
+var suit_total := 100.0
+var suit_left := 100.0
+var base_speed := 119.0
 var samples_got := 0
 var ice_done := false
 var waypoint_reached := false
 var objective_done := false
 var ending := false
 var digging := false
+var crater_count := 0             # slow zones the player is inside (Area2D)
 var in_crater := false
-var crater_count := 0           # slow zones the player is inside (Area2D)
 var storm_started := false
+var storm_at := 30.0              # seconds into the mission when the warning starts (random 25-40%)
+var exit_t := 0.0
 var suit_bar: HudBar
 var suit_label: Label
 var obj_label: Label
@@ -40,7 +45,10 @@ var storm_label: Label
 var crater_label: Label
 var prompt: Node2D
 var prompt_label: Label
+var prompt_bar: ColorRect
+var arrow: Node2D
 var low_sound_t := 0.0
+var target = null                 # current item dictionary, or "exit"
 
 func _ready() -> void:
 	Audio.outdoor = true
@@ -48,11 +56,14 @@ func _ready() -> void:
 	kind = GameState.mission_kind if GameState.mission_kind != "" else "rock"
 	suit_total = GameState.suit_seconds()
 	suit_left = suit_total
+	var rr: Array = Config.data["storms"]["mission_warning_range"]
+	storm_at = randf_range(rr[0], rr[1]) * float(Config.data["missions"]["length_s"])
+	GameState.in_shelter = false          # there is no shelter out here: only the one at the Outpost counts
 	_build_world()
 	_build_player()
 	_build_ui()
-	GameState.event.connect(_on_event)
 	add_child(load("res://scripts/storm_warning.gd").new())
+	GameState.event.connect(_on_event)
 	GameState.clock_running = true
 	_update_objective()
 
@@ -80,10 +91,10 @@ func _build_world() -> void:
 	var dark := CanvasModulate.new()
 	dark.color = dark_tint if GameState.in_shadow else Color.WHITE
 	add_child(dark)
-	var ground := Node2D.new()
+	ground = Node2D.new()
 	add_child(ground)
 	ground.add_child(_tile("ground_1", Rect2(Vector2.ZERO, world_size)))
-	for i in 12:                                   # a few lighter/darker patches
+	for i in 40:                                   # lighter/darker patches
 		var p := Vector2((i * 197) % int(world_size.x - 64), (i * 131) % int(world_size.y - 64))
 		var s := Sprite2D.new()
 		s.texture = Art.tex("ground_2" if i % 2 == 0 else "ground_3")
@@ -97,13 +108,17 @@ func _build_world() -> void:
 	for c in crater_centers:
 		ground.add_child(_tile("ground_dark", Rect2(c - Vector2(64, 40), Vector2(128, 80))))
 		_sprite("crater_large", c, ground, false)
+	# the exit marker: a flat landing pad at the start (walkable), with a label
+	_sprite("landing_pad", base_pos + Vector2(0, 96), ground)
+	var ex := UIKit.world_label(Text.t("ui.exit_marker"), 16, Color("FFD23F"))
+	ex.position = base_pos + Vector2(-60, -118)
+	ex.size = Vector2(120, 20)
+	ex.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	ground.add_child(ex)
 	world = Node2D.new()
 	world.y_sort_enabled = true
 	add_child(world)
-	# base: shelter sprite marks the start / safe zone
-	_sprite("shelter", base_pos + Vector2(0, -40), world)
 	_build_collision()
-	# objectives
 	if kind == "rock":
 		for p in sample_positions:
 			var n := _sprite("sample_spot", p, world)
@@ -130,8 +145,8 @@ func _build_world() -> void:
 		fl.play("default")
 		items.append({"node": fl, "type": "flag", "done": false, "pos": flag_pos})
 
-# Real collision: solid shelter footprint, solid world walls, and Area2D SLOW ZONES for the craters
-# (polygon of the crater floor from data/footprints.json; no collision on the rim).
+# Real collision: solid world walls and Area2D SLOW ZONES for the craters (polygon of the crater floor from
+# data/footprints.json; no collision on the rim).
 func _poly(key: String) -> PackedVector2Array:
 	var pts := PackedVector2Array()
 	for p in Config.load_json("res://data/footprints.json")[key]["poly"]:
@@ -139,16 +154,6 @@ func _poly(key: String) -> PackedVector2Array:
 	return pts
 
 func _build_collision() -> void:
-	var sb := StaticBody2D.new()
-	sb.name = "Footprint"
-	sb.position = base_pos + Vector2(0, -40)
-	sb.collision_layer = 1
-	sb.collision_mask = 0
-	var cp := CollisionPolygon2D.new()
-	cp.polygon = _poly("shelter")
-	cp.add_to_group("footprint_shape")
-	sb.add_child(cp)
-	world.add_child(sb)
 	var walls := StaticBody2D.new()
 	walls.name = "WorldWalls"
 	walls.collision_layer = 1
@@ -178,7 +183,7 @@ func _build_collision() -> void:
 func _build_player() -> void:
 	player = CharacterBody2D.new()
 	player.set_script(load("res://scripts/player.gd"))
-	player.position = base_pos + Vector2(0, 30)
+	player.position = base_pos + Vector2(0, 40)
 	world.add_child(player)
 	player.world_min = Vector2(40, 40)
 	player.world_max = world_size - Vector2(40, 36)
@@ -189,8 +194,10 @@ func _build_player() -> void:
 	cam.limit_right = int(world_size.x)
 	cam.limit_bottom = int(world_size.y)
 	player.add_child(cam)
-	player.stepped.connect(func(_p): Audio.play("step"))
 	player.add_child(load("res://scripts/flashlight.gd").new())
+	player.stepped.connect(func(_p): Audio.play("step"))
+	arrow = load("res://scripts/pointer_arrow.gd").new()
+	player.add_child(arrow)
 	prompt = Node2D.new()
 	prompt.z_index = 200
 	var key := Sprite2D.new()
@@ -202,6 +209,11 @@ func _build_player() -> void:
 	prompt_label.size = Vector2(200, 16)
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	prompt.add_child(prompt_label)
+	prompt_bar = ColorRect.new()
+	prompt_bar.color = Color("FFD23F")
+	prompt_bar.position = Vector2(-16, 38)
+	prompt_bar.size = Vector2(0, 3)
+	prompt.add_child(prompt_bar)
 	prompt.visible = false
 	add_child(prompt)
 
@@ -212,24 +224,24 @@ func _build_ui() -> void:
 	ui.layer = 11
 	ui.scale = Vector2(2, 2)
 	add_child(ui)
-	var ic := UIKit.icon("icon_oxygen", 14)
-	ic.position = Vector2(4, 36)
+	var ic := UIKit.icon("icon_oxygen", 16)
+	ic.position = Vector2(4, 22)
 	ui.add_child(ic)
 	suit_bar = HudBar.new().setup(70, Color("9BE8FF"))
-	suit_bar.position = Vector2(20, 35)
+	suit_bar.position = Vector2(22, 22)
 	ui.add_child(suit_bar)
-	suit_label = UIKit.label("", 9)
-	suit_label.position = Vector2(94, 33)
+	suit_label = UIKit.label("", 8)
+	suit_label.position = Vector2(96, 21)
 	ui.add_child(suit_label)
-	obj_label = UIKit.label("", 9, Color("FFD23F"))
-	obj_label.position = Vector2(4, 52)
+	obj_label = UIKit.label("", 8, Color("FFD23F"))
+	obj_label.position = Vector2(4, 40)
 	ui.add_child(obj_label)
-	storm_label = UIKit.label("", 10, Color("FF8080"))
-	storm_label.position = Vector2(0, 80)
+	storm_label = UIKit.label("", 8, Color("FF8080"))
+	storm_label.position = Vector2(0, 72)
 	UIKit.box(storm_label, 320, 14)
 	storm_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ui.add_child(storm_label)
-	crater_label = UIKit.label(Text.t("ui.in_crater"), 8, Color("FFD23F"))
+	crater_label = UIKit.label(Text.t("ui.in_crater"), 6, Color("FFD23F"))
 	crater_label.position = Vector2(0, 140)
 	UIKit.box(crater_label, 320, 12)
 	crater_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -237,8 +249,8 @@ func _build_ui() -> void:
 	ui.add_child(crater_label)
 
 # ------------------------------------------------------------------ rules
-func _in_base() -> bool:
-	return player.position.distance_to(base_pos + Vector2(0, 10)) < base_radius
+func _in_exit() -> bool:
+	return player.position.distance_to(base_pos + Vector2(0, 20)) < exit_radius
 
 func _update_objective() -> void:
 	var txt := ""
@@ -284,8 +296,10 @@ func _process(delta: float) -> void:
 	var frac := suit_left / suit_total
 	suit_bar.set_frac(frac)
 	suit_label.text = "%d h" % int(ceil(frac * 8.0))
-	suit_label.modulate = Color("FF8080") if frac < 0.25 else Color.WHITE
-	if frac < 0.25:
+	var low := frac < 0.25
+	suit_label.modulate = Color("FF8080") if low else Color.WHITE
+	suit_bar.modulate = Color(1, 0.45, 0.45) if (low and int(Time.get_ticks_msec() / 250) % 2 == 0) else Color.WHITE
+	if low:
 		low_sound_t -= delta
 		if low_sound_t <= 0.0:
 			Audio.play("suit_o2_low")
@@ -295,25 +309,23 @@ func _process(delta: float) -> void:
 		return
 	_storm_logic()
 	_find_target()
-	if Input.is_action_just_pressed("interact") and not digging:
+	_update_arrow()
+	_exit_hold(delta)
+	if Input.is_action_just_pressed("interact") and not digging and target != null and not (target is String):
 		_use_target()
-	if Input.is_action_just_pressed("ui_cancel") and not digging:
-		_abort_menu()
 
 func _storm_logic() -> void:
 	var st = GameState.today()["storm"]
-	if st != null and st["in_mission"] and not storm_started:
-		var at: float = Config.data["missions"]["length_s"] * Config.data["storms"]["mission_warning_at_fraction"]
-		if elapsed >= at:
-			storm_started = true
-			GameState.start_storm_warning(st["size"], st["event"])
+	if st != null and st["in_mission"] and not storm_started and elapsed >= storm_at:
+		_start_storm(st)
 	if GameState.storm_state == "warning":
-		GameState.in_shelter = _in_base()
-		storm_label.text = Text.t("ui.storm_in_shelter") if GameState.in_shelter else Text.t("ui.storm_run")
+		storm_label.text = Text.t("ui.storm_run_outpost")
 	else:
 		storm_label.text = ""
 
-var target = null     # current item dictionary, or "base"
+func _start_storm(st: Dictionary) -> void:
+	storm_started = true
+	GameState.start_storm_warning(st["size"], st["event"], -1.0, true)   # mission countdown: x0.4, at least 20 s
 
 func _find_target() -> void:
 	target = null
@@ -332,8 +344,8 @@ func _find_target() -> void:
 			hud.say(Text.t("ui.waypoint_reached"))
 			Audio.play("waypoint_reached")
 			_check_objective()
-	if target == null and _in_base():
-		target = "base"
+	if target == null and _in_exit():
+		target = "exit"
 	if target == null or digging:
 		prompt.visible = false
 		return
@@ -344,18 +356,43 @@ func _find_target() -> void:
 
 func _target_text() -> String:
 	if target is String:
-		return Text.t("ui.return_base")
+		return Text.t("ui.hold_exit")
 	match target["type"]:
 		"sample": return Text.t("ui.collect_sample")
 		"ice": return Text.t("ui.dig_ice")
 		"stone": return Text.t("ui.take_stone")
 	return ""
 
+# Hold E for 2 s at the exit marker: finishes the mission (or aborts it: samples kept only if the waypoint was reached).
+func _exit_hold(delta: float) -> void:
+	if target is String and not digging and Input.is_action_pressed("interact"):
+		exit_t += delta
+		prompt_bar.size.x = 32.0 * clampf(exit_t / exit_hold, 0.0, 1.0)
+		if exit_t >= exit_hold:
+			_end(objective_done or waypoint_reached, "ui.mission_done" if objective_done else ("ui.mission_result_aborted" if waypoint_reached else "ui.mission_result_lost"))
+	else:
+		exit_t = 0.0
+		prompt_bar.size.x = 0.0
+
+# Yellow pointer arrow circling the player toward the nearest open target, then the exit.
+func _update_arrow() -> void:
+	var dest := base_pos + Vector2(0, 20)
+	var best := 1e9
+	if not objective_done:
+		for it in items:
+			if it["done"] or (it["type"] == "flag" and waypoint_reached):
+				continue
+			var d: float = player.position.distance_to(it["pos"])
+			if d < best:
+				best = d
+				dest = it["pos"]
+	var dist := player.position.distance_to(dest)
+	arrow.visible = dist > 80.0
+	arrow.rotation = (dest - player.position).angle()
+	arrow.position = Vector2(0, -34) + Vector2.from_angle(arrow.rotation) * 24.0
+
 func _use_target() -> void:
-	if target == null:
-		return
-	if target is String:
-		_end(objective_done or waypoint_reached, "ui.mission_done" if objective_done else "ui.mission_result_aborted")
+	if target == null or target is String:
 		return
 	match target["type"]:
 		"sample":
@@ -390,39 +427,29 @@ func _start_dig(it: Dictionary) -> void:
 			_check_objective()
 		_update_objective())
 
-func _abort_menu() -> void:
-	var m := MenuModal.new()
-	m.title_text = Text.t("ui.abort_title")
-	m.items = [
-		{"icon": "icon_rock", "text": Text.t("ui.keep_going")},
-		{"icon": "icon_storm", "text": Text.t("ui.abort_mission"), "call": func(): _end(waypoint_reached, "ui.mission_result_aborted" if waypoint_reached else "ui.mission_result_lost")},
-	]
-	add_child(m)
-	m.build()
-
 func _suit_out() -> void:
 	GameState.damage(Config.data["health"]["suit_empty_damage"])
 	Audio.play("hurt")
 	_end(false, "ui.suit_empty")
 
 func _on_event(ev_name: String, data: Dictionary) -> void:
-	if ending:
+	if ending or GameState.game_over:
 		return
-	if ev_name == "storm_hit":
-		if data["failed"]:
-			_end(false, "ui.mission_failed")
-		elif GameState.in_shelter:
-			_end(waypoint_reached, "ui.mission_done" if objective_done else "ui.mission_result_aborted")
+	# a large/finale storm that hits while you are still out here: mission failed (the game handles the finale itself)
+	if ev_name == "storm_hit" and data["failed"]:
+		_end(false, "ui.mission_failed")
 
-# Finish: record the result, show it, go back to the outpost.
+# Finish: hand the result to GameState (it waits if a storm is still counting down), show it, go back to the Outpost.
+# The mission does NOT clear the storm: walk to the shelter at the Outpost.
 func _end(success: bool, msg_key: String) -> void:
 	if ending:
 		return
 	ending = true
 	GameState.clock_running = false
-	GameState.finish_mission(kind, success)
-	if GameState.storm_state == "warning":
-		GameState.pending_shelter = true     # storm still coming: you go straight to the shelter
+	var st = GameState.today()["storm"]
+	if st != null and st["in_mission"] and not storm_started and GameState.storm_state == "none":
+		_start_storm(st)                       # you were quick: the planned storm starts now, at the Outpost
+	GameState.submit_mission(kind, success)
 	GameState.outpost_spawn = Vector2(640, 800)
 	var m := MenuModal.new()
 	m.title_text = Text.t("ui.mission_done") if success else Text.t("ui.mission_failed")

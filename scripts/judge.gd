@@ -38,7 +38,6 @@ func jump_to_day(d: int) -> void:
 	GameState.judge_mode = true
 	GameState.card_queue.clear()
 	GameState.mission_kind = ""
-	GameState.pending_shelter = false
 	GameState.clock_running = true
 
 func trigger_storm(size: String) -> void:

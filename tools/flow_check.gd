@@ -1,0 +1,96 @@
+extends Node
+# Headless flow check:  godot --headless --path . res://tools/flow_check.tscn
+# 1. Storm rules for the day 8 / 20 / 24 mission storms: the result waits for the storm; sheltered in time vs too late.
+# 2. Finale (day 32) success path: crew lander hidden before, storm during the mission, walk to the shelter ->
+#    crew lander arrives -> Extraction -> EndingSuccess.
+# 3. Finale failure path: not in the shelter when the countdown ends -> EndingFailed.
+var fails := 0
+
+func check(ok: bool, what: String) -> void:
+	if not ok:
+		fails += 1
+	print("%s %s" % ["ok  " if ok else "FAIL", what])
+
+func wait_scene(scene_name: String, timeout_s: float) -> bool:
+	var t := 0.0
+	while t < timeout_s:
+		var cs := get_tree().current_scene
+		if cs != null and cs.name == scene_name:
+			return true
+		await get_tree().process_frame
+		t += get_process_delta_time() / maxf(Engine.time_scale, 0.001)
+	return false
+
+func _ready() -> void:
+	Engine.time_scale = 4.0
+	await get_tree().process_frame
+	# ---------------- storm rules (GameState only)
+	for case in [[8, "ice", "medium"], [20, "rock", "small"], [24, "ice", "large"]]:
+		for in_time in [true, false]:
+			await storm_case(case[0], case[1], case[2], in_time)
+	# ---------------- finale paths (scenes)
+	await finale_case(true)
+	await finale_case(false)
+	print("flow_check FAILS: ", fails)
+	Engine.time_scale = 1.0
+	get_tree().quit(1 if fails > 0 else 0)
+
+func storm_case(d: int, kind: String, size: String, in_time: bool) -> void:
+	GameState.new_game()
+	GameState.auto_endings = false
+	Judge.jump_to_day(d)
+	GameState.advance(1.2)
+	GameState.collect_cargo()
+	var st: Dictionary = GameState.today()["storm"]
+	check(st != null and st["size"] == size and st["in_mission"], "day %d has a %s storm during the mission" % [d, size])
+	GameState.start_storm_warning(size, st["event"], -1.0, true)
+	var secs: float = GameState.storm_total_h * 10.0
+	var want: float = GameState.storm_warning_seconds(size, true)
+	check(absf(secs - want) < 0.01 and want >= 20.0, "day %d warning in a mission = %.0f s (x0.4, min 20)" % [d, secs])
+	var r0 := GameState.pending_research.size()
+	var hp0 := GameState.health
+	GameState.submit_mission(kind, true)
+	check(not GameState.pending_mission.is_empty() and GameState.pending_research.size() == r0 and GameState.storm_state == "warning",
+		"day %d: leaving the mission does NOT clear the storm, result is pending" % d)
+	if in_time:
+		GameState.enter_shelter()
+	GameState.advance(GameState.storm_total_h + 0.5)
+	var tag := "day %d %s %s" % [d, size, "sheltered" if in_time else "too late"]
+	check(GameState.storm_state == "none" and GameState.pending_mission.is_empty(), tag + ": storm resolved, pending applied")
+	if size == "large":
+		if in_time:
+			check(GameState.pending_research.size() == r0 + 1 and GameState.health <= hp0, tag + ": samples kept, small damage only")
+		else:
+			check(GameState.pending_research.size() == r0 and GameState.missions_failed == 1, tag + ": mission failed, samples lost")
+	else:
+		check(GameState.pending_research.size() == r0 + 1, tag + ": samples kept")
+		if in_time:
+			check(GameState.health >= hp0 - 0.01, tag + ": no damage")
+		else:
+			check(GameState.health < hp0 - 1.0, tag + ": damage taken (%.0f -> %.0f)" % [hp0, GameState.health])
+
+func finale_case(sheltered: bool) -> void:
+	var tag := "finale " + ("SUCCESS path" if sheltered else "FAILURE path")
+	GameState.new_game()
+	GameState.auto_endings = true
+	Judge.jump_to_day(32)
+	GameState.mission_kind = "finale"
+	get_tree().change_scene_to_file("res://scenes/Outpost.tscn")
+	await wait_scene("Outpost", 5.0)
+	await get_tree().process_frame
+	var o := get_tree().current_scene
+	var cl: Node2D = o.get_node("World/CrewLander")
+	check(not cl.visible and cl.get_node("Footprint").collision_layer == 0, tag + ": crew lander hidden (and not solid) before the mission")
+	GameState.start_storm_warning("finale", "finale", -1.0, true)
+	GameState.submit_mission("finale", true)
+	check(GameState.storm_state == "warning" and not GameState.pending_mission.is_empty(), tag + ": storm still running after the mission")
+	if sheltered:
+		o.do_shelter()                                   # walk to the shelter and enter it
+		check(await wait_scene("Extraction", 25.0), tag + ": crew lander arrives, then the Extraction scene")
+		check(GameState.finale_cleared and GameState.pending_mission.is_empty(), tag + ": finale cleared, mission result applied")
+		get_tree().current_scene._finish()                # skip the animation
+		check(await wait_scene("EndingSuccess", 10.0), tag + ": reaches EndingSuccess")
+	else:
+		GameState.advance(GameState.storm_total_h + 0.3)  # countdown ends outside the shelter
+		check(await wait_scene("EndingFailed", 10.0), tag + ": reaches EndingFailed")
+		check(not GameState.finale_cleared, tag + ": no crew lander")
