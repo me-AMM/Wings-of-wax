@@ -201,7 +201,10 @@
     "goal_radish": "Water radishes",
     "goal_sleep": "Sleep",
     "goal_later": "(day %d)",
-    "skip_tutorial": "Skip tutorial (K)"
+    "skip_tutorial": "Skip tutorial (K)",
+    "judge_video": "Video mode",
+    "judge_t_video_on": "Video mode ON (clean screen)",
+    "judge_t_video_off": "Video mode OFF"
   },
   "notices": {
     "cargo_tomorrow": "Cargo lander arrives tomorrow at 07:00.",

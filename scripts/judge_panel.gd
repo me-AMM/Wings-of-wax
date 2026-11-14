@@ -112,6 +112,13 @@ func _ready() -> void:
 			b.pressed.connect(func(): _act(cb, msg))
 		root.add_child(b)
 	# presets: full width
+	var vb := _btn(Text.t("ui.judge_video"), Vector2(ox + M + 1 * (cw + 8.0), gy + 3 * 26.0), Vector2(cw, 24))
+	vb.toggle_mode = true
+	vb.button_pressed = GameState.video_mode
+	vb.pressed.connect(func():
+		GameState.video_mode = not GameState.video_mode
+		Judge.toast(Text.t("ui.judge_t_video_on") if GameState.video_mode else Text.t("ui.judge_t_video_off")))
+	root.add_child(vb)
 	var py := gy + 4 * 26.0 + 6.0
 	var presets := [
 		[Text.t("ui.judge_preset_storm_mission"), func(): Judge.preset_storm_in_mission()],

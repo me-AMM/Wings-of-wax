@@ -181,7 +181,7 @@ func refresh() -> void:
 	var low: float = Config.data["power"]["low_pack_warn_pct"]
 	stats[3]["label"].modulate = red if GameState.base_pack < low else Color.WHITE
 	stats[4]["label"].modulate = red if GameState.spare_pack < low else Color.WHITE
-	judge_label.visible = GameState.judge_mode
+	judge_label.visible = GameState.judge_mode and not GameState.video_mode
 
 func _process(delta: float) -> void:
 	# the Health bar animates down (and up) instead of jumping

@@ -72,9 +72,8 @@ func _ready() -> void:
 	count_label.size = Vector2(150, 20)
 	panel.add_child(count_label)
 	src_label = UIKit.world_label("", 8, Color("9BE8FF"))     # the data source, always visible
-	src_label.position = Vector2(100, 42)
-	src_label.size = Vector2(88, 12)
-	src_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	src_label.position = Vector2(38, 22)                     # small line under the countdown, inside the frame strip
+	src_label.size = Vector2(150, 10)
 	panel.add_child(src_label)
 	size_label = UIKit.world_label("", 16, Color("FFD23F"))
 	size_label.position = Vector2(4, 36)

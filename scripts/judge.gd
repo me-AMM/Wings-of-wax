@@ -103,6 +103,9 @@ func _mission_day(d: int) -> void:
 # works in every scene (Title, Outpost, Mission).
 func toast(text: String) -> void:
 	last_toast = text
+	if GameState.video_mode and _toast_layer != null:
+		_toast_label.text = ""
+		return
 	if _toast_layer == null:
 		_toast_layer = CanvasLayer.new()
 		_toast_layer.layer = 110

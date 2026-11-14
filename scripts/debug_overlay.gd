@@ -11,6 +11,8 @@ func _unhandled_input(e: InputEvent) -> void:
 		queue_redraw()
 
 func _process(_d: float) -> void:
+	if GameState.video_mode:
+		visible = false
 	if visible:
 		queue_redraw()
 

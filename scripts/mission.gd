@@ -343,7 +343,7 @@ func _storm_logic() -> void:
 	if st != null and st["in_mission"] and not storm_started and elapsed >= storm_at:
 		_start_storm(st)
 	if GameState.storm_state == "warning":
-		storm_label.text = Text.t("ui.storm_run_outpost")
+		storm_label.text = ""                  # the storm panel in the corner already says "Get to shelter!"
 	else:
 		storm_label.text = ""
 

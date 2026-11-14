@@ -80,6 +80,7 @@ var game_over := false
 var fail_day := 0                  # the day the run failed on (Retry day N)
 var day_start_state: Dictionary = {}   # the 06:00 state of the current day (autosave / Retry)
 var game_started := false          # false until the Outpost opens (autosave starts then)
+var video_mode := false           # Judge panel: hides the JUDGE MODE label and debug overlays (the AI watermark stays)
 var tutorial_off := false         # the player skipped the guided start
 var sliders_tried := false         # the slider panel was opened (day 3 tutorial step)
 var storms_survived: Array = []    # DONKI event slots of storms the player lived through (Space Weather Log ticks)
@@ -164,7 +165,7 @@ const SAVE_EXCLUDE := ["cfg", "days", "day_start_state", "outpost_spawn", "judge
 	"time_scale", "last_modal_close_ms", "card_queue", "mission_kind", "game_over", "game_result", "fail_reason", "fail_day",
 	"storm_state", "storm_size", "storm_event", "storm_left_h", "storm_total_h", "storm_hit_hour", "storm_warned",
 	"later_damage_pct", "later_left_h", "later_base", "pending_mission", "finale_cleared", "in_shelter", "game_started",
-	"day_intro_pending", "log_return"]
+	"day_intro_pending", "log_return", "video_mode"]
 const INT_FIELDS := ["day", "rations", "radish_meals", "tray_growth", "tray_high_days", "last_gym_day", "no_drink_days",
 	"no_meal_days", "missions_done", "missions_failed"]
 
