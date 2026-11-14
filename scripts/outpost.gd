@@ -12,6 +12,7 @@ const PauseMenuScript := preload("res://scripts/pause_menu.gd")
 @onready var dark: CanvasModulate = $Dark
 
 var hud: CanvasLayer
+var polish: Node
 var current: Interactable = null
 var hold_t := 0.0
 var hold_active := false
@@ -41,6 +42,9 @@ func _ready() -> void:
 	_build_locks()
 	player.add_child(load("res://scripts/flashlight.gd").new())
 	Audio.outdoor = false
+	polish = load("res://scripts/polish.gd").new()
+	add_child(polish)
+	polish.setup(self, player, "outpost")
 	player.stepped.connect(func(p):
 		_effect("dust_puff", p + Vector2(0, -2), 0.5, false)
 		Audio.play("step"))
@@ -208,6 +212,8 @@ func _touchdown() -> void:
 	_effect("dust_puff", lander_point + Vector2(-50, -2), 1.5, false)
 	_effect("dust_puff", lander_point + Vector2(50, -2), 1.5, false)
 	Audio.play("lander_touchdown")
+	if polish != null:
+		polish.shake(7.0, 0.4)          # the ground shakes when the lander lands
 	_refresh_visuals()
 
 # One-shot effect sprite at a world position (dust_puff, sparkle). Removes itself.
