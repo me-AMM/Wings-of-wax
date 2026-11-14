@@ -8,6 +8,12 @@ run/main_scene="res://scenes/Title.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://assets/sprites/icons/icon_star_full.png"
 
+[autoload]
+
+Config="*res://scripts/config.gd"
+Text="*res://scripts/text.gd"
+GameState="*res://scripts/game_state.gd"
+
 [display]
 
 window/size/viewport_width=320

@@ -1,0 +1,645 @@
+[
+ {
+  "day": 1,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [
+   "welcome",
+   "breathing"
+  ],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 4,
+   "water": 19.7,
+   "research": 0.0
+  }
+ },
+ {
+  "day": 2,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [
+   "radishes",
+   "recycling",
+   "exercise",
+   "osdr_gym"
+  ],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 3,
+   "water": 19.3,
+   "research": 0.0
+  }
+ },
+ {
+  "day": 3,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [
+   "solar",
+   "dust",
+   "packs"
+  ],
+  "notices": [
+   "cargo_tomorrow"
+  ],
+  "forecast": "",
+  "expect": {
+   "meals": 2,
+   "water": 19.0,
+   "research": 0.0
+  }
+ },
+ {
+  "day": 4,
+  "sky": "sun",
+  "lander": {
+   "rations": 4,
+   "water": 3
+  },
+  "crew_lander": false,
+  "mission": "rock",
+  "storm": {
+   "size": "small",
+   "at": 20.0,
+   "in_mission": false,
+   "event": "small1"
+  },
+  "cards": [
+   "cargo_landers",
+   "moonwalks",
+   "solar_storms",
+   "shelter_card"
+  ],
+  "notices": [
+   "storm_watch_tip"
+  ],
+  "forecast": "",
+  "expect": {
+   "meals": 5,
+   "water": 21.6,
+   "research": 15.0
+  }
+ },
+ {
+  "day": 5,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [
+   "forecasts"
+  ],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 4,
+   "water": 21.3,
+   "research": 15.0
+  }
+ },
+ {
+  "day": 6,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [
+   "moon_ice"
+  ],
+  "notices": [],
+  "forecast": "fc_medium_8",
+  "expect": {
+   "meals": 3,
+   "water": 20.9,
+   "research": 15.0
+  }
+ },
+ {
+  "day": 7,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [
+   "spacesuits",
+   "silent_moon"
+  ],
+  "notices": [
+   "eat_before_mission"
+  ],
+  "forecast": "",
+  "expect": {
+   "meals": 2,
+   "water": 20.6,
+   "research": 15.0
+  }
+ },
+ {
+  "day": 8,
+  "sky": "sun",
+  "lander": {
+   "rations": 4,
+   "water": 3
+  },
+  "crew_lander": false,
+  "mission": "ice",
+  "storm": {
+   "size": "medium",
+   "at": 0,
+   "in_mission": true,
+   "event": "medium1"
+  },
+  "cards": [
+   "ice_drink",
+   "gannon"
+  ],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 5,
+   "water": 23.2,
+   "research": 15.0
+  }
+ },
+ {
+  "day": 9,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [
+   "feeding_person",
+   "csa_radish"
+  ],
+  "notices": [
+   "shadow_11_12"
+  ],
+  "forecast": "",
+  "expect": {
+   "meals": 8,
+   "water": 22.9,
+   "research": 30.0
+  }
+ },
+ {
+  "day": 10,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": {
+   "size": "small",
+   "at": 14.0,
+   "in_mission": false,
+   "event": "small2"
+  },
+  "cards": [
+   "shadows"
+  ],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 7,
+   "water": 22.5,
+   "research": 30.0
+  }
+ },
+ {
+  "day": 11,
+  "sky": "shadow",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [
+   "power_dark"
+  ],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 6,
+   "water": 19.0,
+   "research": 30.0
+  }
+ },
+ {
+  "day": 12,
+  "sky": "shadow",
+  "lander": {
+   "rations": 2,
+   "water": 3
+  },
+  "crew_lander": false,
+  "mission": "rock",
+  "storm": null,
+  "cards": [
+   "radiation"
+  ],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 7,
+   "water": 18.5,
+   "research": 42.5
+  }
+ },
+ {
+  "day": 13,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 6,
+   "water": 18.4,
+   "research": 42.5
+  }
+ },
+ {
+  "day": 14,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": {
+   "size": "small",
+   "at": 20.0,
+   "in_mission": false,
+   "event": "small3"
+  },
+  "cards": [
+   "busy_sun"
+  ],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 5,
+   "water": 18.4,
+   "research": 42.5
+  }
+ },
+ {
+  "day": 15,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": {
+   "size": "small",
+   "at": 12.0,
+   "in_mission": false,
+   "event": "small4"
+  },
+  "cards": [
+   "radlab_storm"
+  ],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 4,
+   "water": 18.0,
+   "research": 42.5
+  }
+ },
+ {
+  "day": 16,
+  "sky": "sun",
+  "lander": {
+   "rations": 2,
+   "water": 3
+  },
+  "crew_lander": false,
+  "mission": "ice",
+  "storm": null,
+  "cards": [],
+  "notices": [
+   "last_water"
+  ],
+  "forecast": "",
+  "expect": {
+   "meals": 9,
+   "water": 20.7,
+   "research": 57.5
+  }
+ },
+ {
+  "day": 17,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [
+   "muscles"
+  ],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 8,
+   "water": 20.3,
+   "research": 57.5
+  }
+ },
+ {
+  "day": 18,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [
+   "space_food"
+  ],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 7,
+   "water": 20.0,
+   "research": 57.5
+  }
+ },
+ {
+  "day": 19,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [
+   "getting_braver"
+  ],
+  "notices": [
+   "eat_before_mission"
+  ],
+  "forecast": "fc_small_20",
+  "expect": {
+   "meals": 6,
+   "water": 19.6,
+   "research": 57.5
+  }
+ },
+ {
+  "day": 20,
+  "sky": "sun",
+  "lander": {
+   "rations": 1,
+   "water": 0
+  },
+  "crew_lander": false,
+  "mission": "rock",
+  "storm": {
+   "size": "small",
+   "at": 0,
+   "in_mission": true,
+   "event": "small5"
+  },
+  "cards": [],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 6,
+   "water": 19.3,
+   "research": 57.5
+  }
+ },
+ {
+  "day": 21,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [
+   "biggest_storms"
+  ],
+  "notices": [
+   "shadow_25_26"
+  ],
+  "forecast": "fc_large_24",
+  "expect": {
+   "meals": 5,
+   "water": 18.9,
+   "research": 72.5
+  }
+ },
+ {
+  "day": 22,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 4,
+   "water": 18.6,
+   "research": 72.5
+  }
+ },
+ {
+  "day": 23,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [
+   "why_forecasts_work"
+  ],
+  "notices": [
+   "storm_tomorrow"
+  ],
+  "forecast": "",
+  "expect": {
+   "meals": 7,
+   "water": 18.2,
+   "research": 72.5
+  }
+ },
+ {
+  "day": 24,
+  "sky": "sun",
+  "lander": {
+   "rations": 1,
+   "water": 0
+  },
+  "crew_lander": false,
+  "mission": "ice",
+  "storm": {
+   "size": "large",
+   "at": 0,
+   "in_mission": true,
+   "event": "large1"
+  },
+  "cards": [],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 7,
+   "water": 17.9,
+   "research": 72.5
+  }
+ },
+ {
+  "day": 25,
+  "sky": "shadow",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 6,
+   "water": 14.4,
+   "research": 87.5
+  }
+ },
+ {
+  "day": 26,
+  "sky": "shadow",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [],
+  "notices": [
+   "water_low_tip"
+  ],
+  "forecast": "",
+  "expect": {
+   "meals": 5,
+   "water": 10.9,
+   "research": 87.5
+  }
+ },
+ {
+  "day": 27,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 4,
+   "water": 10.8,
+   "research": 87.5
+  }
+ },
+ {
+  "day": 28,
+  "sky": "sun",
+  "lander": {
+   "rations": 1,
+   "water": 0
+  },
+  "crew_lander": false,
+  "mission": "rock",
+  "storm": null,
+  "cards": [],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 4,
+   "water": 10.7,
+   "research": 100.0
+  }
+ },
+ {
+  "day": 29,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 3,
+   "water": 10.4,
+   "research": 100.0
+  }
+ },
+ {
+  "day": 30,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [
+   "potatoes"
+  ],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 6,
+   "water": 10.0,
+   "research": 100.0
+  }
+ },
+ {
+  "day": 31,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": false,
+  "mission": null,
+  "storm": null,
+  "cards": [],
+  "notices": [],
+  "forecast": "fc_finale",
+  "expect": {
+   "meals": 5,
+   "water": 9.7,
+   "research": 100.0
+  }
+ },
+ {
+  "day": 32,
+  "sky": "sun",
+  "lander": null,
+  "crew_lander": true,
+  "mission": "finale",
+  "storm": {
+   "size": "finale",
+   "at": 0,
+   "in_mission": true,
+   "event": "finale"
+  },
+  "cards": [],
+  "notices": [],
+  "forecast": "",
+  "expect": {
+   "meals": 4,
+   "water": 9.3,
+   "research": 100.0
+  }
+ }
+]

@@ -2,3 +2,10 @@
 
 - M0: export preset excludes docs/ and tools/ from the pck; thread support off (itch.io friendly); screens use `.tscn` text files written by hand.
 - docs/ has a .gdignore so Godot does not import the docs CSV as a translation.
+- Water: drinking/watering removes only the NET loss at once (2.5 or 1.0 L x (1 - recycler return)), using the slider at that moment.
+- Oxygen and power run continuously per game hour (rate/24 per hour); shadow days follow config shadow_days.
+- Research uses the science slider value stored per day (science_hist); day 4 mission locks 15%, day 12 and 28 lock 12.5%.
+- Storm warning is checked every step against the CURRENT storm watch slider (warning start = hit time minus warning length).
+- JSON numbers are floats in GDScript: `int in [floats]` is false, so compare with float(day).
+- day_snapshots.json holds the state at the START of each day (Judge jump loads it, then rebuilds today's queue).
+- Packs on a sunny day: the policy swaps so the fuller pack runs the base (emptier one charges).

@@ -1,0 +1,95 @@
+{
+  "_note": "Every number the code needs (docs/02_RULEBOOK.md). Edit here, not in scripts.",
+  "time": {
+    "total_days": 32,
+    "day_start_hour": 6.0,
+    "hours_per_day": 24.0,
+    "real_seconds_per_game_hour": 10.0,
+    "sleep_hours": 8.0,
+    "sleep_cooldown_hours": 15.0,
+    "no_sleep_damage": 10
+  },
+  "power": {
+    "panel_groups": 4,
+    "panel_kw": 2.5,
+    "pack_kwh": 120.0,
+    "low_pack_warn_pct": 10.0,
+    "blackout_o2_hold_hours": 24.0,
+    "gym_kwh": 2.0,
+    "swap_hold_s": 2.0,
+    "clean_hold_s": 2.0,
+    "clean_hours_per_group": 0.25,
+    "slider_kw": {
+      "life": [2.0, 3.0, 4.0],
+      "food": [0.5, 1.0, 1.5],
+      "science": [0.5, 1.0, 2.0],
+      "watch": [0.5, 1.0, 1.5]
+    },
+    "start_sliders": [1, 1, 1, 0]
+  },
+  "shadow_days": [11, 12, 25, 26],
+  "dust": { "start_pct": 25.0, "lander_add_pct": 25.0, "max_pct": 75.0 },
+  "oxygen": {
+    "max_h": 48.0,
+    "start_h": 48.0,
+    "change_per_day": [-12.0, 0.0, 12.0],
+    "empty_damage_per_hour": 5.0
+  },
+  "water": {
+    "start_l": 20.0,
+    "max_l": 40.0,
+    "drink_l": 2.5,
+    "radish_l": 1.0,
+    "recycler_return": [0.0, 0.9, 0.98],
+    "warn_below_l": 12.0
+  },
+  "food": {
+    "start_rations": 5,
+    "growth_days": 7,
+    "harvest_meals": 4,
+    "harvest_meals_bonus": 5,
+    "bonus_high_days_needed": 4
+  },
+  "health": {
+    "start": 100.0,
+    "meal_heal": 10.0,
+    "gym_heal": 5.0,
+    "sleep_heal": [5.0, 10.0, 15.0],
+    "no_drink_days": 2,
+    "no_drink_damage": 10.0,
+    "no_meal_days": 3,
+    "no_meal_damage": 10.0,
+    "suit_empty_damage": 30.0,
+    "gym_cooldown_days": 2,
+    "gym_cap_days": [7, 14],
+    "gym_cap_values": [90.0, 75.0]
+  },
+  "storms": {
+    "warning_seconds_low": { "small": 30, "medium": 60, "large": 90, "finale": 180 },
+    "warning_seconds_high": { "small": 90, "medium": 120, "large": 150, "finale": 180 },
+    "unsheltered_now_pct": { "small": 30, "medium": 50 },
+    "unsheltered_later_pct": { "small": 20, "medium": 30 },
+    "later_hours": 4.0,
+    "shelter_damage_big": 5.0,
+    "mission_warning_at_fraction": 0.35
+  },
+  "missions": {
+    "length_s": 90,
+    "game_hours_used": 9.0,
+    "suit_seconds": 120,
+    "suit_seconds_first": 180,
+    "crater_speed_mult": 0.5,
+    "crater_drain_mult": 1.25,
+    "types": { "1": "rock", "2": "ice", "3": "rock", "4": "ice", "5": "rock", "6": "ice", "7": "rock" }
+  },
+  "research": {
+    "per_mission_pct": [10.0, 15.0, 20.0],
+    "average_days": 4,
+    "star_thresholds": [20, 40, 60, 80, 100]
+  },
+  "unlock_day": {
+    "habitat": 1, "greenhouse": 2, "recycler": 2, "gym": 2,
+    "solar": 3, "pad": 4, "lab": 4, "shelter": 4
+  },
+  "player": { "walk_speed": 70.0 }
+}
