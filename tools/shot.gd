@@ -28,6 +28,10 @@ func _start() -> void:
 			gs.day = 4
 			gs._start_day(false)
 			gs.advance(1.5)
+		"storm":
+			gs.day = 4
+			gs._start_day(false)
+			gs.advance(11.2)
 		"shadow":
 			gs.day = 11
 			gs._start_day(false)

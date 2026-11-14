@@ -49,6 +49,7 @@ func _ready() -> void:
 	_build_player()
 	_build_ui()
 	GameState.event.connect(_on_event)
+	add_child(load("res://scripts/storm_warning.gd").new())
 	GameState.clock_running = true
 	_update_objective()
 
@@ -172,7 +173,7 @@ func _build_ui() -> void:
 	obj_label.position = Vector2(4, 52)
 	ui.add_child(obj_label)
 	storm_label = UIKit.label("", 10, Color("FF8080"))
-	storm_label.position = Vector2(0, 66)
+	storm_label.position = Vector2(0, 80)
 	storm_label.size = Vector2(320, 14)
 	storm_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ui.add_child(storm_label)
@@ -259,8 +260,7 @@ func _storm_logic() -> void:
 			GameState.start_storm_warning(st["size"], st["event"])
 	if GameState.storm_state == "warning":
 		GameState.in_shelter = _in_base()
-		storm_label.text = "%s %d s  -  %s" % [Text.t("ui.storm_incoming"), int(ceil(GameState.storm_left_h * 10.0)),
-			Text.t("ui.storm_in_shelter") if GameState.in_shelter else Text.t("ui.storm_run")]
+		storm_label.text = Text.t("ui.storm_in_shelter") if GameState.in_shelter else Text.t("ui.storm_run")
 	else:
 		storm_label.text = ""
 

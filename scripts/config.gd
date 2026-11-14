@@ -4,10 +4,12 @@ extends Node
 
 var data: Dictionary = {}
 var days: Array = []
+var donki: Dictionary = {}     # real flares (data/donki_events.json), key = storm slot like "small1"
 
 func _init() -> void:
 	data = load_json("res://data/config.json")
 	days = load_json("res://data/days.json")
+	donki = load_json("res://data/donki_events.json")
 
 static func load_json(path: String) -> Variant:
 	if not FileAccess.file_exists(path):
@@ -25,3 +27,18 @@ func v(path: String) -> Variant:
 	for part in path.split("/"):
 		cur = cur[part]
 	return cur
+
+# "2024-05-03T00:15Z" -> "3 May 2024"
+static func nice_date(iso: String) -> String:
+	var months := ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+	if iso.length() < 10:
+		return iso
+	return "%d %s %s" % [int(iso.substr(8, 2)), months[int(iso.substr(5, 2)) - 1], iso.substr(0, 4)]
+
+# The line shown on every storm banner.
+func storm_label(slot: String) -> String:
+	var e: Dictionary = donki.get(slot, {})
+	if e.is_empty():
+		return ""
+	var src: String = e.get("source", "NASA DONKI")
+	return Text.t("ui.storm_similar") % [e["classType"], nice_date(e["peakTime"]), src]

@@ -36,7 +36,8 @@ func _ready() -> void:
 	for b in get_tree().get_nodes_in_group("blocker"):
 		player.blockers.append(b.rect())
 	GameState.event.connect(_on_event)
-	GameState.card.connect(func(k): pending_cards.append(k))
+	GameState.card.connect(func(k): GameState.card_queue.append(k))
+	add_child(load("res://scripts/storm_warning.gd").new())
 	GameState.changed.connect(_refresh_visuals)
 	dark.color = shadow_tint if GameState.in_shadow else Color.WHITE
 	card_wait = card_delay
@@ -207,10 +208,10 @@ func _show_cards(delta: float) -> void:
 	if card_wait > 0.0:
 		card_wait -= delta
 		return
-	if pending_cards.size() > 0 and GameState.modal_count == 0 and not busy:
+	if GameState.card_queue.size() > 0 and GameState.modal_count == 0 and not busy:
 		var c: Modal = load("res://scenes/InfoCard.tscn").instantiate()
-		c.keys = pending_cards.duplicate()
-		pending_cards.clear()
+		c.keys = GameState.card_queue.duplicate()
+		GameState.card_queue.clear()
 		add_child(c)
 
 func _find_nearest() -> void:
@@ -356,16 +357,8 @@ func start_mission(kind: String) -> void:
 		hud.toast("Mission scene comes in M3")
 
 func _read_board() -> void:
-	var msg := Text.t("forecast.fc_none")
-	if GameState.sliders[3] == 0:
-		msg = Text.t("forecast.fc_low_watch")
-	else:
-		for d in range(GameState.day, 33):
-			var st = GameState.days[d - 1]["storm"]
-			if st != null and (d > GameState.day or GameState.hour < st["at"] or st["in_mission"]):
-				msg = Text.t("forecast.fc_next") % [Text.t("storm_names." + st["size"]), d]
-				break
-	hud.say(msg)
+	GameState.outpost_spawn = Vector2(1130, 475)
+	get_tree().change_scene_to_file("res://scenes/ForecastBoard.tscn")
 
 func do_sleep() -> void:
 	busy = true

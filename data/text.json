@@ -109,7 +109,13 @@
     "dig_hint": "Press E when the marker is in the green zone",
     "storm_run": "Run to the shelter!",
     "storm_in_shelter": "Safe in the shelter",
-    "in_crater": "Crater: slow and more suit air used"
+    "in_crater": "Crater: slow and more suit air used",
+    "storm_failed": "The storm caught you outside. Mission failed.",
+    "board_title": "Forecast board",
+    "board_back": "E: back",
+    "board_real": "Like the real flare: %s, %s",
+    "storm_countdown": "Particles arrive in",
+    "storm_finale_note": "the brightest X-ray flare ever measured"
   },
   "notices": {
     "cargo_tomorrow": "Cargo lander arrives tomorrow at 07:00.",

@@ -1,0 +1,83 @@
+{
+ "small1": {
+  "slot": "small1",
+  "flrID": "2024-05-03T00:08:00-FLR-001",
+  "classType": "M2.7",
+  "peakTime": "2024-05-03T00:15Z",
+  "sourceLocation": "S21E57",
+  "activeRegionNum": 13664,
+  "source": "NASA CCMC DONKI",
+  "todo": false
+ },
+ "small2": {
+  "slot": "small2",
+  "flrID": "2024-05-04T00:26:00-FLR-001",
+  "classType": "M1.6",
+  "peakTime": "2024-05-04T00:36Z",
+  "sourceLocation": "N26W05",
+  "activeRegionNum": 13663,
+  "source": "NASA CCMC DONKI",
+  "todo": false
+ },
+ "small3": {
+  "slot": "small3",
+  "flrID": "2024-05-05T01:15:00-FLR-001",
+  "classType": "M8.4",
+  "peakTime": "2024-05-05T01:27Z",
+  "sourceLocation": "N26W20",
+  "activeRegionNum": 13663,
+  "source": "NASA CCMC DONKI",
+  "todo": false
+ },
+ "small4": {
+  "slot": "small4",
+  "flrID": "2024-05-06T00:47:00-FLR-001",
+  "classType": "M1.6",
+  "peakTime": "2024-05-06T01:06Z",
+  "sourceLocation": "N26W30",
+  "activeRegionNum": 13663,
+  "source": "NASA CCMC DONKI",
+  "todo": false
+ },
+ "small5": {
+  "slot": "small5",
+  "flrID": "2024-05-07T00:41:00-FLR-001",
+  "classType": "M2.6",
+  "peakTime": "2024-05-07T00:58Z",
+  "sourceLocation": "N25W45",
+  "activeRegionNum": 13663,
+  "source": "NASA CCMC DONKI",
+  "todo": false
+ },
+ "medium1": {
+  "slot": "medium1",
+  "flrID": "2024-05-11T01:10:00-FLR-001",
+  "classType": "X5.8",
+  "peakTime": "2024-05-11T01:23Z",
+  "sourceLocation": "S17W47",
+  "activeRegionNum": 13664,
+  "source": "NASA CCMC DONKI",
+  "todo": false
+ },
+ "large1": {
+  "slot": "large1",
+  "flrID": "2024-10-03T12:08:00-FLR-001",
+  "classType": "X9.0",
+  "peakTime": "2024-10-03T12:18Z",
+  "sourceLocation": "S15W05",
+  "activeRegionNum": 13842,
+  "source": "NASA CCMC DONKI",
+  "todo": false
+ },
+ "finale": {
+  "slot": "finale",
+  "flrID": "hand-entered",
+  "classType": "X28",
+  "peakTime": "2003-11-04T19:53Z",
+  "sourceLocation": "S19W83",
+  "activeRegionNum": 486,
+  "source": "NOAA / ESA",
+  "note": "the brightest X-ray flare ever measured (later estimated up to X45)",
+  "todo": false
+ }
+}

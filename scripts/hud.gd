@@ -17,6 +17,7 @@ var notice_timer := 0.0
 var fade_rect: ColorRect
 var splash: Label
 var judge_label: Label
+var storm_icon: TextureRect
 
 func _ready() -> void:
 	layer = 10
@@ -80,6 +81,10 @@ func _build() -> void:
 	notice_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	notice_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	notice_panel.add_child(notice_label)
+	storm_icon = UIKit.icon("icon_storm", 14)
+	storm_icon.position = Vector2(142, 2)
+	storm_icon.visible = false
+	root.add_child(storm_icon)
 	# judge mode label
 	judge_label = UIKit.label(Text.t("ui.judge_label"), 9, Color("F06FA8"))
 	judge_label.position = Vector2(120, 34)
@@ -116,6 +121,8 @@ func refresh() -> void:
 	judge_label.visible = GameState.judge_mode
 
 func _process(delta: float) -> void:
+	storm_icon.visible = GameState.storm_state == "warning"
+	storm_icon.modulate.a = 0.5 + 0.5 * sin(Time.get_ticks_msec() / 120.0)
 	if notice_timer > 0.0:
 		notice_timer -= delta
 		if notice_timer <= 0.0:

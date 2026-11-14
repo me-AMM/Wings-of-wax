@@ -68,6 +68,7 @@ var day_intro_pending := true      # cards/notices of this day not shown yet
 var mission_done_today := false
 var pending_shelter := false       # mission ended during a storm warning: go to the shelter
 var outpost_spawn := Vector2(640, 492)  # where the player appears when the Outpost opens
+var card_queue: Array = []          # info cards waiting to be shown (survives scene changes)
 var mission_kind := ""             # set by the Outpost when a mission starts
 var last_modal_close_ms := 0
 var game_over := false
@@ -303,6 +304,8 @@ func emit_day_intro() -> void:
 		card.emit(c)
 	for n in d["notices"]:
 		notice.emit(n)
+	if sliders[3] == 2 and day < 32 and days[day]["storm"] != null:
+		notice.emit("storm_tomorrow")        # storm watch high: warn the day before
 
 func _start_day(emit_intro := true) -> void:
 	mission_done_today = false
@@ -557,6 +560,10 @@ func storm_hit() -> Dictionary:
 		else:
 			res["failed"] = true
 			missions_failed += 1
+			if size == "finale":
+				finish_game("failed")
+			elif mission_done_today and pending_research.size() > 0:
+				pending_research.pop_back()      # today's samples are lost
 	elif not in_shelter:
 		var now: float = cfg["storms"]["unsheltered_now_pct"][size]
 		var later: float = cfg["storms"]["unsheltered_later_pct"][size]
