@@ -283,7 +283,7 @@ func _shadows_for_buildings() -> void:
 
 # WARM GLOWS: small additive warm lights on windows and doors (pixel positions inside the sprite image)
 const GLOWS := {"Habitat": [Vector2(48, 122), Vector2(150, 150)], "Lab": [Vector2(130, 88)], "Charger": [Vector2(35, 16)]}
-const GLOW_COLOR := Color(1.0, 0.78, 0.45, 0.45)
+const GLOW_COLOR := Color(1.0, 0.75, 0.4, 0.8)
 func _window_glows() -> void:
 	var world: Node = host.get_node_or_null("World")
 	if world == null:
@@ -296,7 +296,7 @@ func _window_glows() -> void:
 		for px in GLOWS[nm]:
 			var g := Sprite2D.new()
 			g.texture = dot_texture()
-			g.scale = Vector2(2.0, 1.6)
+			g.scale = Vector2(2.6, 2.0)
 			g.modulate = GLOW_COLOR
 			g.position = sp.position + sp.offset + px
 			var mat := CanvasItemMaterial.new()
@@ -344,8 +344,8 @@ func _update_grade() -> void:
 		return
 	var m: ShaderMaterial = grade.material
 	if GameState.in_shadow:
-		m.set_shader_parameter("shadow_tint", Vector3(0.86, 0.94, 1.14))
-		m.set_shader_parameter("light_tint", Vector3(0.98, 1.0, 1.06))
+		m.set_shader_parameter("shadow_tint", Vector3(0.92, 0.96, 1.08))
+		m.set_shader_parameter("light_tint", Vector3(1.0, 1.0, 1.03))
 	else:
 		m.set_shader_parameter("shadow_tint", Vector3(0.94, 0.98, 1.06))
 		m.set_shader_parameter("light_tint", Vector3(1.04, 1.01, 0.95))
