@@ -25,7 +25,7 @@ func _on_start() -> void:
 	Audio.play("ui_click")
 	GameState.new_game()
 	var next := "res://scenes/CharacterSelect.tscn"
-	get_tree().change_scene_to_file(next if ResourceLoader.exists(next) else "res://scenes/Outpost.tscn")
+	Scenes.go(next if ResourceLoader.exists(next) else "res://scenes/Outpost.tscn")
 
 func _on_judge() -> void:
 	Audio.play("ui_click")

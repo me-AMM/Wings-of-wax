@@ -59,7 +59,7 @@ func _stars() -> void:
 
 func _next() -> void:
 	Audio.play("ui_click")
-	get_tree().change_scene_to_file("res://scenes/Credits.tscn" if success else "res://scenes/Title.tscn")
+	Scenes.go("res://scenes/Credits.tscn" if success else "res://scenes/Title.tscn")
 
 func _unhandled_input(e: InputEvent) -> void:
 	if e.is_action_pressed("interact"):

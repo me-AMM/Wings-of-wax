@@ -35,6 +35,13 @@ static func nice_date(iso: String) -> String:
 		return iso
 	return "%d %s %s" % [int(iso.substr(8, 2)), months[int(iso.substr(5, 2)) - 1], iso.substr(0, 4)]
 
+# Short form for the storm panel footer: "M2.7, 3 May 2024".
+func storm_short(slot: String) -> String:
+	var e: Dictionary = donki.get(slot, {})
+	if e.is_empty():
+		return ""
+	return "%s, %s" % [e["classType"], nice_date(e["peakTime"])]
+
 # The line shown on every storm banner.
 func storm_label(slot: String) -> String:
 	var e: Dictionary = donki.get(slot, {})

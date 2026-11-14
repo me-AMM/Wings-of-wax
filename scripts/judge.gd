@@ -29,7 +29,7 @@ func begin_judge_run() -> void:
 
 func go_outpost() -> void:
 	GameState.modal_count = 0
-	get_tree().change_scene_to_file("res://scenes/Outpost.tscn")
+	Scenes.go("res://scenes/Outpost.tscn")
 
 # ---- jump to the START of day d with the "good player" stock (data/day_snapshots.json)
 func jump_to_day(d: int) -> void:
@@ -61,7 +61,7 @@ func start_mission() -> void:
 	GameState.mission_kind = kind if kind != null else "rock"
 	GameState.mission_done_today = false
 	GameState.modal_count = 0
-	get_tree().change_scene_to_file("res://scenes/Mission.tscn")
+	Scenes.go("res://scenes/Mission.tscn")
 
 func refill_all() -> void:
 	GameState.health = 100.0
@@ -105,7 +105,7 @@ func toast(text: String) -> void:
 		_toast_layer.layer = 110
 		add_child(_toast_layer)
 		_toast_label = UIKit.world_label("", 16, Color("F06FA8"))
-		_toast_label.position = Vector2(0, 8)
+		_toast_label.position = Vector2(0, 44)
 		_toast_label.size = Vector2(640, 24)
 		_toast_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		_toast_layer.add_child(_toast_label)

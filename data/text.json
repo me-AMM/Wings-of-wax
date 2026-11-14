@@ -152,7 +152,12 @@
     "judge_t_speed_on": "Speed x4 ON",
     "judge_t_speed_off": "Speed x4 OFF",
     "judge_t_preset": "Preset: %s",
-    "judge_t_start": "Judge game started"
+    "judge_t_start": "Judge game started",
+    "storm_in": "Storm in",
+    "storm_over": "Storm over",
+    "get_to_shelter": "Get to shelter!",
+    "day_card_meals": "Meals",
+    "day_card_water": "Water"
   },
   "notices": {
     "cargo_tomorrow": "Cargo lander arrives tomorrow at 07:00.",

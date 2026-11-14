@@ -13,6 +13,8 @@ config_version=5
 config/name="Junior Astronaut Mission Trainer"
 run/main_scene="res://scenes/Title.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+boot_splash/bg_color=Color(0.043, 0.051, 0.1, 1)
+boot_splash/show_image=false
 config/icon="res://assets/sprites/icons/icon_star_full.png"
 
 [autoload]
@@ -23,6 +25,7 @@ Text="*res://scripts/text.gd"
 Audio="*res://scripts/audio.gd"
 GameState="*res://scripts/game_state.gd"
 Judge="*res://scripts/judge.gd"
+Scenes="*res://scripts/scenes.gd"
 
 [display]
 

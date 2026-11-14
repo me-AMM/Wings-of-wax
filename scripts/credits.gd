@@ -42,4 +42,4 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(e: InputEvent) -> void:
 	if e.is_action_pressed("interact") or (e is InputEventKey and e.pressed and e.keycode == KEY_ESCAPE):
-		get_tree().change_scene_to_file("res://scenes/Title.tscn")
+		Scenes.go("res://scenes/Title.tscn")

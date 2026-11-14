@@ -473,7 +473,7 @@ func _end(success: bool, msg_key: String) -> void:
 	var m := MenuModal.new()
 	m.title_text = Text.t("ui.mission_done") if success else Text.t("ui.mission_failed")
 	m.items = [{"icon": "icon_research" if success else "icon_storm", "text": Text.t("ui.ok"), "sub": Text.t(msg_key),
-		"call": func(): get_tree().change_scene_to_file("res://scenes/Outpost.tscn")}]
+		"call": func(): Scenes.go("res://scenes/Outpost.tscn")}]
 	m.menu_width = 250.0
 	add_child(m)
 	m.build()

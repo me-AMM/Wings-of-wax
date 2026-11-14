@@ -58,6 +58,25 @@ func _ready() -> void:
 	await get_tree().process_frame
 	for host in ["Title", "Outpost", "Mission"]:
 		await check_host(host)
+	# the J key must open (and close) the panel inside the Outpost and inside a mission, even with an info card open
+	for host in ["Outpost", "Mission"]:
+		fresh(host, 8)
+		await frames(3)
+		if host == "Outpost":
+			var card = load("res://scenes/InfoCard.tscn").instantiate()
+			card.keys = ["ice_drink"]
+			host_scene.add_child(card)
+			await frames(30)
+		var ej := InputEventKey.new()
+		ej.keycode = KEY_J
+		ej.physical_keycode = KEY_J
+		ej.pressed = true
+		get_viewport().push_input(ej)
+		await frames(3)
+		var opened: bool = Judge.panel != null and is_instance_valid(Judge.panel) and not Judge.panel.is_queued_for_deletion()
+		record(host, "J key", opened, "panel opened by the J key" if opened else "panel did NOT open")
+		if opened:
+			Judge.panel.close_modal()
 	print("host     button       res   note")
 	for r in rows:
 		print(r)

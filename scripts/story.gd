@@ -39,7 +39,7 @@ func _next() -> void:
 	page += 1
 	Audio.play("ui_click")
 	if page >= 3:
-		get_tree().change_scene_to_file("res://scenes/Outpost.tscn")
+		Scenes.go("res://scenes/Outpost.tscn")
 	else:
 		_show()
 

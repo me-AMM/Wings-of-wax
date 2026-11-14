@@ -21,6 +21,8 @@ var fade_rect: ColorRect
 var splash: Label
 var judge_label: Label
 var storm_icon: TextureRect
+var day_card: ColorRect
+var day_info: Label
 var health_num: Label
 var heart_icon: TextureRect
 var flash: ColorRect
@@ -87,7 +89,7 @@ func _build() -> void:
 	storm_icon.visible = false
 	blackout_icon = _icon("icon_blackout", Vector2(532, strip_height + 2), root)
 	blackout_icon.visible = false
-	judge_label = _text(Vector2(4, strip_height + 4), 16, root, Color("F06FA8"))
+	judge_label = _text(Vector2(4, 298), 16, root, Color("F06FA8"))
 	judge_label.text = Text.t("ui.judge_label")
 	judge_label.visible = false
 	# notice line
@@ -123,12 +125,22 @@ func _build() -> void:
 	banner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	banner_panel.add_child(banner_label)
 	# day splash and fade (above everything)
+	day_card = ColorRect.new()
+	day_card.color = Color(0.04, 0.05, 0.1, 0.85)
+	day_card.position = Vector2(160, 120)
+	day_card.size = Vector2(320, 110)
+	day_card.visible = false
+	root.add_child(day_card)
 	splash = UIKit.world_label("", 48)
-	splash.position = Vector2(0, 130)
-	splash.size = Vector2(640, 60)
+	splash.position = Vector2(0, 8)
+	splash.size = Vector2(320, 56)
 	splash.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	splash.modulate.a = 0.0
-	root.add_child(splash)
+	day_card.add_child(splash)
+	day_info = UIKit.world_label("", 16, Color("FFD23F"))
+	day_info.position = Vector2(0, 70)
+	day_info.size = Vector2(320, 24)
+	day_info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	day_card.add_child(day_info)
 	fade_rect = ColorRect.new()
 	fade_rect.color = Color.BLACK
 	fade_rect.size = Vector2(640, 360)
@@ -207,12 +219,17 @@ func toast(text: String, color: Color = Color.WHITE) -> void:
 	tw.tween_property(l, "modulate:a", 0.0, 1.4).set_delay(0.5)
 	tw.chain().tween_callback(l.queue_free)
 
+# "Day N" card for 1.5 s at 06:00: the day number, meals and water.
 func show_day_splash() -> void:
 	splash.text = "%s %d" % [Text.t("ui.day"), GameState.day]
+	day_info.text = "%s %d    %s %.1f" % [Text.t("ui.day_card_meals"), GameState.meals_left(), Text.t("ui.day_card_water"), GameState.water]
+	day_card.modulate.a = 0.0
+	day_card.visible = true
 	var tw := create_tween()
-	tw.tween_property(splash, "modulate:a", 1.0, 0.4)
-	tw.tween_interval(1.2)
-	tw.tween_property(splash, "modulate:a", 0.0, 0.6)
+	tw.tween_property(day_card, "modulate:a", 1.0, 0.2)
+	tw.tween_interval(1.1)
+	tw.tween_property(day_card, "modulate:a", 0.0, 0.2)
+	tw.tween_callback(func(): day_card.visible = false)
 
 func fade_to_black(seconds: float = 0.6) -> Signal:
 	var tw := create_tween()

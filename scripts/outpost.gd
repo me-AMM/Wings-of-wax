@@ -26,6 +26,7 @@ var prompt: Node2D
 var prompt_label: Label
 var prompt_key: Sprite2D
 var prompt_bar: ColorRect
+var prompt_back: ColorRect
 
 func _ready() -> void:
 	GameState.clock_running = true
@@ -59,6 +60,11 @@ func _build_prompt() -> void:
 	prompt.z_index = 200
 	prompt.visible = false
 	add_child(prompt)
+	prompt_back = ColorRect.new()                       # small dark panel behind the key icon and the verb
+	prompt_back.color = Color(0.04, 0.05, 0.1, 0.78)
+	prompt_back.position = Vector2(-90, -14)
+	prompt_back.size = Vector2(180, 56)
+	prompt.add_child(prompt_back)
 	prompt_key = Sprite2D.new()
 	prompt_key.texture = Art.tex("icon_ekey")
 	prompt_key.scale = Vector2(0.5, 0.5)
@@ -128,8 +134,8 @@ func _build_locks() -> void:
 		it.add_child(lb)
 		var back := ColorRect.new()                      # small dark panel behind the lock label
 		back.color = Color(0.04, 0.05, 0.1, 0.7)
-		back.position = lb.position + Vector2(10, -1)
-		back.size = Vector2(140, 20)
+		back.position = lb.position + Vector2(-4, -1)
+		back.size = Vector2(168, 20)
 		back.z_index = 49
 		it.add_child(back)
 		locks[it] = {"icon": ic, "label": lb, "back": back}
@@ -244,6 +250,7 @@ func _update_ambience(delta: float) -> void:
 
 func _process(delta: float) -> void:
 	_update_ambience(delta)
+	_clamp_locks()
 	GameState.clock_running = GameState.modal_count == 0 and not busy
 	player.frozen = busy
 	_show_cards(delta)
@@ -303,8 +310,30 @@ func _prompt_text(it: Interactable) -> String:
 			return Text.t(it.prompt_key)
 	return Text.t(it.prompt_key) if it.prompt_key != "" else ""
 
+# Lock labels sit on their building but are kept inside the screen (never clipped by the edge or the HUD strip).
+func _clamp_locks() -> void:
+	var view: Rect2 = get_viewport().get_canvas_transform().affine_inverse() * get_viewport().get_visible_rect()
+	if not is_inside_tree():
+		return
+	for it in locks:
+		if not is_instance_valid(it):
+			continue
+		var d: Dictionary = locks[it]
+		if not is_instance_valid(d["label"]) or not d["label"].visible:
+			continue
+		var sp: Sprite2D = it.get_node("Sprite2D")
+		var c: Vector2 = it.global_position + sp.offset + sp.texture.get_size() / 2.0 + Vector2(0, 22)
+		var lbl_w := 160.0
+		c.x = clampf(c.x, view.position.x + lbl_w / 2.0 + 6.0, view.end.x - lbl_w / 2.0 - 6.0)
+		c.y = clampf(c.y, view.position.y + 56.0, view.end.y - 70.0)
+		d["label"].global_position = c - Vector2(lbl_w / 2.0, 0)
+		d["back"].global_position = d["label"].global_position + Vector2(-4, -1)
+
 func _update_prompt() -> void:
 	if current == null:
+		prompt.visible = false
+		return
+	if not current.is_open():                           # a locked building shows its lock label only
 		prompt.visible = false
 		return
 	prompt.visible = true
@@ -417,13 +446,13 @@ func _use_pad() -> void:
 func start_mission(kind: String) -> void:
 	GameState.mission_kind = kind
 	if ResourceLoader.exists("res://scenes/Mission.tscn"):
-		get_tree().change_scene_to_file("res://scenes/Mission.tscn")
+		Scenes.go("res://scenes/Mission.tscn")
 	else:
 		hud.toast("Mission scene comes in M3")
 
 func _read_board() -> void:
 	GameState.outpost_spawn = Vector2(1130, 475)
-	get_tree().change_scene_to_file("res://scenes/ForecastBoard.tscn")
+	Scenes.go("res://scenes/ForecastBoard.tscn")
 
 func do_sleep() -> void:
 	busy = true
@@ -476,4 +505,4 @@ func _crew_touchdown() -> void:
 	_effect("dust_puff", cl.position + Vector2(70, -4), 2.0, false)
 	await get_tree().create_timer(1.4).timeout
 	await hud.fade_to_black(0.8)
-	get_tree().change_scene_to_file("res://scenes/Extraction.tscn")
+	Scenes.go("res://scenes/Extraction.tscn")

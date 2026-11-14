@@ -67,7 +67,7 @@ func _finish() -> void:
 	done = true
 	GameState.finish_game("success")             # -> EndingSuccess (stars) -> Credits
 	if not GameState.auto_endings:
-		get_tree().change_scene_to_file("res://scenes/EndingSuccess.tscn")
+		Scenes.go("res://scenes/EndingSuccess.tscn")
 
 func _unhandled_input(e: InputEvent) -> void:
 	if e.is_action_pressed("interact"):

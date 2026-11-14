@@ -211,7 +211,7 @@ func damage(amount: float, reason := "") -> void:
 
 func _goto_ending(result: String) -> void:
 	modal_count = 0
-	get_tree().change_scene_to_file("res://scenes/EndingSuccess.tscn" if result == "success" else "res://scenes/EndingFailed.tscn")
+	Scenes.go("res://scenes/EndingSuccess.tscn" if result == "success" else "res://scenes/EndingFailed.tscn")
 
 func heal(amount: float) -> void:
 	health = minf(health_cap, health + amount)

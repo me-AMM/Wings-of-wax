@@ -33,6 +33,7 @@ func _ready() -> void:
 		for host in ["Outpost", "Mission"]:
 			await damage_case(size, host)
 	await shelter_lock_case()
+	await audio_case()
 	# ---------------- finale paths (scenes)
 	await finale_case(true)
 	await finale_case(false)
@@ -135,5 +136,26 @@ func shelter_lock_case() -> void:
 	check(not GameState.enter_shelter(), "GameState.enter_shelter() refuses without a storm")
 	Judge.trigger_storm("small")
 	check(sh.is_open(), "shelter OPENS during a storm warning (Judge storm button)")
+	scene.queue_free()
+	await get_tree().process_frame
+
+# The storm alarm plays and the ambience goes silent during a storm.
+func audio_case() -> void:
+	GameState.new_game()
+	GameState.auto_endings = false
+	var scene: Node = load("res://scenes/Outpost.tscn").instantiate()
+	add_child(scene)
+	await get_tree().process_frame
+	Audio.ambience({"suit_breath": 1.0})
+	for i in 90:
+		await get_tree().process_frame
+	var before: float = Audio._amb["suit_breath"]["vol"] if Audio._amb.has("suit_breath") else -1.0
+	check(before > 0.3, "ambience is audible before a storm (suit_breath volume %.2f)" % before)
+	GameState.start_storm_warning("small", "small1")
+	for i in 120:
+		await get_tree().process_frame
+	var during: float = Audio._amb["suit_breath"]["vol"] if Audio._amb.has("suit_breath") else -1.0
+	check(during < 0.05, "ambience is SILENT during the storm warning (volume %.2f)" % during)
+	check(Audio._loops.has("storm_warning"), "the storm alarm loop is playing during the warning")
 	scene.queue_free()
 	await get_tree().process_frame

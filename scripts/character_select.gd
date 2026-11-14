@@ -29,6 +29,12 @@ func _ready() -> void:
 		b.custom_minimum_size = Vector2(140, 150)
 		b.size = Vector2(140, 150)
 		b.focus_mode = Control.FOCUS_ALL
+		for state in ["normal", "hover", "pressed", "focus"]:
+			var sb := StyleBoxFlat.new()
+			sb.bg_color = Color(0.04, 0.05, 0.1, 0.35)
+			sb.border_color = Color("FFD23F") if state in ["hover", "focus", "pressed"] else Color(0.64, 0.67, 0.76, 0.5)
+			sb.set_border_width_all(3 if state != "normal" else 1)
+			b.add_theme_stylebox_override(state, sb)
 		b.text = ""
 		b.pressed.connect(func(): _choose(key))
 		add_child(b)
@@ -76,7 +82,7 @@ func _go() -> void:
 	GameState.astronaut = pick
 	GameState.player_name = name_edit.text.strip_edges() if name_edit.text.strip_edges() != "" else Text.t("ui.default_name")
 	Audio.play("ui_click")
-	get_tree().change_scene_to_file("res://scenes/Story.tscn")
+	Scenes.go("res://scenes/Story.tscn")
 
 func _unhandled_input(e: InputEvent) -> void:
 	var f := get_viewport().gui_get_focus_owner()

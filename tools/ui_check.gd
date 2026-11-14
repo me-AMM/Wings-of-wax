@@ -69,21 +69,25 @@ func _ready() -> void:
 	hud.notice_label.text = ln
 	report(lines_needed(hud.notice_label, hud.notice_label.size.x) <= 2, "HUD notice '%s' fits 2 lines" % ln.left(30))
 	hud.queue_free()
-	# --- storm banner with the longest real-event line
-	var longest_real := ""
-	for slot in Config.donki:
-		var s := Config.storm_label(slot)
-		if s.length() > longest_real.length():
-			longest_real = s
+	# --- storm panel (top-right corner): every line must fit its 176 px width, the full text in 2 lines
 	var sw = load("res://scripts/storm_warning.gd").new()
 	add_child(sw)
 	await get_tree().process_frame
-	sw.real_label.text = longest_real
-	report(lines_needed(sw.real_label, sw.real_label.size.x) <= 2, "storm real-event line '%s' in <= 2 lines" % longest_real)
-	sw.count_label.text = "%s 9:99" % Text.t("ui.storm_countdown")
-	report(text_w(sw.count_label) <= sw.count_label.size.x, "storm countdown %.0f of %.0f px" % [text_w(sw.count_label), sw.count_label.size.x])
-	sw.title_label.text = "%s  -  %s" % [Text.t("ui.storm_incoming"), Text.t("storm_names.medium")]
-	report(text_w(sw.title_label) <= sw.title_label.size.x, "storm title %.0f of %.0f px" % [text_w(sw.title_label), sw.title_label.size.x])
+	var long_short := ""
+	var long_full := ""
+	for slot in Config.donki:
+		if Config.storm_short(slot).length() > long_short.length():
+			long_short = Config.storm_short(slot)
+		if Config.storm_label(slot).length() > long_full.length():
+			long_full = Config.storm_label(slot)
+	sw.full_label.text = long_full
+	report(lines_needed(sw.full_label, sw.full_label.size.x) <= 2, "storm full text '%s' in <= 2 lines" % long_full)
+	for item in [[sw.real_label, long_short, "real-event short form"], [sw.count_label, "%s 9:99" % Text.t("ui.storm_in"), "countdown"],
+			[sw.shelter_label, Text.t("ui.get_to_shelter"), "shelter line"], [sw.size_label, Text.t("storm_names.medium"), "storm size"]]:
+		var lab: Label = item[0]
+		report(text_w(lab, item[1]) <= lab.size.x, "storm panel %s '%s' %.0f of %.0f px" % [item[2], item[1], text_w(lab, item[1]), lab.size.x])
+	report(sw.panel_size.y <= 360.0 * 0.28, "storm panel height %.0f <= 28%% of the screen" % sw.panel_size.y)
+	report(sw.panel_size.x <= 640.0 * 0.31, "storm panel width %.0f about 30%% of the screen" % sw.panel_size.x)
 	sw.queue_free()
 	# --- habitat menu rows
 	GameState.new_game()
