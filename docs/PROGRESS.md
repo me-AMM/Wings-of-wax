@@ -1,6 +1,6 @@
 # Progress (builder keeps this updated; read it at the start of every session)
 
-State at 10:20, 14 Nov 2026. Last commit before this note: f3370fe. The game is frozen here: the visual polish round was stopped.
+State at 10:45, 14 Nov 2026. The visual polish round (POLISH 1-5) is done and committed; Web build exported after it.
 
 ## Milestones
 - [x] M0 Setup (project.godot, import, git, Web export proven)
@@ -40,10 +40,14 @@ Run from the project folder (console exe in CLAUDE.md):
 8. HUD values have no text labels (48H, two pack numbers); kids may need the info cards to understand them.
 9. Some world labels can still sit close to each other near the left map edge on day 1 (lock labels are staggered).
 
-## Pending (not started; the polish round was stopped)
-- Visual polish round: grounding (darker contact shadows on the visual base, dirt patches), polar sun shadows that rotate
-  with the clock, natural path borders, ground contrast, boot prints, cables, HUD Facts icon in the strip, collapsible
-  checklist, light/colour grade. No code from that round is in the repository.
+## Visual polish round (done, POLISH 1-5)
+- Grounding: dithered contact shadows and dirt patches on each sprite's measured base (tools/make_derived.py -> assets_derived/bases.json).
+- Polar sun: long silhouette shadows that turn once per game day, hidden on shadow days (scripts/polish.gd, SUN_* constants).
+- Ground: one baked image (tools/make_ground.py -> assets_derived/ground_outpost.png): noise tiles, dithered paths, pebbles,
+  tiny craters, tracks, cables, pipe. Re-run it if buildings or paths move. Live boot prints fade over 30 s.
+- HUD: health number beside the heart, "?" Facts button in the strip, 6 px safe margin (UIStyle.SAFE), checklist folds with T.
+- Light: warm window glows, colour-grade shader, softer flashlight. itch cover: python tools/make_cover.py after capture.
+- Not done: mission scene has only the player's shadows (no dirt/ground bake); window glow positions were checked on one capture only.
 
 ## Manual steps for AMM
 1. Play day 32 to the success ending once (Judge Mode, day 32).
