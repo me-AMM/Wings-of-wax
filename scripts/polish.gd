@@ -144,7 +144,9 @@ func setup(host_node: Node, player_node: Node2D, kind: String) -> void:
 	_build_vignette()
 	GameState.changed.connect(_update_vignette)
 	_update_vignette()
+	_build_grade()
 	if kind == "outpost":
+		_window_glows()
 		_baked_ground()
 		_shadows_for_buildings()
 		if sun_group != null:                         # one layer: the astronaut's shadow never doubles a building's
@@ -278,6 +280,75 @@ func _shadows_for_buildings() -> void:
 		dirt.visible = n.visible
 		s.visible = n.visible
 		ls.visible = n.visible
+
+# WARM GLOWS: small additive warm lights on windows and doors (pixel positions inside the sprite image)
+const GLOWS := {"Habitat": [Vector2(48, 122), Vector2(150, 150)], "Lab": [Vector2(130, 88)], "Charger": [Vector2(35, 16)]}
+const GLOW_COLOR := Color(1.0, 0.78, 0.45, 0.45)
+func _window_glows() -> void:
+	var world: Node = host.get_node_or_null("World")
+	if world == null:
+		return
+	for nm in GLOWS:
+		var n: Node2D = world.get_node_or_null(nm)
+		if n == null:
+			continue
+		var sp: Sprite2D = n.get_node("Sprite2D")
+		for px in GLOWS[nm]:
+			var g := Sprite2D.new()
+			g.texture = dot_texture()
+			g.scale = Vector2(2.0, 1.6)
+			g.modulate = GLOW_COLOR
+			g.position = sp.position + sp.offset + px
+			var mat := CanvasItemMaterial.new()
+			mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+			g.material = mat
+			n.add_child(g)
+			var tw := g.create_tween().set_loops()      # gentle breathing, never a hard blink
+			tw.tween_property(g, "modulate:a", GLOW_COLOR.a * 0.55, 1.8 + randf())
+			tw.tween_property(g, "modulate:a", GLOW_COLOR.a, 1.8 + randf())
+
+# COLOUR GRADE: one full-screen shader under the vignette and HUD. Cool shadows, warm highlights, tiny contrast lift.
+# Shadow days: deeper blue. Keep it subtle (readability first).
+const GRADE_SHADER := """
+shader_type canvas_item;
+uniform sampler2D screen_tex : hint_screen_texture, filter_nearest;
+uniform vec3 shadow_tint = vec3(0.94, 0.98, 1.06);
+uniform vec3 light_tint = vec3(1.04, 1.01, 0.95);
+uniform float contrast = 1.05;
+void fragment() {
+	vec3 c = texture(screen_tex, SCREEN_UV).rgb;
+	float l = dot(c, vec3(0.299, 0.587, 0.114));
+	c *= mix(shadow_tint, light_tint, smoothstep(0.2, 0.75, l));
+	c = (c - 0.5) * contrast + 0.5;
+	COLOR = vec4(clamp(c, 0.0, 1.0), 1.0);
+}
+"""
+var grade: ColorRect
+func _build_grade() -> void:
+	var layer := CanvasLayer.new()
+	layer.layer = 4                       # world below, vignette (5) and HUD (10) above
+	add_child(layer)
+	grade = ColorRect.new()
+	grade.size = Vector2(640, 360)
+	grade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var sh := Shader.new()
+	sh.code = GRADE_SHADER
+	grade.material = ShaderMaterial.new()
+	grade.material.shader = sh
+	layer.add_child(grade)
+	GameState.changed.connect(_update_grade)
+	_update_grade()
+
+func _update_grade() -> void:
+	if grade == null:
+		return
+	var m: ShaderMaterial = grade.material
+	if GameState.in_shadow:
+		m.set_shader_parameter("shadow_tint", Vector3(0.86, 0.94, 1.14))
+		m.set_shader_parameter("light_tint", Vector3(0.98, 1.0, 1.06))
+	else:
+		m.set_shader_parameter("shadow_tint", Vector3(0.94, 0.98, 1.06))
+		m.set_shader_parameter("light_tint", Vector3(1.04, 1.01, 0.95))
 
 # slow blinking lights on the charger, the recycler and the lab
 func _blinking_lights() -> void:

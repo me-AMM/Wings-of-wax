@@ -81,14 +81,14 @@ func _build() -> void:
 	heart_icon = _icon("icon_heart", Vector2(hx, 2), root)
 	var num_w := 36.0
 	health_num = UIKit.world_label("100", 16)
-	health_num.position = Vector2(hx + 32, 6)
+	health_num.position = Vector2(hx + 30, 5)
 	health_num.size = Vector2(num_w, 20)
 	health_num.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	health_num.add_theme_constant_override("outline_size", 4)
 	health_num.add_theme_color_override("font_outline_color", Color(0, 0, 0))
 	root.add_child(health_num)
 	health_bar = HudBar.new().setup(num_w, UIStyle.DANGER)
-	health_bar.position = Vector2(hx + 32, 26)
+	health_bar.position = Vector2(hx + 30, 25)
 	health_bar.scale = Vector2(1, 0.5)               # thin bar under the number
 	root.add_child(health_bar)
 	# blinking storm icon under the strip
@@ -102,6 +102,7 @@ func _build() -> void:
 	# Fact log: a "?" button at the right end of the strip (also the F key); reopens every info card seen so far
 	var fb := UIKit.flat_button(Text.t("ui.fact_icon"), Rect2(640.0 - UIStyle.SAFE - 20.0, 8, 20, 20))
 	fb.tooltip_text = Text.t("ui.fact_log")
+	fb.add_theme_font_size_override("font_size", 16)     # the "?" must read on video
 	fb.focus_mode = Control.FOCUS_NONE
 	fb.pressed.connect(open_fact_log)
 	root.add_child(fb)

@@ -107,7 +107,7 @@ func _process(delta: float) -> void:
 		var name: String = Text.t("ui.goal_" + c["key"])
 		if locked_day > 0:
 			l.text = "  " + name + " " + Text.t("ui.goal_later") % locked_day
-			l.modulate = Color(0.6, 0.62, 0.7)
+			l.modulate = Color(0.78, 0.8, 0.88)       # greyed but readable
 		else:
 			l.text = ("[x] " if done else "[ ] ") + name
 			l.modulate = UIStyle.GOOD if done else Color.WHITE

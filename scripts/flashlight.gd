@@ -11,7 +11,8 @@ func _ready() -> void:
 	g.fill_from = Vector2(0.5, 0.5)
 	g.fill_to = Vector2(1.0, 0.5)
 	g.gradient = Gradient.new()
-	g.gradient.colors = PackedColorArray([Color(1, 1, 0.9, 1), Color(1, 1, 0.9, 0)])
+	g.gradient.offsets = PackedFloat32Array([0.0, 0.45, 1.0])          # softer edge: bright core, long gentle fall-off
+	g.gradient.colors = PackedColorArray([Color(1, 0.97, 0.88, 1), Color(1, 0.97, 0.88, 0.5), Color(1, 0.97, 0.88, 0)])
 	texture = g
 	texture_scale = light_radius / 128.0
 	energy = 1.1
