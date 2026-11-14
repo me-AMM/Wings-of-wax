@@ -55,7 +55,8 @@ def main():
     # 1. every clip -> MP4 (silent audio track added if a clip has none)
     for avi in sorted(glob.glob(os.path.join(CLIPS, "*.avi"))):
         mp4 = avi[:-4] + ".mp4"
-        run([ff, "-y", "-i", avi] + enc + [mp4])
+        # Movie Maker writes the 640x360 game view: scale exactly 2x with nearest neighbour (crisp pixels) to 1280x720
+        run([ff, "-y", "-i", avi, "-vf", "scale=1280:720:flags=neighbor"] + enc + [mp4])
         print("mp4:", os.path.basename(mp4), "%.1f s" % duration(ff, mp4))
     # 2. rough cut: trim each piece, concat, captions, fades
     parts = []
