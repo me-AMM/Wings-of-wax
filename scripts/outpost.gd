@@ -84,7 +84,7 @@ func _build_prompt() -> void:
 	prompt_label.size = Vector2(100, 18)
 	prompt.add_child(prompt_label)
 	prompt_bar = ColorRect.new()                      # hold progress: a thin line along the bottom of the box
-	prompt_bar.color = Color("FFD23F")
+	prompt_bar.color = UIStyle.ACCENT
 	prompt_bar.position = Vector2(0, 14)
 	prompt_bar.size = Vector2(0, 2)
 	prompt.add_child(prompt_bar)
@@ -201,7 +201,7 @@ func _on_event(ev_name: String, data: Dictionary) -> void:
 		"panel_cleaned":
 			_effect("sparkle", _panel_pos(data["group"]) + Vector2(0, -30), 1.0, true)
 		"harvest":
-			hud.toast("+%d" % int(data["meals"]), Color("5FC96B"))
+			hud.toast("+%d" % int(data["meals"]), UIStyle.GOOD)
 
 func _panel_pos(group: int) -> Vector2:
 	for it in get_tree().get_nodes_in_group("interactable"):
@@ -337,7 +337,7 @@ func _clamp_locks() -> void:
 		var sp: Sprite2D = it.get_node("Sprite2D")
 		# neighbouring labels sit at two different heights so they never overlap
 		var c: Vector2 = it.global_position + sp.offset + sp.texture.get_size() / 2.0 + Vector2(0, 22 + 24 * (idx % 2))
-		var show := view.grow(40.0).has_point(c)               # a building that is off screen shows no label
+		var show := view.grow(40.0).has_point(c) and player.global_position.distance_to(it.global_position) < 120.0   # only near the player
 		d["label"].visible = show
 		d["back"].visible = show
 		if not show:
@@ -427,7 +427,7 @@ func do_interact(it: Interactable) -> void:
 			add_child(m)
 		"recycler":
 			if GameState.drink() == "":
-				hud.toast(Text.t("ui.drank"), Color("9BE8FF"))
+				hud.toast(Text.t("ui.drank"), UIStyle.INFO)
 				Audio.play("drink")
 			else:
 				hud.toast(Text.t("ui.drank"))
@@ -442,7 +442,7 @@ func do_interact(it: Interactable) -> void:
 		"charger":
 			GameState.swap_packs()
 			Audio.play("pack_swap")
-			hud.toast(Text.t("ui.pack_base") + " %d%%" % int(round(GameState.base_pack)), Color("9BE8FF"))
+			hud.toast(Text.t("ui.pack_base") + " %d%%" % int(round(GameState.base_pack)), UIStyle.INFO)
 		"lab":
 			var g := GameState.process_samples()
 			if g > 0.0:
@@ -467,17 +467,17 @@ func _use_tray() -> void:
 	elif not GameState.tray_planted:
 		GameState.plant_radish()
 		GameState.water_radish()
-		hud.toast(Text.t("ui.plant_radish"), Color("5FC96B"))
+		hud.toast(Text.t("ui.plant_radish"), UIStyle.GOOD)
 		Audio.play("plant")
 	elif GameState.water_radish() == "":
-		hud.toast(Text.t("ui.water_radish"), Color("9BE8FF"))
+		hud.toast(Text.t("ui.water_radish"), UIStyle.INFO)
 		Audio.play("water_radish")
 	else:
 		hud.toast(Text.t("ui.radish_growing"))
 
 func _use_pad() -> void:
 	if GameState.collect_cargo():
-		hud.toast(Text.t("ui.collect_cargo"), Color("FFD23F"))
+		hud.toast(Text.t("ui.collect_cargo"), UIStyle.ACCENT)
 		Audio.play("sample_pickup")
 		return
 	var m = GameState.today()["mission"]
@@ -510,7 +510,7 @@ func do_gym() -> void:
 	player.play_action("interact_front", 1.0)
 	var r := GameState.gym()
 	if r == "":
-		hud.toast("+%d" % int(Config.data["health"]["gym_heal"]), Color("FF8080"))
+		hud.toast("+%d" % int(Config.data["health"]["gym_heal"]), UIStyle.DANGER)
 		Audio.play("gym")
 	else:
 		hud.toast(Text.t(r))

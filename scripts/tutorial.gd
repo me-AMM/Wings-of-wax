@@ -20,17 +20,17 @@ func _ready() -> void:
 	box.position = Vector2(4, 40)
 	box.size = Vector2(150, 78)
 	layer.add_child(box)
-	var head := UIKit.world_label(Text.t("ui.goals"), 16, Color("FFD23F"))
+	var head := UIKit.world_label(Text.t("ui.goals"), 16, UIStyle.ACCENT)
 	head.position = Vector2(10, 40)
 	layer.add_child(head)
 	var y := 58.0
 	for k in ["eat", "drink", "radish", "sleep"]:
-		var l := UIKit.world_label("", 8)
+		var l := UIKit.world_label("", 12)
 		l.position = Vector2(10, y)
 		layer.add_child(l)
 		checks.append({"key": k, "label": l})
 		y += 14.0
-	goal_label = UIKit.world_label("", 16, Color("FFD23F"))
+	goal_label = UIKit.world_label("", 16, UIStyle.ACCENT)
 	goal_label.position = Vector2(0, 296)
 	goal_label.size = Vector2(640, 20)
 	goal_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -85,7 +85,7 @@ func _process(delta: float) -> void:
 			l.modulate = Color(0.6, 0.62, 0.7)
 		else:
 			l.text = ("[x] " if done else "[ ] ") + name
-			l.modulate = Color("5FC96B") if done else Color.WHITE
+			l.modulate = UIStyle.GOOD if done else Color.WHITE
 	# guided arrow and one-line goal on days 1-3
 	var guided: bool = gs.day <= 3 and not gs.tutorial_off and gs.modal_count == 0
 	skip_btn.visible = gs.day <= 3 and not gs.tutorial_off
@@ -105,7 +105,7 @@ func _process(delta: float) -> void:
 # a bouncing yellow arrow pointing down at the building
 func _draw() -> void:
 	var pts := PackedVector2Array([Vector2(0, 10), Vector2(-9, -4), Vector2(-3, -4), Vector2(-3, -14), Vector2(3, -14), Vector2(3, -4), Vector2(9, -4)])
-	draw_colored_polygon(pts, Color("FFD23F"))
+	draw_colored_polygon(pts, UIStyle.ACCENT)
 	var o := PackedVector2Array(pts)
 	o.append(pts[0])
-	draw_polyline(o, Color("0B0D1A"), 1.0)
+	draw_polyline(o, UIStyle.PANEL_DARK, 1.0)

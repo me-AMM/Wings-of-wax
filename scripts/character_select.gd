@@ -15,7 +15,7 @@ func _ready() -> void:
 	bg.stretch_mode = TextureRect.STRETCH_SCALE
 	bg.size = Vector2(640, 360)
 	add_child(bg)
-	var title := UIKit.world_label(Text.t("ui.select_title"), 24, Color("FFD23F"))
+	var title := UIKit.world_label(Text.t("ui.select_title"), 24, UIStyle.ACCENT)
 	title.position = Vector2(0, 20)
 	title.size = Vector2(640, 32)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -33,7 +33,7 @@ func _ready() -> void:
 		for state in ["normal", "hover", "pressed", "focus"]:
 			var sb := StyleBoxFlat.new()
 			sb.bg_color = Color(0.04, 0.05, 0.1, 0.35)
-			sb.border_color = Color("FFD23F") if state in ["hover", "focus", "pressed"] else Color(0.64, 0.67, 0.76, 0.5)
+			sb.border_color = UIStyle.ACCENT if state in ["hover", "focus", "pressed"] else Color(0.64, 0.67, 0.76, 0.5)
 			sb.set_border_width_all(3 if state != "normal" else 1)
 			b.add_theme_stylebox_override(state, sb)
 		b.text = ""

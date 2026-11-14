@@ -19,7 +19,7 @@ func _ready() -> void:
 func _save() -> void:
 	var ok := Save.write(in_mission)
 	if hud != null:
-		hud.toast(Text.t("ui.game_saved") if ok else Text.t("ui.save_failed"), Color("5FC96B") if ok else Color("FF8080"))
+		hud.toast(Text.t("ui.game_saved") if ok else Text.t("ui.save_failed"), UIStyle.GOOD if ok else UIStyle.DANGER)
 	if ok:
 		Audio.play("interact_done")
 

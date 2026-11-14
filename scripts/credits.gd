@@ -17,16 +17,17 @@ func _ready() -> void:
 	dim.color = Color(0.04, 0.05, 0.1, 0.55)
 	dim.size = Vector2(640, 360)
 	add_child(dim)
-	var ai := UIKit.world_label(Text.t("ui.ai_statement"), 8)      # AI statement (challenge rules)
-	ai.position = Vector2(8, 334)
-	ai.size = Vector2(624, 12)
+	var ai := UIKit.world_label(Text.t("ui.ai_statement_1") + "
+" + Text.t("ui.ai_statement_2"), 12)      # AI statement (challenge rules)
+	ai.position = Vector2(8, 312)
+	ai.size = Vector2(624, 28)
 	ai.modulate.a = 0.85
 	add_child(ai)
 	box = Control.new()
 	box.position = Vector2(60, 340)
 	add_child(box)
 	var y := 0.0
-	var head := UIKit.world_label(Text.t("game_title"), 24, Color("FFD23F"))
+	var head := UIKit.world_label(Text.t("game_title"), 24, UIStyle.ACCENT)
 	head.position = Vector2(0, y)
 	box.add_child(head)
 	y += 44.0
@@ -37,7 +38,7 @@ func _ready() -> void:
 		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		box.add_child(l)
 		y += 20.0 * ceil(l.get_theme_font("font").get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x / 520.0) + 14.0
-	var th := UIKit.world_label(Text.t("ui.thanks"), 24, Color("9BE8FF"))
+	var th := UIKit.world_label(Text.t("ui.thanks"), 24, UIStyle.INFO)
 	th.position = Vector2(0, y + 10)
 	box.add_child(th)
 

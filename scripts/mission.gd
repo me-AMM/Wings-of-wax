@@ -118,7 +118,7 @@ func _build_world() -> void:
 		_sprite("crater_large", c, ground, false)
 	# the exit marker: a flat landing pad at the start (walkable), with a label
 	_sprite("landing_pad", base_pos + Vector2(0, 96), ground)
-	var ex := UIKit.world_label(Text.t("ui.exit_marker"), 16, Color("FFD23F"))
+	var ex := UIKit.world_label(Text.t("ui.exit_marker"), 16, UIStyle.ACCENT)
 	ex.position = base_pos + Vector2(-60, 100)
 	ex.size = Vector2(120, 20)
 	ex.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -234,7 +234,7 @@ func _build_player() -> void:
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	prompt.add_child(prompt_label)
 	prompt_bar = ColorRect.new()
-	prompt_bar.color = Color("FFD23F")
+	prompt_bar.color = UIStyle.ACCENT
 	prompt_bar.position = Vector2(-16, 38)
 	prompt_bar.size = Vector2(0, 3)
 	prompt.add_child(prompt_bar)
@@ -248,24 +248,28 @@ func _build_ui() -> void:
 	ui.layer = 11
 	ui.scale = Vector2(2, 2)
 	add_child(ui)
+	var back := UIKit.dark_box()                 # small dark backing so the text never sits on busy ground
+	back.position = Vector2(2, 30)
+	back.size = Vector2(124, 32)
+	ui.add_child(back)
 	var ic := UIKit.icon("icon_oxygen", 16)
 	ic.position = Vector2(4, 32)
 	ui.add_child(ic)
-	suit_bar = HudBar.new().setup(70, Color("9BE8FF"))
+	suit_bar = HudBar.new().setup(70, UIStyle.INFO)
 	suit_bar.position = Vector2(22, 32)
 	ui.add_child(suit_bar)
 	suit_label = UIKit.label("", 8)
 	suit_label.position = Vector2(96, 31)
 	ui.add_child(suit_label)
-	obj_label = UIKit.label("", 8, Color("FFD23F"))
+	obj_label = UIKit.label("", 8, UIStyle.ACCENT)
 	obj_label.position = Vector2(4, 50)
 	ui.add_child(obj_label)
-	storm_label = UIKit.label("", 8, Color("FF8080"))
+	storm_label = UIKit.label("", 8, UIStyle.DANGER)
 	storm_label.position = Vector2(0, 72)
 	UIKit.box(storm_label, 320, 14)
 	storm_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ui.add_child(storm_label)
-	crater_label = UIKit.label(Text.t("ui.in_crater"), 6, Color("FFD23F"))
+	crater_label = UIKit.label(Text.t("ui.in_crater"), 6, UIStyle.ACCENT)
 	crater_label.position = Vector2(0, 140)
 	UIKit.box(crater_label, 320, 12)
 	crater_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -321,7 +325,7 @@ func _process(delta: float) -> void:
 	suit_bar.set_frac(frac)
 	suit_label.text = "%d h" % int(ceil(frac * 8.0))
 	var low := frac < 0.25
-	suit_label.modulate = Color("FF8080") if low else Color.WHITE
+	suit_label.modulate = UIStyle.DANGER if low else Color.WHITE
 	suit_bar.modulate = Color(1, 0.45, 0.45) if (low and int(Time.get_ticks_msec() / 250) % 2 == 0) else Color.WHITE
 	if low:
 		low_sound_t -= delta
@@ -374,7 +378,7 @@ func _find_target() -> void:
 		prompt.visible = false
 		return
 	prompt.visible = true
-	var p: Vector2 = base_pos + Vector2(0, -50) if (target is String) else target["pos"] + Vector2(0, -50)
+	var p: Vector2 = base_pos + Vector2(0, 64) if (target is String) else target["pos"] + Vector2(0, -50)
 	prompt.position = p
 	prompt_label.text = _target_text()
 
@@ -424,7 +428,7 @@ func _use_target() -> void:
 			target["node"].visible = false
 			samples_got += 1
 			Audio.play("sample_pickup")
-			hud.toast("+1", Color("FFD23F"))
+			hud.toast("+1", UIStyle.ACCENT)
 			_check_objective()
 		"stone":
 			target["done"] = true
@@ -447,7 +451,7 @@ func _start_dig(it: Dictionary) -> void:
 		if hits >= bar.hits_needed:
 			it["done"] = true
 			ice_done = true
-			hud.toast("+" + Text.t("ui.obj_ice"), Color("9BE8FF"))
+			hud.toast("+" + Text.t("ui.obj_ice"), UIStyle.INFO)
 			_check_objective()
 		_update_objective())
 

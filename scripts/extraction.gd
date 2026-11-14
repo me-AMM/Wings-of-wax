@@ -9,7 +9,7 @@ var done := false
 func _ready() -> void:
 	GameState.clock_running = false
 	var sky := ColorRect.new()
-	sky.color = Color("0B0D1A")
+	sky.color = UIStyle.PANEL_DARK
 	sky.size = Vector2(640, 360)
 	add_child(sky)
 	for i in 40:                                              # stars

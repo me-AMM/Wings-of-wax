@@ -7,7 +7,7 @@ func _ready() -> void:
 
 func _draw() -> void:
 	var pts := PackedVector2Array([Vector2(8, 0), Vector2(-5, -6), Vector2(-5, 6)])
-	draw_colored_polygon(pts, Color("FFD23F"))
+	draw_colored_polygon(pts, UIStyle.ACCENT)
 	var outline := PackedVector2Array(pts)
 	outline.append(pts[0])
-	draw_polyline(outline, Color("0B0D1A"), 1.0)
+	draw_polyline(outline, UIStyle.PANEL_DARK, 1.0)

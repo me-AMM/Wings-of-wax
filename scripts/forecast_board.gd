@@ -11,7 +11,7 @@ func _ready() -> void:
 	bg.stretch_mode = TextureRect.STRETCH_SCALE
 	bg.size = Vector2(640, 360)
 	add_child(bg)
-	var title := UIKit.world_label(Text.t("ui.board_title"), 24, Color("FFD23F"))
+	var title := UIKit.world_label(Text.t("ui.board_title"), 24, UIStyle.ACCENT)
 	title.position = Vector2(48, 44)
 	add_child(title)
 	var body := UIKit.world_label(_message(), 24)
@@ -26,7 +26,7 @@ func _ready() -> void:
 	add_child(real)
 	var back := UIKit.world_label(Text.t("ui.board_back"), 16)
 	back.position = Vector2(440, 266)      # inside the board frame (the border is the outer 30 px)
-	var lh := UIKit.world_label(Text.t("ui.log_hint"), 16, Color("FFD23F"))
+	var lh := UIKit.world_label(Text.t("ui.log_hint"), 16, UIStyle.ACCENT)
 	lh.position = Vector2(48, 266)
 	add_child(lh)
 	add_child(back)

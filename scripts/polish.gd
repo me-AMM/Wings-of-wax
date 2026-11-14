@@ -130,7 +130,7 @@ func _shadows_for_buildings() -> void:
 
 # slow blinking lights on the charger, the recycler and the lab
 func _blinking_lights() -> void:
-	var spots := {"Charger": [Vector2(-6, 8), Color("5FC96B")], "Recycler": [Vector2(0, 6), Color("9BE8FF")], "Lab": [Vector2(-52, 10), Color("E5484D")]}
+	var spots := {"Charger": [Vector2(-6, 8), UIStyle.GOOD], "Recycler": [Vector2(0, 6), UIStyle.INFO], "Lab": [Vector2(-52, 10), UIStyle.DANGER]}
 	var world: Node = host.get_node_or_null("World")
 	for nm in spots:
 		var n: Node2D = world.get_node_or_null(nm)

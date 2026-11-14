@@ -46,7 +46,7 @@ stretch_mode = 1
 layout_mode = 0
 offset_left = 250.0
 offset_top = 440.0
-offset_right = 1080.0
+offset_right = 1162.0
 offset_bottom = 504.0
 texture = ExtResource("3")
 expand_mode = 1
@@ -68,6 +68,16 @@ offset_left = 250.0
 offset_top = 200.0
 offset_right = 950.0
 offset_bottom = 264.0
+texture = ExtResource("3")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="PathToShelter" type="TextureRect" parent="Ground"]
+layout_mode = 0
+offset_left = 1098.0
+offset_top = 504.0
+offset_right = 1162.0
+offset_bottom = 640.0
 texture = ExtResource("3")
 expand_mode = 1
 stretch_mode = 1

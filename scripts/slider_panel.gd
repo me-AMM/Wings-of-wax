@@ -6,7 +6,7 @@ extends Modal
 const ROW_ICONS := ["icon_oxygen", "icon_radish", "icon_research", "icon_storm"]
 const ROW_TEXT := ["ui.slider_life", "ui.slider_food", "ui.slider_science", "ui.slider_watch"]
 const ZONE_X := [25.0, 63.5, 102.0]      # knob centre inside the 128 px track art (low, medium, high)
-@export var track_scale := 0.75
+@export var track_scale := 0.5      # 0.5 in the 2x UI layer = exactly 1:1 on screen
 @export var row_y0 := 24.0
 @export var row_h := 27.0
 
@@ -31,7 +31,7 @@ func _ready() -> void:
 	root.add_child(hilite)
 	for i in 4:
 		var y := row_y0 + i * row_h
-		var ic := UIKit.icon(ROW_ICONS[i], 18)
+		var ic := UIKit.icon(ROW_ICONS[i], 16)
 		ic.position = Vector2(22, y + 3)
 		root.add_child(ic)
 		var lb := UIKit.label(Text.t(ROW_TEXT[i]), 10)
@@ -53,21 +53,22 @@ func _ready() -> void:
 		kl.position = Vector2(256, y + 4)
 		root.add_child(kl)
 		kw_labels.append(kl)
-	var pi := UIKit.icon("icon_sun", 14)
+	var pi := UIKit.icon("icon_sun", 16)
 	pi.position = Vector2(22, 136)
 	root.add_child(pi)
 	made_l = UIKit.label("", 8)
 	made_l.position = Vector2(38, 134)
-	UIKit.box(made_l, 262, 14)
+	UIKit.box(made_l, 262, 26)
+	made_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	root.add_child(made_l)
-	var ui_i := UIKit.icon("icon_pack", 14)
+	var ui_i := UIKit.icon("icon_pack", 16)
 	ui_i.position = Vector2(22, 152)
 	root.add_child(ui_i)
 	used_l = UIKit.label("", 9)
 	used_l.position = Vector2(38, 150)
 	root.add_child(used_l)
-	hours_l = UIKit.label("", 9, Color("9BE8FF"))
-	hours_l.position = Vector2(170, 150)
+	hours_l = UIKit.label("", 9, UIStyle.INFO)
+	hours_l.position = Vector2(38, 162)
 	root.add_child(hours_l)
 	_refresh()
 
@@ -79,19 +80,19 @@ func _refresh() -> void:
 		var cx: float = track_x + ZONE_X[lvl] * track_scale
 		knobs[i].position = Vector2(cx - 16.0 * track_scale, row_y0 + i * row_h)
 		kw_labels[i].text = "%.1f kW" % GameState.slider_kw(i)
-		kw_labels[i].modulate = [Color("5FC96B"), Color("FFD23F"), Color("FF8080")][lvl]       # low / medium / high
+		kw_labels[i].modulate = [UIStyle.GOOD, UIStyle.ACCENT, UIStyle.DANGER][lvl]       # low / medium / high
 	# one plain sentence: green = spare power charges the pack, yellow = almost nothing spare, red = draining
 	var made := GameState.panel_kw()
 	var used := GameState.draw_kw()
 	if made <= 0.0:
 		made_l.text = Text.t("ui.power_sentence_dark")
-		made_l.modulate = Color("FF8080")
+		made_l.modulate = UIStyle.DANGER
 	elif used <= made:
 		made_l.text = Text.t("ui.power_sentence_ok") % [used, made]
-		made_l.modulate = Color("5FC96B") if made - used >= 1.0 else Color("FFD23F")
+		made_l.modulate = UIStyle.GOOD if made - used >= 1.0 else UIStyle.ACCENT
 	else:
 		made_l.text = Text.t("ui.power_sentence_bad") % [used, made]
-		made_l.modulate = Color("FF8080")
+		made_l.modulate = UIStyle.DANGER
 	used_l.text = ""
 	var h := GameState.base_hours_left()
 	hours_l.text = "" if h >= 99.0 else "%s: %d %s" % [Text.t("ui.pack_base"), int(h), Text.t("ui.hours_left")]

@@ -71,11 +71,11 @@ func _ready() -> void:
 	count_label.position = Vector2(38, 6)
 	count_label.size = Vector2(150, 20)
 	panel.add_child(count_label)
-	src_label = UIKit.world_label("", 8, Color("9BE8FF"))     # the data source, always visible
+	src_label = UIKit.world_label("", 12, UIStyle.INFO)     # the data source, always visible
 	src_label.position = Vector2(38, 22)                     # small line under the countdown, inside the frame strip
 	src_label.size = Vector2(150, 10)
 	panel.add_child(src_label)
-	size_label = UIKit.world_label("", 16, Color("FFD23F"))
+	size_label = UIKit.world_label("", 16, UIStyle.ACCENT)
 	size_label.position = Vector2(4, 36)
 	size_label.size = Vector2(184, 20)
 	panel.add_child(size_label)
@@ -83,7 +83,7 @@ func _ready() -> void:
 	real_label.position = Vector2(4, 56)
 	real_label.size = Vector2(184, 20)
 	panel.add_child(real_label)
-	shelter_label = UIKit.world_label("", 16, Color("FF8080"))
+	shelter_label = UIKit.world_label("", 16, UIStyle.DANGER)
 	shelter_label.position = Vector2(4, 76)
 	shelter_label.size = Vector2(184, 20)
 	panel.add_child(shelter_label)

@@ -21,7 +21,7 @@ func build() -> void:
 	var x := (320.0 - menu_width) / 2.0
 	var y := (180.0 - h) / 2.0
 	root.add_child(UIKit.panel(Vector2(x, y), Vector2(menu_width, h)))
-	var title := UIKit.label(title_text, 10, Color("FFD23F"))
+	var title := UIKit.label(title_text, 10, UIStyle.ACCENT)
 	title.position = Vector2(x + 22, y + 14)
 	root.add_child(title)
 	for i in items.size():
@@ -31,8 +31,8 @@ func build() -> void:
 		var bg := UIKit.button_bg(menu_width - 28.0, "normal")
 		bg.position = Vector2(bx, by)
 		root.add_child(bg)
-		var ic := UIKit.icon(it.get("icon", "icon_heart"), 20)
-		ic.position = Vector2(bx + 12, by + 6)
+		var ic := UIKit.icon(it.get("icon", "icon_heart"), 16)   # 16 in the 2x layer = the 32 px icon 1:1
+		ic.position = Vector2(bx + 12, by + 8)
 		root.add_child(ic)
 		var col := Color.WHITE if it.get("enabled", true) else Color(0.6, 0.62, 0.7)
 		var lb := UIKit.label(it["text"], 10, col)

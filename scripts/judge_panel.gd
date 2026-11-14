@@ -29,15 +29,15 @@ func _ready() -> void:
 	var oy := (360.0 - PH) / 2.0
 	var bg := Panel.new()
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color("0B0D1A")
-	sb.border_color = Color("F06FA8")
+	sb.bg_color = UIStyle.PANEL_DARK
+	sb.border_color = UIStyle.JUDGE
 	sb.set_border_width_all(2)
 	bg.add_theme_stylebox_override("panel", sb)
 	bg.position = Vector2(ox, oy)
 	bg.size = Vector2(PW, PH)
 	root.add_child(bg)
 	# title row: JUDGE MODE ........ [Close]
-	var title := UIKit.world_label(Text.t("ui.judge_label"), 16, Color("F06FA8"))
+	var title := UIKit.world_label(Text.t("ui.judge_label"), 16, UIStyle.JUDGE)
 	title.position = Vector2(ox + M, oy + 6)
 	root.add_child(title)
 	var close := _btn(Text.t("ui.judge_close"), Vector2(ox + PW - M - 80, oy + M - 4), Vector2(80, 24))
@@ -68,13 +68,13 @@ func _ready() -> void:
 	track.content_margin_bottom = 2
 	day_slider.add_theme_stylebox_override("slider", track)
 	var fill := StyleBoxFlat.new()
-	fill.bg_color = Color("FFD23F")
+	fill.bg_color = UIStyle.ACCENT
 	fill.content_margin_top = 2
 	fill.content_margin_bottom = 2
 	day_slider.add_theme_stylebox_override("grabber_area", fill)
 	day_slider.add_theme_stylebox_override("grabber_area_highlight", fill)
 	var img := Image.create(8, 16, false, Image.FORMAT_RGBA8)     # 8 px grabber
-	img.fill(Color("E4E8F2"))
+	img.fill(UIStyle.TEXT_LIGHT)
 	var gt := ImageTexture.create_from_image(img)
 	day_slider.add_theme_icon_override("grabber", gt)
 	day_slider.add_theme_icon_override("grabber_highlight", gt)

@@ -42,7 +42,7 @@ func _ready() -> void:
 func _eat(kind: String) -> void:
 	var r := GameState.eat(kind)
 	if r == "":
-		outpost.hud.toast("+%d" % int(Config.data["health"]["meal_heal"]), Color("FF8080"))
+		outpost.hud.toast("+%d" % int(Config.data["health"]["meal_heal"]), UIStyle.DANGER)
 		Audio.play("eat")
 	else:
 		outpost.hud.toast(Text.t(r))

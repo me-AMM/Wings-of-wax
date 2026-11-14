@@ -72,13 +72,13 @@ func _build() -> void:
 		var lb := _text(Vector2(x + 34, 8), 16, root)
 		lb.custom_minimum_size = Vector2(cell_widths[i] - 34.0, 20)
 		if i == 4:
-			lb.add_theme_color_override("font_color", Color("9BE8FF"))    # spare pack on the charger
+			lb.add_theme_color_override("font_color", UIStyle.INFO)    # spare pack on the charger
 		stats.append({"icon": ic, "label": lb, "get": defs[i][1]})
 		x += cell_widths[i]
 	# health: heart + red bar (bar_frame + fill)
 	var hx := x
 	heart_icon = _icon("icon_heart", Vector2(hx, 2), root)
-	health_bar = HudBar.new().setup(640.0 - hx - 38.0, Color("E5484D"))
+	health_bar = HudBar.new().setup(640.0 - hx - 38.0, UIStyle.DANGER)
 	health_bar.position = Vector2(hx + 34, 10)
 	root.add_child(health_bar)
 	health_num = UIKit.world_label("100", 16)         # the Health number sits on its bar
@@ -93,7 +93,7 @@ func _build() -> void:
 	storm_icon.visible = false
 	blackout_icon = _icon("icon_blackout", Vector2(532, strip_height + 2), root)
 	blackout_icon.visible = false
-	judge_label = _text(Vector2(4, 298), 16, root, Color("F06FA8"))
+	judge_label = _text(Vector2(4, 298), 16, root, UIStyle.JUDGE)
 	judge_label.text = Text.t("ui.judge_label")
 	judge_label.visible = false
 	# Fact log: reopens every info card seen so far (also the F key)
@@ -109,7 +109,7 @@ func _build() -> void:
 	notice_panel.size = Vector2(640, 38)
 	notice_panel.visible = false
 	root.add_child(notice_panel)
-	notice_label = UIKit.world_label("", 16, Color("FFD23F"))
+	notice_label = UIKit.world_label("", 16, UIStyle.ACCENT)
 	notice_label.position = Vector2(12, 4)
 	notice_label.size = Vector2(616, 32)
 	notice_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -141,12 +141,12 @@ func _build() -> void:
 	day_card.size = Vector2(320, 110)
 	day_card.visible = false
 	root.add_child(day_card)
-	splash = UIKit.world_label("", 48)
+	splash = UIKit.world_label("", 24)
 	splash.position = Vector2(0, 8)
 	splash.size = Vector2(320, 56)
 	splash.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	day_card.add_child(splash)
-	day_info = UIKit.world_label("", 16, Color("FFD23F"))
+	day_info = UIKit.world_label("", 16, UIStyle.ACCENT)
 	day_info.position = Vector2(0, 70)
 	day_info.size = Vector2(320, 24)
 	day_info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -177,7 +177,7 @@ func refresh() -> void:
 	sky_icon.texture = Art.tex("icon_moon" if GameState.in_shadow else "icon_sun")
 	for s in stats:
 		s["label"].text = s["get"].call()
-	var red := Color("FF8080")
+	var red := UIStyle.DANGER
 	stats[1]["label"].modulate = red if GameState.water < Config.data["water"]["warn_below_l"] else Color.WHITE
 	stats[2]["label"].modulate = red if GameState.oxygen_h < 12.0 else Color.WHITE
 	var low: float = Config.data["power"]["low_pack_warn_pct"]
@@ -190,7 +190,7 @@ func _process(delta: float) -> void:
 	shown_health = move_toward(shown_health, GameState.health, delta * 70.0)
 	health_bar.set_frac(shown_health / 100.0)
 	health_num.text = str(int(ceil(GameState.health)))
-	health_num.modulate = Color("FFD23F") if GameState.health < 30.0 else Color.WHITE
+	health_num.modulate = UIStyle.ACCENT if GameState.health < 30.0 else Color.WHITE
 	_hurt_tick(delta)
 	var blink := int(Time.get_ticks_msec() / 300) % 2 == 0
 	var low: float = Config.data["power"]["low_pack_warn_pct"]
@@ -299,7 +299,7 @@ func _show_hurt(amount: float, reason: String) -> void:
 	var at := Vector2(320, 180)
 	if pl != null:
 		at = get_viewport().get_canvas_transform() * pl.global_position + Vector2(-20, -100)
-	var l := UIKit.world_label("-%d" % int(round(amount)), 24, Color("FF5050"))
+	var l := UIKit.world_label("-%d" % int(round(amount)), 24, UIStyle.DANGER)
 	l.position = at
 	add_child(l)
 	var tf := create_tween()

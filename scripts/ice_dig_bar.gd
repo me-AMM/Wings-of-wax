@@ -31,7 +31,7 @@ func _ready() -> void:
 	marker.texture = Art.tex("dig_marker")
 	marker.position = bar_pos
 	root.add_child(marker)
-	hits_label = UIKit.label("", 9, Color("FFD23F"))
+	hits_label = UIKit.label("", 9, UIStyle.ACCENT)
 	hits_label.position = Vector2(60, 110)
 	root.add_child(hits_label)
 	var hint := UIKit.label(Text.t("ui.dig_hint"), 8)

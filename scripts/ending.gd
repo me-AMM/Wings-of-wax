@@ -31,12 +31,12 @@ func _ready() -> void:
 	body.position = Vector2(34, 180)
 	body.size = Vector2(560, 84)          # set after add_child so the wrap width sticks
 	if success:
-		var pct := UIKit.world_label(Text.t("ui.ending_percent") % int(round(GameState.research)), 24, Color("FFD23F"))
+		var pct := UIKit.world_label(Text.t("ui.ending_percent") % int(round(GameState.research)), 24, UIStyle.ACCENT)
 		pct.position = Vector2(34, 272)
 		pct.size = Vector2(572, 30)
 		add_child(pct)
 		if GameState.judge_mode:
-			var nj := UIKit.world_label(Text.t("ui.judge_no_stars"), 16, Color("F06FA8"))
+			var nj := UIKit.world_label(Text.t("ui.judge_no_stars"), 16, UIStyle.JUDGE)
 			nj.position = Vector2(34, 316)
 			add_child(nj)
 		else:
@@ -130,7 +130,7 @@ func _learned() -> void:
 	panel.position = Vector2(20, 12)
 	panel.size = Vector2(600, 24 + 32 * picks.size())
 	add_child(panel)
-	var head := UIKit.world_label(Text.t("ui.learned"), 16, Color("FFD23F"))
+	var head := UIKit.world_label(Text.t("ui.learned"), 16, UIStyle.ACCENT)
 	head.position = Vector2(30, 14)
 	add_child(head)
 	for i in picks.size():
@@ -138,6 +138,6 @@ func _learned() -> void:
 		var t := UIKit.world_label("- " + c["title"], 16)
 		t.position = Vector2(30, 34 + 32 * i)
 		add_child(t)
-		var s := UIKit.world_label(c["source"], 8, Color(0.75, 0.85, 1.0))
+		var s := UIKit.world_label(c["source"], 12, Color(0.75, 0.85, 1.0))
 		s.position = Vector2(46, 52 + 32 * i)
 		add_child(s)

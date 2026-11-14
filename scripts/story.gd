@@ -24,7 +24,7 @@ func _ready() -> void:
 	text_l.size = Vector2(572, 56)
 	text_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(text_l)
-	dots = UIKit.world_label("", 16, Color("FFD23F"))
+	dots = UIKit.world_label("", 16, UIStyle.ACCENT)
 	dots.position = Vector2(34, 322)
 	dots.size = Vector2(572, 20)
 	dots.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT

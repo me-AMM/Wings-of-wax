@@ -21,7 +21,7 @@ func _ready() -> void:
 	add_child(root)
 	root.add_child(UIKit.dim())
 	root.add_child(UIKit.panel(Vector2(PX, PY), Vector2(PW, PH)))
-	title_l = UIKit.label("", 8, Color("FFD23F"))
+	title_l = UIKit.label("", 8, UIStyle.ACCENT)
 	title_l.position = Vector2(PX + PAD, PY + PAD - 2)
 	UIKit.box(title_l, PW - 2 * PAD - 20, 12)
 	root.add_child(title_l)

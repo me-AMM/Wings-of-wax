@@ -11,13 +11,13 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	label = Label.new()
 	label.text = Text.t("ui.watermark")
-	label.add_theme_font_size_override("font_size", 8)
+	label.add_theme_font_size_override("font_size", 12)
 	label.add_theme_color_override("font_color", Color(1, 1, 1))
 	label.add_theme_color_override("font_outline_color", Color(0, 0, 0))
 	label.add_theme_constant_override("outline_size", 2)
 	label.modulate.a = 0.6                        # about 60% opacity
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	label.position = Vector2(340, 347)
-	label.size = Vector2(296, 12)
+	label.position = Vector2(300, 344)
+	label.size = Vector2(336, 14)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(label)

@@ -16,18 +16,18 @@ func _ready() -> void:
 	dim.color = Color(0.03, 0.04, 0.09, 0.82)
 	dim.size = Vector2(640, 360)
 	add_child(dim)
-	var title := UIKit.world_label(Text.t("ui.weather_log"), 24, Color("FFD23F"))
+	var title := UIKit.world_label(Text.t("ui.weather_log"), 24, UIStyle.ACCENT)
 	title.position = Vector2(16, 10)
 	add_child(title)
-	var line := UIKit.world_label(Text.t("ui.log_line"), 16, Color("9BE8FF"))
+	var line := UIKit.world_label(Text.t("ui.log_line"), 16, UIStyle.INFO)
 	line.position = Vector2(16, 42)
 	line.size = Vector2(608, 20)
 	add_child(line)
 	var cols: Array = Text.list("log_cols")
-	var xs := [16, 54, 130, 184, 268, 452, 560]
+	var xs := [12, 44, 152, 196, 292, 528, 612]
 	var y := 74.0
 	for i in cols.size():
-		_cell(cols[i], Vector2(xs[i], y), Color("FFD23F"))
+		_cell(cols[i], Vector2(xs[i], y), UIStyle.ACCENT)
 	var sep := ColorRect.new()
 	sep.color = Color(1, 0.82, 0.25, 0.5)
 	sep.position = Vector2(16, y + 14)
@@ -41,21 +41,21 @@ func _ready() -> void:
 		var e: Dictionary = Config.donki.get(st["event"], {})
 		var survived: bool = st["event"] in GameState.storms_survived
 		var row := [str(d), Text.t("storm_names." + st["size"]), e.get("classType", "?"), Config.nice_date(e.get("peakTime", "")),
-			str(e.get("flrID", "")), "NOAA / ESA" if e.get("source", "") == "NOAA / ESA" else "NASA CCMC DONKI", "YES" if survived else "-"]
+			str(e.get("flrID", "")), "NOAA/ESA" if e.get("source", "") == "NOAA / ESA" else "NASA DONKI", "YES" if survived else "-"]
 		var shade := ColorRect.new()
 		shade.color = Color(1, 1, 1, 0.04 if int(y) % 44 < 22 else 0.0)
 		shade.position = Vector2(12, y - 2)
 		shade.size = Vector2(616, 22)
 		add_child(shade)
 		for i in row.size():
-			_cell(row[i], Vector2(xs[i], y), Color("5FC96B") if (i == 6 and survived) else Color.WHITE)
+			_cell(row[i], Vector2(xs[i], y), UIStyle.GOOD if (i == 6 and survived) else Color.WHITE)
 		y += 26.0
 	var back := UIKit.world_label(Text.t("ui.back_hint"), 16)
 	back.position = Vector2(16, 312)
 	add_child(back)
 
 func _cell(text: String, pos: Vector2, color: Color) -> void:
-	var l := UIKit.world_label(text, 8, color)
+	var l := UIKit.world_label(text, 12, color)
 	l.position = pos
 	add_child(l)
 

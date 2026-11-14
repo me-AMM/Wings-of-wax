@@ -110,7 +110,7 @@ func toast(text: String) -> void:
 		_toast_layer = CanvasLayer.new()
 		_toast_layer.layer = 110
 		add_child(_toast_layer)
-		_toast_label = UIKit.world_label("", 16, Color("F06FA8"))
+		_toast_label = UIKit.world_label("", 16, UIStyle.JUDGE)
 		_toast_label.position = Vector2(0, 44)
 		_toast_label.size = Vector2(640, 24)
 		_toast_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

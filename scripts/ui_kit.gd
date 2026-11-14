@@ -37,7 +37,7 @@ static func box(l: Control, w: float, h: float) -> void:
 
 # Label for the world (scale 1, real pixels): prompts and lock labels above buildings.
 static func world_label(text: String, px: int = 16, color: Color = Color.WHITE) -> Label:
-	px = maxi(8, int(round(px / 8.0)) * 8)       # whole multiples of the font size 8
+	px = UIStyle.SMALL if px <= 12 else (UIStyle.BODY if px <= 18 else UIStyle.TITLE)   # three sizes only
 	var l := Label.new()
 	l.text = text
 	l.add_theme_font_size_override("font_size", px)
@@ -123,11 +123,11 @@ static func button(text: String, width: float = 120.0) -> Button:
 		b.add_theme_stylebox_override(state, sb)
 	b.add_theme_font_size_override("font_size", 16)
 	b.add_theme_color_override("font_color", Color.WHITE)
-	b.add_theme_color_override("font_pressed_color", Color("FFD23F"))
+	b.add_theme_color_override("font_pressed_color", UIStyle.ACCENT)
 	b.add_theme_constant_override("outline_size", 1)
 	b.add_theme_constant_override("h_separation", 0)
-	b.add_theme_color_override("font_hover_color", Color("FFD23F"))
-	b.add_theme_color_override("font_focus_color", Color("FFD23F"))
+	b.add_theme_color_override("font_hover_color", UIStyle.ACCENT)
+	b.add_theme_color_override("font_focus_color", UIStyle.ACCENT)
 	return b
 
 # Small flat debug button (Judge panel).
@@ -141,7 +141,7 @@ static func flat_button(text: String, rect: Rect2) -> Button:
 	b.add_theme_font_size_override("font_size", 8)
 	for state in ["normal", "hover", "pressed", "focus"]:
 		var sb := StyleBoxFlat.new()
-		sb.bg_color = {"normal": Color("1F2438"), "hover": Color("3D4560"), "pressed": Color("2F5BE0"), "focus": Color("3D4560")}[state]
+		sb.bg_color = {"normal": Color("1F2438"), "hover": UIStyle.PANEL_BORDER, "pressed": Color("2F5BE0"), "focus": UIStyle.PANEL_BORDER}[state]
 		sb.border_color = Color("A3ABC2")
 		sb.set_border_width_all(1)
 		sb.content_margin_top = 0
