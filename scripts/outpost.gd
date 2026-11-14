@@ -34,13 +34,14 @@ func _ready() -> void:
 	_build_prompt()
 	_build_lander()
 	_build_locks()
+	player.add_child(load("res://scripts/flashlight.gd").new())
 	player.stepped.connect(func(p): _effect("dust_puff", p + Vector2(0, -2), 0.5, false))
 	add_child(load("res://scripts/debug_overlay.gd").new())
 	GameState.event.connect(_on_event)
 	GameState.card.connect(func(k): GameState.card_queue.append(k))
 	add_child(load("res://scripts/storm_warning.gd").new())
 	GameState.changed.connect(_refresh_visuals)
-	dark.color = shadow_tint if GameState.in_shadow else Color.WHITE
+	_refresh_visuals()
 	card_wait = card_delay
 	if GameState.day_intro_pending:
 		GameState.emit_day_intro()
@@ -161,7 +162,10 @@ func _refresh_visuals() -> void:
 	if _lander_on_pad() and not lander_sprite.is_playing():
 		lander_sprite.visible = true
 		lander_sprite.frame = lander_sprite.sprite_frames.get_frame_count("default") - 1
-	dark.color = shadow_tint if GameState.in_shadow else Color.WHITE
+	if GameState.blackout:
+		dark.color = Color(0.16, 0.18, 0.32)       # blackout: nearly dark, the flashlight still works
+	else:
+		dark.color = shadow_tint if GameState.in_shadow else Color.WHITE
 
 func _set_solid(body: Node, on: bool) -> void:
 	if body != null:
@@ -356,6 +360,11 @@ func do_interact(it: Interactable) -> void:
 			_use_pad()
 		"shelter":
 			do_shelter()
+		"crew_lander":
+			if GameState.mission_done_today and GameState.storm_state == "none":
+				GameState.finish_game("success")      # extraction: the crew lander takes you home
+			else:
+				hud.toast(Text.t("ui.crew_wait"))
 
 func _use_tray() -> void:
 	if GameState.tray_ready:

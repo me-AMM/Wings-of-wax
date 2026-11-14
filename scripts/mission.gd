@@ -187,6 +187,7 @@ func _build_player() -> void:
 	cam.limit_right = int(world_size.x)
 	cam.limit_bottom = int(world_size.y)
 	player.add_child(cam)
+	player.add_child(load("res://scripts/flashlight.gd").new())
 	prompt = Node2D.new()
 	prompt.z_index = 200
 	var key := Sprite2D.new()

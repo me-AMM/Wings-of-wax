@@ -21,6 +21,7 @@ var fade_rect: ColorRect
 var splash: Label
 var judge_label: Label
 var storm_icon: TextureRect
+var blackout_icon: TextureRect
 
 func _ready() -> void:
 	layer = 10
@@ -67,6 +68,8 @@ func _build() -> void:
 	# blinking storm icon under the strip
 	storm_icon = _icon("icon_storm", Vector2(40, strip_height + 2), root)
 	storm_icon.visible = false
+	blackout_icon = _icon("icon_blackout", Vector2(76, strip_height + 2), root)
+	blackout_icon.visible = false
 	judge_label = _text(Vector2(280, strip_height + 4), 16, root, Color("F06FA8"))
 	judge_label.text = Text.t("ui.judge_label")
 	judge_label.visible = false
@@ -129,6 +132,7 @@ func _process(delta: float) -> void:
 	var low: float = Config.data["power"]["low_pack_warn_pct"]
 	stats[3]["icon"].texture = Art.tex("icon_pack_low" if (GameState.base_pack < low and blink) else "icon_pack")
 	stats[4]["icon"].texture = Art.tex("icon_pack_low" if (GameState.spare_pack < low and blink) else "icon_pack")
+	blackout_icon.visible = GameState.blackout and blink
 	storm_icon.visible = GameState.storm_state == "warning"
 	storm_icon.modulate.a = 0.5 + 0.5 * sin(Time.get_ticks_msec() / 120.0)
 	if notice_timer > 0.0:

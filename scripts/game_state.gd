@@ -71,6 +71,7 @@ var outpost_spawn := Vector2(640, 492)  # where the player appears when the Outp
 var card_queue: Array = []          # info cards waiting to be shown (survives scene changes)
 var mission_kind := ""             # set by the Outpost when a mission starts
 var last_modal_close_ms := 0
+var auto_endings := false         # true in the real game: finishing goes to the ending screens (off in sim_check)
 var game_over := false
 var game_result := ""              # "" / "success" / "failed"
 var total_hours := 0.0             # hours since day 1, 06:00 (for cooldowns)
@@ -200,6 +201,10 @@ func damage(amount: float) -> void:
 		finish_game("failed")
 	changed.emit()
 
+func _goto_ending(result: String) -> void:
+	modal_count = 0
+	get_tree().change_scene_to_file("res://scenes/EndingSuccess.tscn" if result == "success" else "res://scenes/EndingFailed.tscn")
+
 func heal(amount: float) -> void:
 	health = minf(health_cap, health + amount)
 	changed.emit()
@@ -209,7 +214,10 @@ func finish_game(result: String) -> void:
 		return
 	game_over = true
 	game_result = result
+	clock_running = false
 	event.emit("game_over", {"result": result})
+	if auto_endings:
+		call_deferred("_goto_ending", result)
 
 # ---------------------------------------------------------------- time
 # Real-time driver: scenes that want the clock to run add this node to the tree and

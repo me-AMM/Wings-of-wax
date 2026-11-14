@@ -22,6 +22,8 @@ func _start() -> void:
 			gs.day = 4
 			gs._start_day(false)
 			gs.advance(1.2)
+		"r100":
+			gs.research = 100.0
 		"day2":
 			gs.day = 2
 			gs._start_day(false)
@@ -52,7 +54,7 @@ func _process(_delta: float) -> bool:
 	frames += 1
 	if frames == 3:
 		_start()
-	if frames == 160:
+	if frames == 260:
 		var img := root.get_texture().get_image()
 		img.save_png(out_path)
 		print("saved ", out_path, " ", img.get_size())

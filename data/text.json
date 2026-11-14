@@ -123,7 +123,18 @@
     "judge_hint": "Judge mode: press J any time to open this panel. Runs earn no stars.",
     "judge_day_label": "Day",
     "judge_presets": "Presets",
-    "judge_end_shadow": "Sunrise"
+    "judge_end_shadow": "Sunrise",
+    "press_e_continue": "E: continue",
+    "judge_no_stars": "Judge run: no stars",
+    "crew_wait": "Finish the final mission first.",
+    "select_title": "Choose your astronaut",
+    "astronaut_a": "Astronaut A",
+    "astronaut_b": "Astronaut B",
+    "name_hint": "Your name (type, then Enter)",
+    "mission_complete_title": "Mission complete",
+    "thanks": "Thank you for playing!",
+    "not_endorsed": "This game is not endorsed by NASA.",
+    "blackout_icon": "Blackout"
   },
   "notices": {
     "cargo_tomorrow": "Cargo lander arrives tomorrow at 07:00.",

@@ -4,6 +4,7 @@ extends Control
 func _ready() -> void:
 	GameState.clock_running = false
 	GameState.judge_mode = false
+	GameState.auto_endings = true
 	var bg: TextureRect = $Background
 	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	bg.stretch_mode = TextureRect.STRETCH_SCALE
