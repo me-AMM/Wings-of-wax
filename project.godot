@@ -24,6 +24,7 @@ Art="*res://scripts/art.gd"
 Text="*res://scripts/text.gd"
 Audio="*res://scripts/audio.gd"
 GameState="*res://scripts/game_state.gd"
+Save="*res://scripts/save.gd"
 Judge="*res://scripts/judge.gd"
 Scenes="*res://scripts/scenes.gd"
 

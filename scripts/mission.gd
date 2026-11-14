@@ -1,4 +1,5 @@
 extends Node2D
+const PauseMenuScript := preload("res://scripts/pause_menu.gd")
 # Mission: ONE scene for rock/soil, ice dig and the finale stone (GameState.mission_kind).
 # Walk out, do the job, reach the flag, then come back to the EXIT marker at the start and hold E (2 s).
 # Suit air runs out! A yellow arrow points to the next target. A storm warning can start mid-mission; the countdown
@@ -477,3 +478,12 @@ func _end(success: bool, msg_key: String) -> void:
 	m.menu_width = 250.0
 	add_child(m)
 	m.build()
+
+# Esc: pause menu (saving is not allowed during a mission)
+func _unhandled_input(e: InputEvent) -> void:
+	if e is InputEventKey and e.pressed and not e.echo and e.keycode == KEY_ESCAPE and GameState.modal_count == 0 and not ending and not digging:
+		var m := PauseMenuScript.new()
+		m.hud = hud
+		m.in_mission = true
+		add_child(m)
+		get_viewport().set_input_as_handled()

@@ -98,3 +98,7 @@ Health 100, 5 rations, 20 L water, oxygen reserve 48 h, both packs 100%, dust 25
 
 ## Day 1-3 unlocks
 Day 1: only the habitat is open (other buildings show the lock icon, "opens on day 2/3"). Day 2: greenhouse, water recycler and gym (menu) open. Day 3: solar field opens. Day 4: landing pad, lab and shelter open.
+
+## Save, load and death (round 5, owner decisions)
+- One save slot. Autosave at the start of each day (06:00). Manual save from the pause menu, disabled during a mission, a storm warning or a storm. Judge mode never saves.
+- Failure (Health 0, fatal large/finale storm, out of air): "Retry day N" restores the 06:00 state of that day (everything done that day is undone). Dying never overwrites the save.

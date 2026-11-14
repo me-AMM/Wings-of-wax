@@ -1,4 +1,5 @@
 extends Node2D
+const PauseMenuScript := preload("res://scripts/pause_menu.gd")
 # Outpost: the main map. Buildings are Interactable nodes in the scene (move them in the editor!).
 # This script: finds the nearest thing to use, shows the E prompt, runs actions, landers, dust, tint.
 
@@ -30,6 +31,9 @@ var prompt_back: ColorRect
 
 func _ready() -> void:
 	GameState.clock_running = true
+	if not GameState.game_started:
+		GameState.game_started = true            # the game has really started: first autosave (day start)
+		Save.autosave()
 	hud = load("res://scripts/hud.gd").new()
 	add_child(hud)
 	_build_prompt()
@@ -506,3 +510,10 @@ func _crew_touchdown() -> void:
 	await get_tree().create_timer(1.4).timeout
 	await hud.fade_to_black(0.8)
 	Scenes.go("res://scenes/Extraction.tscn")
+
+func _unhandled_input(e: InputEvent) -> void:
+	if e is InputEventKey and e.pressed and not e.echo and e.keycode == KEY_ESCAPE and GameState.modal_count == 0 and not busy:
+		var m := PauseMenuScript.new()
+		m.hud = hud
+		add_child(m)
+		get_viewport().set_input_as_handled()

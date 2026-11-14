@@ -35,6 +35,8 @@ func _ready() -> void:
 	await shelter_lock_case()
 	await audio_case()
 	await large_fatal_case()
+	await retry_case(false)
+	await retry_case(true)
 	# ---------------- finale paths (scenes)
 	await finale_case(true)
 	await finale_case(false)
@@ -183,3 +185,47 @@ func large_fatal_case() -> void:
 	var hp := GameState.health
 	GameState.advance(GameState.storm_total_h + 0.2)
 	check(not GameState.game_over and GameState.health >= hp - 5.01 and GameState.health > 0.0, "large storm sheltered: tiny damage (-5), the run continues")
+
+# Die, then "Retry day N": the 06:00 state of that day comes back and the save file is untouched (also in judge mode).
+func retry_case(judge: bool) -> void:
+	var tag := "judge mode" if judge else "normal day"
+	Save.path = "user://save_test.json"
+	if FileAccess.file_exists(Save.path):
+		DirAccess.remove_absolute(Save.path)
+	GameState.new_game()
+	GameState.auto_endings = true
+	GameState.game_started = true
+	GameState.day = 6
+	GameState._start_day(false)
+	check(Save.write(), "%s: a save file exists before the death" % tag)
+	GameState.day = 3
+	GameState._start_day(false)                    # a new day: the 06:00 autosave (normal mode)
+	if judge:
+		Judge.jump_to_day(5)                       # judge mode on from the jump: nothing is saved
+	var h0 := FileAccess.get_md5(Save.path)
+	var day0: int = GameState.day
+	var state0 := JSON.stringify(GameState.save_dict(), "", true)
+	get_tree().change_scene_to_file("res://scenes/Outpost.tscn")
+	await wait_scene("Outpost", 5.0)
+	GameState.eat("ration")                       # things done during the day ...
+	GameState.drink()
+	GameState.dust = [50.0, 50.0, 50.0, 50.0]
+	GameState.advance(6.0)
+	GameState.damage(1000.0, "health")             # ... and then the run ends
+	check(await wait_scene("EndingFailed", 10.0), "%s: death reaches EndingFailed" % tag)
+	var ending := get_tree().current_scene
+	check(ending.retry_btn != null and ending.retry_btn.text == Text.t("ui.retry_day") % day0, "%s: the button says 'Retry day %d'" % [tag, day0])
+	ending.retry_btn.pressed.emit()
+	check(await wait_scene("Outpost", 10.0), "%s: Retry opens the Outpost" % tag)
+	var back := JSON.stringify(GameState.save_dict(), "", true)
+	var dk := ""
+	var da: Dictionary = JSON.parse_string(state0)
+	var db: Dictionary = JSON.parse_string(back)
+	for k in da:
+		if k not in ["hour", "total_hours"] and str(da[k]) != str(db.get(k)):      # (the clock has run a few frames since)
+			dk += " " + str(k)
+	check(GameState.day == day0 and GameState.hour < 6.6 and not GameState.game_over and dk == "", "%s: day %d starts again at 06:00 with the day-start state (everything done is undone)%s" % [tag, day0, " DIFF:" + dk if dk != "" else ""])
+	check(GameState.judge_mode == judge, "%s: judge mode kept as it was" % tag)
+	check(FileAccess.get_md5(Save.path) == h0, "%s: the save file is unchanged by the death and the retry" % tag)
+	DirAccess.remove_absolute(Save.path)
+	Save.path = "user://save.json"

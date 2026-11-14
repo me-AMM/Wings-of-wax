@@ -76,6 +76,10 @@ var mission_kind := ""             # set by the Outpost when a mission starts
 var last_modal_close_ms := 0
 var auto_endings := false         # true in the real game: finishing goes to the ending screens (off in sim_check)
 var game_over := false
+var fail_day := 0                  # the day the run failed on (Retry day N)
+var day_start_state: Dictionary = {}   # the 06:00 state of the current day (autosave / Retry)
+var game_started := false          # false until the Outpost opens (autosave starts then)
+var storm_resolved_today := false  # today's scheduled storm already passed (not repeated after a load)
 var fail_reason := ""             # why the run failed: storm / air / health (picks the ending text)
 var game_result := ""              # "" / "success" / "failed"
 var total_hours := 0.0             # hours since day 1, 06:00 (for cooldowns)
@@ -133,37 +137,99 @@ func new_game() -> void:
 	game_over = false
 	game_result = ""
 	fail_reason = ""
+	fail_day = 0
+	game_started = false
+	time_scale = 1.0
 	total_hours = 0.0
 	_start_day(false)
 
 func to_dict() -> Dictionary:
 	var d := {}
 	for p in get_property_list():
-		if p["usage"] & PROPERTY_USAGE_SCRIPT_VARIABLE and p["name"] not in ["cfg", "days"]:
+		if p["usage"] & PROPERTY_USAGE_SCRIPT_VARIABLE and p["name"] not in ["cfg", "days", "day_start_state", "outpost_spawn"]:
+			var val = get(p["name"])
+			d[p["name"]] = val.duplicate(true) if (val is Array or val is Dictionary) else val
+	return d
+
+# State that is NOT saved: runtime flags, the storm (it comes from the day schedule), scene hand-over values.
+const SAVE_EXCLUDE := ["cfg", "days", "day_start_state", "outpost_spawn", "judge_mode", "auto_endings", "modal_count", "clock_running",
+	"time_scale", "last_modal_close_ms", "card_queue", "mission_kind", "game_over", "game_result", "fail_reason", "fail_day",
+	"storm_state", "storm_size", "storm_event", "storm_left_h", "storm_total_h", "storm_hit_hour", "storm_warned",
+	"later_damage_pct", "later_left_h", "later_base", "pending_mission", "finale_cleared", "in_shelter", "game_started",
+	"day_intro_pending"]
+const INT_FIELDS := ["day", "rations", "radish_meals", "tray_growth", "tray_high_days", "last_gym_day", "no_drink_days",
+	"no_meal_days", "missions_done", "missions_failed"]
+
+# The full game state for a save file (everything the rules need; JSON friendly).
+func save_dict() -> Dictionary:
+	var d := {}
+	for p in get_property_list():
+		if p["usage"] & PROPERTY_USAGE_SCRIPT_VARIABLE and p["name"] not in SAVE_EXCLUDE:
 			var val = get(p["name"])
 			d[p["name"]] = val.duplicate(true) if (val is Array or val is Dictionary) else val
 	return d
 
 func from_dict(d: Dictionary) -> void:
-	var keep_auto := auto_endings          # runtime setting, not part of a saved state
-	pending_mission = {}
-	finale_cleared = false
+	# keep runtime settings (they are not part of a state)
+	var keep_auto := auto_endings
+	var keep_judge := judge_mode
+	var keep_scale := time_scale
+	var keep_started := game_started
 	for k in d:
 		var val = d[k]
 		if val is Array or val is Dictionary:
 			val = val.duplicate(true)
+		if k in SAVE_EXCLUDE and k != "judge_mode":
+			continue
+		if k == "judge_mode":
+			continue
 		set(k, val)
-	modal_count = 0
-	day_intro_pending = true
-	# JSON turns whole numbers into floats: fix the int-like arrays
+	# JSON turns whole numbers into floats: fix the int-like fields
+	for f in INT_FIELDS:
+		set(f, int(get(f)))
 	sliders = sliders.map(func(x): return int(x))
-	rations = int(rations)
-	radish_meals = int(radish_meals)
 	science_hist = {}
 	for k in d.get("science_hist", {}):
 		science_hist[int(k)] = int(d["science_hist"][k])
+	# reset what is not saved
+	pending_mission = {}
+	finale_cleared = false
+	in_shelter = false
+	storm_state = "none"
+	storm_warned = false
+	storm_left_h = 0.0
+	later_left_h = 0.0
+	game_over = false
+	game_result = ""
+	fail_reason = ""
+	modal_count = 0
+	day_intro_pending = true
 	auto_endings = keep_auto
+	judge_mode = keep_judge
+	time_scale = keep_scale
+	game_started = keep_started
 	changed.emit()
+
+# "Retry day N": back to the 06:00 state of the day the run failed on (the save file is never touched).
+func retry_day() -> void:
+	var st: Dictionary = {}
+	if not day_start_state.is_empty() and int(day_start_state.get("day", 0)) == fail_day:
+		st = day_start_state.duplicate(true)
+	else:
+		var snaps: Dictionary = Config.load_json("res://data/day_snapshots.json")      # e.g. after a Judge jump
+		if snaps.has(str(fail_day)):
+			st = snaps[str(fail_day)]
+	var keep_judge := judge_mode
+	var keep_auto := auto_endings
+	var keep_started := game_started
+	if st.is_empty():
+		new_game()
+	else:
+		from_dict(st)
+		day_start_state = st.duplicate(true)
+	judge_mode = keep_judge
+	auto_endings = keep_auto
+	game_started = keep_started
 
 # ---------------------------------------------------------------- helpers
 func clock_text() -> String:
@@ -228,6 +294,8 @@ func finish_game(result: String) -> void:
 		return
 	game_over = true
 	game_result = result
+	if result == "failed":
+		fail_day = day
 	clock_running = false
 	event.emit("game_over", {"result": result})
 	if auto_endings:
@@ -315,7 +383,7 @@ func _run_queue() -> void:
 func _storm_tick(dt: float) -> void:
 	var st = today().get("storm")
 	# scheduled storm (not in a mission): warn when the warning time is reached
-	if st != null and not st["in_mission"] and storm_state == "none" and not storm_warned:
+	if st != null and not st["in_mission"] and storm_state == "none" and not storm_warned and not storm_resolved_today:
 		var warn_h: float = storm_warning_seconds(st["size"]) / cfg["time"]["real_seconds_per_game_hour"]
 		if hour >= st["at"] - warn_h:
 			storm_hit_hour = st["at"]
@@ -348,6 +416,7 @@ func _start_day(emit_intro := true) -> void:
 	in_shelter = false
 	storm_state = "none"
 	storm_warned = false
+	storm_resolved_today = false
 	storm_hit_hour = 0.0
 	var d := today()
 	science_hist[day] = sliders[2]
@@ -363,6 +432,7 @@ func _start_day(emit_intro := true) -> void:
 	day_intro_pending = true
 	if emit_intro:
 		emit_day_intro()
+	day_start_state = save_dict()              # the 06:00 state: autosave and "Retry day N" use it
 	event.emit("day_start", {"day": day})
 	changed.emit()
 
@@ -588,6 +658,7 @@ func storm_hit() -> Dictionary:
 	var size := storm_size
 	var res := {"sheltered": in_shelter, "damage_pct": 0.0, "failed": false, "size": size}
 	storm_state = "none"
+	storm_resolved_today = true
 	if size == "large" or size == "finale":
 		if in_shelter:
 			damage(cfg["storms"]["shelter_damage_big"])

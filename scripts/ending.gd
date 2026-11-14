@@ -4,6 +4,7 @@ extends Control
 
 var success := true
 var star_nodes: Array = []
+var retry_btn: Button
 
 func _ready() -> void:
 	GameState.clock_running = false
@@ -38,11 +39,31 @@ func _ready() -> void:
 			add_child(nj)
 		else:
 			_stars()
-	var next := UIKit.button(Text.t("ui.credits") if success else Text.t("ui.play_again"), 140)
-	next.position = Vector2(466, 310)
-	next.pressed.connect(_next)
-	add_child(next)
-	next.grab_focus()
+	if success:
+		var next := UIKit.button(Text.t("ui.credits"), 140)
+		next.position = Vector2(466, 310)
+		next.pressed.connect(_next)
+		add_child(next)
+		next.grab_focus()
+	else:
+		# failed: two main buttons (Retry day N / Start new game) and a small Title button
+		retry_btn = UIKit.button(Text.t("ui.retry_day") % GameState.fail_day, 190)
+		retry_btn.position = Vector2(34, 304)
+		retry_btn.pressed.connect(_retry)
+		add_child(retry_btn)
+		var newb := UIKit.button(Text.t("ui.new_game_btn"), 190)
+		newb.position = Vector2(244, 304)
+		newb.pressed.connect(_new_game)
+		add_child(newb)
+		var tb := UIKit.button(Text.t("ui.title_btn"), 96)
+		tb.position = Vector2(520, 304)
+		tb.pressed.connect(_to_title)
+		add_child(tb)
+		retry_btn.focus_neighbor_right = newb.get_path()
+		newb.focus_neighbor_left = retry_btn.get_path()
+		newb.focus_neighbor_right = tb.get_path()
+		tb.focus_neighbor_left = newb.get_path()
+		retry_btn.grab_focus()
 	Audio.play("success" if success else "fail")
 
 func _stars() -> void:
@@ -61,8 +82,30 @@ func _stars() -> void:
 
 func _next() -> void:
 	Audio.play("ui_click")
-	Scenes.go("res://scenes/Credits.tscn" if success else "res://scenes/Title.tscn")
+	Scenes.go("res://scenes/Credits.tscn")
+
+# Retry day N: the 06:00 state of that day (everything done since is undone). The save file is never touched.
+func _retry() -> void:
+	Audio.play("ui_click")
+	GameState.retry_day()
+	Scenes.go("res://scenes/Outpost.tscn")
+
+# Start new game: fresh state, character select. The save is only replaced by the next autosave.
+func _new_game() -> void:
+	Audio.play("ui_click")
+	GameState.new_game()
+	Scenes.go("res://scenes/CharacterSelect.tscn")
+
+func _to_title() -> void:
+	Audio.play("ui_click")
+	Scenes.go("res://scenes/Title.tscn")
 
 func _unhandled_input(e: InputEvent) -> void:
 	if e.is_action_pressed("interact"):
-		_next()
+		var f := get_viewport().gui_get_focus_owner()
+		if f is Button:
+			f.pressed.emit()
+		elif success:
+			_next()
+		else:
+			_retry()

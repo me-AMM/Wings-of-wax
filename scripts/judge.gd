@@ -37,8 +37,10 @@ func jump_to_day(d: int) -> void:
 	var snap = snaps.get(str(d))
 	if snap == null:
 		return
+	GameState.judge_mode = true              # judge mode is on from the moment of the jump: nothing is saved
 	GameState.from_dict(snap)
-	GameState.judge_mode = true
+	GameState.day_start_state = GameState.save_dict() if GameState.hour == 6.0 else GameState.day_start_state
+	GameState.game_started = true
 	GameState.card_queue.clear()
 	GameState.mission_kind = ""
 	GameState.clock_running = true

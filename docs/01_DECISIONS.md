@@ -42,3 +42,8 @@ This file overrides docs 02-05 where they disagree. Newer decisions are marked (
 - Sound files: the owner generates them (jsfxr). Wire by file name. Optional fallback in docs/05.
 - Local organizer confirmation that AI art is fine (owner handles it).
 - Hackathon rules, as reported by the organizer and a judge (not seen in writing): AI use allowed if disclosed; research before the event is fine; code, art and sound are made during the event.
+
+## Round 5 decisions (save/load and death, owner)
+9. **Save/load:** one slot, `user://save.json` (version, checksum). Title menu: Start Game / Load Game / Judge Mode. Autosave at 06:00 of every day, manual save from the Esc pause menu (not during a mission, a storm warning or a storm). Storms are not saved: they come from the day schedule.
+10. **Judge mode never touches the save:** `Save.write()` refuses while `judge_mode` is on (hard guard inside write). Load never loads a judge state. Back on the title, judge mode is off.
+11. **Failure screen:** "Retry day N" (the 06:00 state of that day, the save is untouched), "Start new game" (character select, the save is replaced only by the next autosave), and a small "Title" button.
