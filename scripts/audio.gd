@@ -17,6 +17,10 @@ var _loops := {}                              # name -> AudioStreamPlayer
 var _amb := {}                                # name -> {player, target}
 var _levels := {}                             # requested ambience volumes (0..1) from the scene
 var _muted := false
+var _last_ms := {}                            # sound -> last start time (anti-spam, 60 ms)
+var _duck_t := 0.0                            # ambience ducks 6 dB while this is > 0
+const VARY := ["step", "sample_pickup", "ui_click"]
+const IMPORTANT := ["hurt", "lander_touchdown", "success", "fail", "sample_pickup", "interact_done", "warning_low", "suit_o2_low", "harvest", "waypoint_reached", "rare_stone"]
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -90,12 +94,27 @@ func play(sound_name: String) -> void:
 	if sound_name in LOOPS:
 		loop(sound_name, true)
 		return
+	# no spam: the same sound at most once every 60 ms, and at most 2 copies playing at once
+	var now := Time.get_ticks_msec()
+	if now - int(_last_ms.get(sound_name, -1000)) < 60:
+		return
+	var copies := 0
+	for p in _pool:
+		if p.playing and p.get_meta("sound", "") == sound_name:
+			copies += 1
+	if copies >= 2:
+		return
+	_last_ms[sound_name] = now
+	if sound_name in IMPORTANT:
+		_duck_t = 0.4
 	for p in _pool:
 		if not p.playing:
 			p.stream = s
+			p.set_meta("sound", sound_name)
+			# missions: the muffled Outdoor bus; in the outpost: the normal SFX bus; storm alarm and hit: the Alarm bus
 			p.bus = "Alarm" if sound_name in ["storm_warning", "storm_hit"] else ("Outdoor" if outdoor else "SFX")
-			p.pitch_scale = randf_range(0.92, 1.08) if sound_name == "step" else 1.0       # steps vary by 8%
-			p.volume_db = -6.0 if sound_name == "step" else (-8.0 if sound_name == "countdown_tick" else 0.0)
+			p.pitch_scale = randf_range(0.95, 1.05) if sound_name in VARY else 1.0       # +-5% variation
+			p.volume_db = 0.0                    # loudness is set per group in the files (tools/make_sfx.py)
 			p.play()
 			return
 
@@ -124,11 +143,14 @@ func ambience(levels: Dictionary) -> void:
 	_levels = levels
 
 func _process(delta: float) -> void:
+	_duck_t = maxf(0.0, _duck_t - delta)
 	var storm: bool = GameState.storm_state == "warning"
 	for n in _amb:
 		var target: float = 0.0 if storm else float(_levels.get(n, 0.0))
 		var a: Dictionary = _amb[n]
-		a["vol"] = move_toward(a["vol"], target, delta * 1.5)
+		if _duck_t > 0.0 and not storm:
+			target *= 0.5                    # duck about 6 dB under important effects
+		a["vol"] = move_toward(a["vol"], target, delta * 2.0)      # 0.5 s fades in and out
 		a["player"].volume_db = linear_to_db(maxf(a["vol"], 0.0001))      # the Ambience bus is at -18 dB
 	if not storm and _loops.has("storm_warning"):
 		loop("storm_warning", false)

@@ -36,16 +36,27 @@ func _ready() -> void:
 		var peak := 0.0
 		for v in x:
 			peak = maxf(peak, absf(v))
-		check(x.size() > 100 and peak > 0.2 and peak <= 0.72, "Priority 1 '%s': %d samples (%.0f ms), peak %.2f (%.1f dB)" % [n, x.size(), x.size() * 1000.0 / 22050.0, peak, 20.0 * log(maxf(peak, 0.0001)) / log(10.0)])
+		check(x.size() > 100 and peak > 0.1 and peak <= 0.892, "Priority 1 '%s': %d samples (%.0f ms), peak %.2f (%.1f dB)" % [n, x.size(), x.size() * 1000.0 / 22050.0, peak, 20.0 * log(maxf(peak, 0.0001)) / log(10.0)])
 	for n in P2 + P3:
 		var x := samples("res://audio/sfx/%s.wav" % n)
 		var peak := 0.0
 		for v in x:
 			peak = maxf(peak, absf(v))
-		check(x.size() > 50 and peak > 0.1, "'%s' exists and is not silent (peak %.2f)" % [n, peak])
+		check(x.size() > 50 and peak > 0.05 and peak <= 0.892, "'%s' exists, not silent, peak <= -1 dBFS (peak %.2f)" % [n, peak])
+	# loudness table (peak / RMS in dBFS)
+	print("sound              peak dB   RMS dB")
+	for n in P1 + P2 + P3:
+		var x := samples("res://audio/sfx/%s.wav" % n)
+		var peak := 0.0
+		var sq := 0.0
+		for v in x:
+			peak = maxf(peak, absf(v))
+			sq += v * v
+		var rms := sqrt(sq / maxf(1.0, x.size()))
+		print("%-18s %7.1f  %7.1f" % [n, 20.0 * log(maxf(peak, 1e-5)) / log(10.0), 20.0 * log(maxf(rms, 1e-5)) / log(10.0)])
 	# the storm alarm loop is 1 s and starts and ends near zero (no click at the loop point)
 	var sw := samples("res://audio/sfx/storm_warning.wav")
-	check(absf(sw.size() / 22050.0 - 1.0) < 0.01 and absf(sw[sw.size() - 1]) < 0.05 and absf(sw[0]) < 0.05, "storm_warning is a 1 s loop that starts and ends near zero")
+	check(absf(sw.size() / 22050.0 - 1.0) < 0.02 and absf(sw[sw.size() - 1]) < 0.05 and absf(sw[0]) < 0.05, "storm_warning is a 1 s loop that starts and ends near zero")
 	for n in ["suit_breath", "hab_hum", "recycler_hum"]:
 		var x := samples("res://audio/ambience/%s.wav" % n)
 		var steps := 0.0

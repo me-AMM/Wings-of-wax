@@ -11,10 +11,44 @@ PEAK = 10 ** (-3 / 20)            # -3 dB
 random.seed(7)
 
 # ------------------------------------------------------------------ building blocks
-def write(path, samples, normalise=True):
+# Loudness groups (peak in dBFS): steps very quiet, UI quiet, pickups medium, big events louder, alarms loudest.
+# Nothing goes above -1 dBFS.
+GROUP_DB = {"alarm": -1.0, "event": -4.0, "medium": -7.0, "ui": -12.0, "step": -18.0, "amb": -3.0}
+GROUPS = {
+    "alarm": ["storm_warning", "storm_hit"],
+    "event": ["lander_touchdown", "success", "fail", "hurt", "power_down", "warning_low", "suit_o2_low"],
+    "ui": ["ui_click", "ui_hover", "slider_tick", "info_card", "notice", "countdown_tick", "flashlight", "interact_hold"],
+    "step": ["step"],
+}
+def group_of(name):
+    for g, names in GROUPS.items():
+        if name in names:
+            return g
+    return "medium"
+
+def finish(samples):
+    """trim leading silence, then a 5 ms fade in and out so nothing clicks"""
+    i = 0
+    while i < len(samples) and abs(samples[i]) < 0.002:
+        i += 1
+    x = list(samples[i:]) or [0.0]
+    f = max(1, int(SR * 0.005))
+    for k in range(min(f, len(x))):
+        x[k] *= k / f
+        x[-1 - k] *= k / f
+    return x
+
+# RMS targets (dBFS) per group: sounds of one group feel equally loud; the group peak is the upper limit
+GROUP_RMS = {"alarm": -6.0, "event": -12.0, "medium": -15.0, "ui": -20.0, "step": -30.0, "amb": -12.0}
+
+def write(path, samples, normalise=True, peak_db=-3.0, rms_db=None):
+    PEAK = 10 ** (peak_db / 20.0)
     path.parent.mkdir(parents=True, exist_ok=True)
     m = max((abs(s) for s in samples), default=1.0) or 1.0
     k = PEAK / m if normalise else 1.0
+    if normalise and rms_db is not None:
+        rms = math.sqrt(sum(v * v for v in samples) / max(1, len(samples))) or 1.0
+        k = min(k, (10 ** (rms_db / 20.0)) / rms)          # equal loudness, never above the group peak
     buf = io.BytesIO()
     with wave.open(buf, "wb") as w:
         w.setnchannels(1)
@@ -57,6 +91,11 @@ def lowpass(x, fc):
     return out
 
 def osc(kind, f0, dur, f1=None, vol=1.0, attack=0.004, release=0.35):
+    """square and saw are low-passed at about 4 kHz (softer); "soft" = square/triangle mix for UI, step and pickups"""
+    raw = _osc(kind, f0, dur, f1, vol, attack, release)
+    return lowpass(raw, 4000) if kind in ("square", "saw", "soft") else raw
+
+def _osc(kind, f0, dur, f1=None, vol=1.0, attack=0.004, release=0.35):
     n = n_of(dur)
     out = []
     ph = 0.0
@@ -65,6 +104,10 @@ def osc(kind, f0, dur, f1=None, vol=1.0, attack=0.004, release=0.35):
         ph = (ph + f / SR) % 1.0
         if kind == "square":
             s = 1.0 if ph < 0.5 else -1.0
+        elif kind == "soft":
+            sq = 1.0 if ph < 0.5 else -1.0
+            tri = 4.0 * abs(ph - 0.5) - 1.0
+            s = 0.45 * sq + 0.55 * tri
         elif kind == "saw":
             s = 2.0 * ph - 1.0
         else:
@@ -150,8 +193,19 @@ S["ui_hover"] = osc("square", 1000, 0.018, None, 0.3, 0.001, 0.5)
 S["notice"] = osc("square", 1000, 0.07, None, 0.5, 0.004, 0.4)
 S["day_start"] = seq(osc("square", 392, 0.09, None, 0.5), osc("square", 523, 0.16, None, 0.5))
 
+# softer UI / pickup tones: rebuild them with the square/triangle mix
+S["interact_done"] = seq(osc("soft", 660, 0.070), osc("soft", 880, 0.070))
+S["sample_pickup"] = seq(osc("soft", 523, 0.050), osc("soft", 784, 0.050), osc("soft", 1047, 0.050))
+S["ui_click"] = osc("soft", 1000, 0.025, None, 0.8, 0.001, 0.5)
+S["ui_hover"] = osc("soft", 1000, 0.018, None, 0.3, 0.001, 0.5)
+S["slider_tick"] = osc("soft", 700, 0.035, None, 0.6, 0.002, 0.5)
+S["info_card"] = seq(osc("soft", 880, 0.05, None, 0.5), osc("soft", 1320, 0.09, None, 0.5))
+S["notice"] = osc("soft", 1000, 0.07, None, 0.5, 0.004, 0.4)
+S["harvest"] = seq(osc("soft", 440, 0.06), osc("soft", 554, 0.06), osc("soft", 659, 0.10))
+S["star"] = osc("soft", 1400, 0.14, 1800, 0.5, 0.003, 0.5)
+
 for name, data in S.items():
-    write(root / "audio" / "sfx" / f"{name}.wav", data)
+    write(root / "audio" / "sfx" / f"{name}.wav", finish(data), True, GROUP_DB[group_of(name)], GROUP_RMS[group_of(name)])
 
 # ------------------------------------------------------------------ ambience loops: 8 s, seamless (50 ms crossfade)
 def seamless(gen, dur=8.0, cross=0.050):
@@ -176,7 +230,7 @@ def recycler(n):
     return [0.6 * math.sin(2 * math.pi * 180.0 * i / SR) * (0.85 + 0.15 * math.sin(2 * math.pi * 0.5 * i / SR)) + 0.5 * soft[i] for i in range(n)]
 
 amb = root / "audio" / "ambience"
-write(amb / "suit_breath.wav", seamless(breath))
-write(amb / "hab_hum.wav", seamless(hab))
-write(amb / "recycler_hum.wav", seamless(recycler))
+write(amb / "suit_breath.wav", seamless(breath), True, GROUP_DB["amb"])
+write(amb / "hab_hum.wav", seamless(hab), True, GROUP_DB["amb"])
+write(amb / "recycler_hum.wav", seamless(recycler), True, GROUP_DB["amb"])
 print(len(S), "sound effects + 3 ambience loops (8 s) written")
