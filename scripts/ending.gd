@@ -20,6 +20,8 @@ func _ready() -> void:
 	panel.size = Vector2(600, 184)
 	add_child(panel)
 	var lines: Array = Text.list("ending_success" if success else "ending_failed")
+	if not success and Text.list("ending_failed_" + GameState.fail_reason).size() > 0:
+		lines = Text.list("ending_failed_" + GameState.fail_reason)
 	var body := UIKit.world_label("\n".join(lines), 16)
 	body.position = Vector2(34, 176)
 	body.size = Vector2(572, 92)

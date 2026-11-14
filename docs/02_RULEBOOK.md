@@ -64,7 +64,7 @@ All values are game-scaled. Put them in data/config.json. docs/01_DECISIONS.md o
 - **Owner decision:** the countdown belongs to the game and keeps running when you leave the mission. You must WALK to the shelter at the Outpost and enter it before it ends. Nothing clears a storm automatically. The mission result (samples, research) is applied only after the storm is resolved; large/finale not sheltered = mission failed (finale: failed ending). Finale sheltered: the crew lander arrives, short extraction scene, ending.
 - Damage is a % of CURRENT Health. Watch high also shows "storm expected tomorrow" on the HUD the day before.
 - The forecast board in the lab is free to read; at watch medium or high it names the next storm and its day.
-- **Owner decision:** the shelter opens ONLY while a storm warning is active (otherwise locked, "Opens during a storm"). Large/finale storm outside the shelter: mission failed AND -40% of current Health. Small/medium damage = 30%+20% / 50%+30% of the Health at storm start, the second part over about 10 s.
+- **Owner decision:** the shelter opens ONLY while a storm warning is active (otherwise locked, "Opens during a storm"). Large/finale storm outside the shelter is FATAL (round 4): Health 0, failed ending ("You did not reach the shelter in time. Mission failed. Try again!"); sheltered = -5 and the run continues. Small/medium damage = 30%+20% / 50%+30% of the Health at storm start, the second part over about 10 s.
 - Shelter: forced sleep until the day ends, counts as that day's sleep, the player can't leave. Undone chores are delayed, not lost.
 - The countdown stands for incoming particles, not the flare's light (first info card says so).
 

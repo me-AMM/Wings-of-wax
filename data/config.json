@@ -140,8 +140,7 @@
     "mission_warning_range": [
       0.25,
       0.4
-    ],
-    "large_unsheltered_hit": 40
+    ]
   },
   "missions": {
     "length_s": 90,

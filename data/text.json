@@ -388,5 +388,13 @@
     "suit": "Suit out of air! Health -30",
     "oxygen": "Oxygen reserve empty!",
     "storm": "Storm damage!"
-  }
+  },
+  "ending_failed_storm": [
+    "You did not reach the shelter in time.",
+    "Mission failed. Try again!"
+  ],
+  "ending_failed_air": [
+    "You ran out of air at the outpost.",
+    "Watch life support and power next time. Try again, you can do it!"
+  ]
 }

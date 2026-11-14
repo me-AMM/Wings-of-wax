@@ -75,6 +75,7 @@ var mission_kind := ""             # set by the Outpost when a mission starts
 var last_modal_close_ms := 0
 var auto_endings := false         # true in the real game: finishing goes to the ending screens (off in sim_check)
 var game_over := false
+var fail_reason := ""             # why the run failed: storm / air / health (picks the ending text)
 var game_result := ""              # "" / "success" / "failed"
 var total_hours := 0.0             # hours since day 1, 06:00 (for cooldowns)
 var queue: Array = []              # today's timed events: {t, name}
@@ -129,6 +130,7 @@ func new_game() -> void:
 	judge_mode = false
 	game_over = false
 	game_result = ""
+	fail_reason = ""
 	total_hours = 0.0
 	_start_day(false)
 
@@ -206,6 +208,8 @@ func damage(amount: float, reason := "") -> void:
 	health = maxf(0.0, health - amount)
 	event.emit("hurt", {"amount": amount, "reason": reason})
 	if health <= 0.0:
+		if fail_reason == "":
+			fail_reason = "air" if reason == "oxygen" else "health"
 		finish_game("failed")
 	changed.emit()
 
@@ -225,7 +229,8 @@ func finish_game(result: String) -> void:
 	clock_running = false
 	event.emit("game_over", {"result": result})
 	if auto_endings:
-		call_deferred("_goto_ending", result)
+		# a short pause so the red flash and shake of the last hit can be seen
+		get_tree().create_timer(1.3).timeout.connect(func(): _goto_ending(result))
 
 # ---------------------------------------------------------------- time
 # Real-time driver: scenes that want the clock to run add this node to the tree and
@@ -580,9 +585,9 @@ func storm_hit() -> Dictionary:
 			res["damage_pct"] = 5.0
 		else:
 			res["failed"] = true
-			var hit: float = cfg["storms"]["large_unsheltered_hit"]       # mission failed AND 40% of current health
-			damage(health * hit / 100.0, "storm")
-			res["damage_pct"] = hit
+			res["damage_pct"] = 100.0
+			fail_reason = "storm"
+			damage(health, "storm")                  # a large/finale storm outside the shelter is FATAL: Health 0, failed ending
 	elif not in_shelter:
 		var now: float = cfg["storms"]["unsheltered_now_pct"][size]
 		var later: float = cfg["storms"]["unsheltered_later_pct"][size]

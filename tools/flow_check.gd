@@ -34,6 +34,7 @@ func _ready() -> void:
 			await damage_case(size, host)
 	await shelter_lock_case()
 	await audio_case()
+	await large_fatal_case()
 	# ---------------- finale paths (scenes)
 	await finale_case(true)
 	await finale_case(false)
@@ -68,7 +69,7 @@ func storm_case(d: int, kind: String, size: String, in_time: bool) -> void:
 			check(GameState.pending_research.size() == r0 + 1 and GameState.health <= hp0, tag + ": samples kept, small damage only")
 		else:
 			check(GameState.pending_research.size() == r0 and GameState.missions_failed == 1, tag + ": mission failed, samples lost")
-			check(absf(GameState.health - hp0 * 0.6) < 2.5, tag + ": AND 40%% of current Health lost (%.0f -> %.0f)" % [hp0, GameState.health])
+			check(GameState.health == 0.0 and GameState.game_over and GameState.game_result == "failed" and GameState.fail_reason == "storm", tag + ": FATAL (Health %.0f -> 0, failed ending)" % hp0)
 	else:
 		check(GameState.pending_research.size() == r0 + 1, tag + ": samples kept")
 		if in_time:
@@ -114,7 +115,10 @@ func damage_case(size: String, host: String) -> void:
 	var hp0 := GameState.health
 	GameState.advance(GameState.storm_total_h + 1.6)       # countdown, then the damage over time
 	var limit: float = {"small": 0.75, "medium": 0.6, "large": 0.62}[size]
-	check(GameState.health < hp0 * limit, "%s storm in the %s outside the shelter: Health %.0f -> %.0f" % [size, host, hp0, GameState.health])
+	if size == "large":
+		check(GameState.health == 0.0 and GameState.game_over, "large storm in the %s outside the shelter is FATAL (Health %.0f -> %.0f)" % [host, hp0, GameState.health])
+	else:
+		check(GameState.health < hp0 * limit, "%s storm in the %s outside the shelter: Health %.0f -> %.0f" % [size, host, hp0, GameState.health])
 	GameState.modal_count = 0
 	scene.queue_free()
 	await get_tree().process_frame
@@ -159,3 +163,23 @@ func audio_case() -> void:
 	check(Audio._loops.has("storm_warning"), "the storm alarm loop is playing during the warning")
 	scene.queue_free()
 	await get_tree().process_frame
+
+# Large storm: unsheltered = fatal and EndingFailed with the storm text; sheltered = -5 and the run continues.
+func large_fatal_case() -> void:
+	GameState.new_game()
+	GameState.auto_endings = true
+	Judge.jump_to_day(24)
+	get_tree().change_scene_to_file("res://scenes/Outpost.tscn")
+	await wait_scene("Outpost", 5.0)
+	GameState.start_storm_warning("large", "large1")
+	GameState.advance(GameState.storm_total_h + 0.2)
+	check(await wait_scene("EndingFailed", 10.0), "large storm outside the shelter reaches EndingFailed")
+	check(GameState.fail_reason == "storm" and GameState.health == 0.0, "  ... reason 'storm', Health 0")
+	GameState.new_game()
+	GameState.auto_endings = true
+	Judge.jump_to_day(24)
+	GameState.start_storm_warning("large", "large1")
+	GameState.enter_shelter()
+	var hp := GameState.health
+	GameState.advance(GameState.storm_total_h + 0.2)
+	check(not GameState.game_over and GameState.health >= hp - 5.01 and GameState.health > 0.0, "large storm sheltered: tiny damage (-5), the run continues")
