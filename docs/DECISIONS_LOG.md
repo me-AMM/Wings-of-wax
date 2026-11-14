@@ -17,3 +17,7 @@
 - PART 0B: player_speed (config player.player_speed) = 85 px/s. The brief asked for about 3.2x the old 55 (=176) but also a 15-20 s chore loop; 176 gives ~7 s, so the loop time wins (measured in collision_check). Walk animation speed_scale 1.5, dust puff every 96 px walked. Mission world is 1400x700 (waypoint and samples further apart), timers unchanged.
 - PART 1: collision is real (StaticBody2D "Footprint" from sprite alpha, tools/footprints.py). collision_check.gd: 0 failures, every interaction point reachable. Chore loop measured by A* on a 4 px grid: 1137 px; player_speed set to 68 px/s = 16.7 s (inside the 15-20 s target).
 - PART 2: greenhouse and tray are one unit (both kind "tray", one lock on the greenhouse).
+- PART 3: font = Pixelify Sans (SIL OFL 1.1, Stefie Justprince, from google/fonts on GitHub; Monogram skipped, itch.io has no direct download). Import: antialiasing/hinting/subpixel off. Theme theme/game_theme.tres is the project theme. Credits line and fonts/LICENSE added.
+- PART 4: HUD, storm banner, forecast board, title and Judge panel are drawn in real 640x360 pixels; menus/info cards are authored in 320x180 units inside 2x CanvasLayers with labels drawn at scale 0.5 so glyphs stay crisp. Not done: panels as StyleBoxTexture (NinePatchRect with the same margins is used), per-menu button width rule only on Title buttons.
+- PART 5: Judge panel rewritten in real pixels (420x300), flat buttons, visible slider, J toggles.
+- ui_check.gd, collision_check.gd and sim_check.gd all pass.
