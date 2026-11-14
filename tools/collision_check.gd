@@ -17,6 +17,9 @@ func _ready() -> void:
 		await get_tree().physics_frame
 	space = get_viewport().world_2d.direct_space_state
 	_run(o)
+	o.queue_free()
+	for k in ["rock", "ice", "finale"]:
+		await mission_check(k)
 	get_tree().quit(1 if fails > 0 else 0)
 
 func _blocked_point(p: Vector2) -> bool:
@@ -121,3 +124,59 @@ func _run(o: Node) -> void:
 	var speed: float = Config.data["player"]["player_speed"]
 	print("chore loop: %d px at %d px/s = %.1f s (target 15-20 s)" % [total, speed, total / speed])
 	print("collision_check FAILS: ", fails)
+
+# Mission map: every objective reachable (A* on a 4 px grid) and the suit left after a good route (target 15-25% on 100 s).
+func mission_check(kind: String) -> void:
+	GameState.new_game()
+	GameState.mission_kind = kind
+	var m = load("res://scenes/Mission.tscn").instantiate()
+	add_child(m)
+	for i in 4:
+		await get_tree().physics_frame
+	space = get_viewport().world_2d.direct_space_state
+	var cols := int(m.world_size.x / CELL)
+	var rows := int(m.world_size.y / CELL)
+	var astar := AStarGrid2D.new()
+	astar.region = Rect2i(0, 0, cols, rows)
+	astar.cell_size = Vector2(CELL, CELL)
+	astar.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
+	astar.update()
+	for y in rows:
+		for x in cols:
+			if _blocked_circle(Vector2(x, y) * CELL):
+				astar.set_point_solid(Vector2i(x, y), true)
+	var pts: Array = [m.base_pos + Vector2(0, 40)]
+	if kind == "rock":
+		pts.append_array(m.sample_positions)
+	elif kind == "ice":
+		pts.append(m.ice_pos)
+	pts.append(m.flag_pos)
+	pts.append(m.base_pos + Vector2(0, 20))
+	var speed: float = Config.data["player"]["player_speed"]
+	var drain := 2.0 + (10.0 if kind == "ice" else 0.0) + (3.0 if kind == "rock" else 0.0)
+	var ok := true
+	for i in range(pts.size() - 1):
+		var a := Vector2i(pts[i] / CELL)
+		var b := Vector2i(pts[i + 1] / CELL)
+		var path := astar.get_point_path(a, b)
+		if path.size() == 0:
+			ok = false
+			break
+		for k in range(1, path.size()):
+			var step: float = path[k].distance_to(path[k - 1])
+			var in_c := false
+			for c in m.crater_centers:
+				if path[k].distance_to(c) < 58.0:
+					in_c = true
+			drain += step / speed * (2.5 if in_c else 1.0)      # crater: half speed x 1.25 drain
+		var d0: float = pts[i].distance_to(pts[i + 1])
+		if d0 < m.world_size.x * 0.25 and i == 0 and kind != "finale":
+			fails += 1
+			print("FAIL nearest objective is closer than a quarter of the map width")
+	var suit: float = 140.0 if kind == "rock" else 100.0           # mission 1 (rock) has 140 s
+	var left := (suit - drain) / suit * 100.0
+	print("MISSION %-6s reachable=%s  drain %.0f s of %.0f s -> %.0f%% left (target 15-25%% on a 100 s suit)" % [kind, ok, drain, suit, left])
+	if not ok:
+		fails += 1
+	m.queue_free()
+	await get_tree().process_frame

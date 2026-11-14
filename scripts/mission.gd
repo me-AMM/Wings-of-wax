@@ -6,13 +6,17 @@ extends Node2D
 # Everything you may want to tweak is an exported variable below. Positions are in pixels.
 
 @export var world_size := Vector2(2240, 1120)
-@export var base_pos := Vector2(150, 560)             # exit marker = start
+@export var base_pos := Vector2(150, 580)             # exit marker = start
 @export var exit_radius := 70.0
 @export var exit_hold := 2.0
 @export var flag_pos := Vector2(2060, 560)
-@export var sample_positions: Array[Vector2] = [Vector2(820, 260), Vector2(1250, 900), Vector2(1760, 280)]
-@export var ice_pos := Vector2(900, 470)
-@export var crater_centers: Array[Vector2] = [Vector2(560, 540), Vector2(1080, 430), Vector2(1500, 640), Vector2(1900, 430), Vector2(1100, 840)]
+@export var sample_positions: Array[Vector2] = [Vector2(820, 420), Vector2(1240, 600), Vector2(1680, 520)]
+@export var ice_pos := Vector2(800, 430)
+@export var crater_centers: Array[Vector2] = [Vector2(350, 300), Vector2(714, 696), Vector2(1154, 444), Vector2(1594, 696), Vector2(1950, 330)]
+# Serpentine of boulder-wall barriers (solid): you must zigzag through the gaps. Gaps alternate bottom / top.
+@export var barrier_x: Array[float] = [560.0, 1000.0, 1440.0, 1880.0]
+@export var gap_bottom := Vector2(860, 1060)      # y range of the gap in barriers 1 and 3
+@export var gap_top := Vector2(50, 250)           # y range of the gap in barriers 2 and 4
 @export var pick_radius := 30.0
 @export var flag_radius := 28.0
 @export var dark_tint := Color(0.3, 0.34, 0.58)
@@ -105,6 +109,8 @@ func _build_world() -> void:
 	ground.add_child(_tile("boulder_wall", Rect2(0, world_size.y - 32, world_size.x, 32)))
 	ground.add_child(_tile("boulder_wall", Rect2(0, 0, 32, world_size.y)))
 	ground.add_child(_tile("boulder_wall", Rect2(world_size.x - 32, 0, 32, world_size.y)))
+	for r in _barriers():
+		ground.add_child(_tile("boulder_wall", r))
 	for c in crater_centers:
 		ground.add_child(_tile("ground_dark", Rect2(c - Vector2(64, 40), Vector2(128, 80))))
 		_sprite("crater_large", c, ground, false)
@@ -145,6 +151,17 @@ func _build_world() -> void:
 		fl.play("default")
 		items.append({"node": fl, "type": "flag", "done": false, "pos": flag_pos})
 
+# The barrier rectangles (solid).
+func _barriers() -> Array[Rect2]:
+	var out: Array[Rect2] = []
+	for i in barrier_x.size():
+		var x: float = barrier_x[i]
+		if i % 2 == 0:
+			out.append(Rect2(x - 32.0, 0.0, 64.0, gap_bottom.x))
+		else:
+			out.append(Rect2(x - 32.0, gap_top.y, 64.0, world_size.y - gap_top.y))
+	return out
+
 # Real collision: solid world walls and Area2D SLOW ZONES for the craters (polygon of the crater floor from
 # data/footprints.json; no collision on the rim).
 func _poly(key: String) -> PackedVector2Array:
@@ -159,7 +176,9 @@ func _build_collision() -> void:
 	walls.collision_layer = 1
 	walls.collision_mask = 0
 	var w := world_size
-	for r in [Rect2(-64, -64, w.x + 128, 96), Rect2(-64, w.y - 32, w.x + 128, 96), Rect2(-64, -64, 96, w.y + 128), Rect2(w.x - 32, -64, 96, w.y + 128)]:
+	var rects: Array = [Rect2(-64, -64, w.x + 128, 96), Rect2(-64, w.y - 32, w.x + 128, 96), Rect2(-64, -64, 96, w.y + 128), Rect2(w.x - 32, -64, 96, w.y + 128)]
+	rects.append_array(_barriers())
+	for r in rects:
 		var wp := CollisionPolygon2D.new()
 		wp.polygon = PackedVector2Array([r.position, Vector2(r.end.x, r.position.y), r.end, Vector2(r.position.x, r.end.y)])
 		wp.add_to_group("footprint_shape")
