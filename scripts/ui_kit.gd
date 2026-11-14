@@ -5,10 +5,8 @@ extends RefCounted
 const FONT := 10
 
 # Text sizes are snapped to the pixel font's clean sizes (virtual units; UI layers are drawn at 2x):
-# 6 = small (12 px real), 8 = body (16), 12 = heading (24), 16 = title (32), 24 = splash (48).
+# Silkscreen is an 8 px font: use whole multiples only. 8 = body/small (16 real), 12 = heading (24), 16 = title (32), 24 = splash (48).
 static func snap_size(size: int) -> int:
-	if size <= 7:
-		return 6
 	if size <= 10:
 		return 8
 	if size <= 13:
@@ -37,7 +35,8 @@ static func box(l: Control, w: float, h: float) -> void:
 	l.custom_minimum_size = l.size
 
 # Label for the world (scale 1, real pixels): prompts and lock labels above buildings.
-static func world_label(text: String, px: int = 12, color: Color = Color.WHITE) -> Label:
+static func world_label(text: String, px: int = 16, color: Color = Color.WHITE) -> Label:
+	px = maxi(16, int(round(px / 8.0)) * 8)      # whole multiples of the font size 8, never below 16
 	var l := Label.new()
 	l.text = text
 	l.add_theme_font_size_override("font_size", px)

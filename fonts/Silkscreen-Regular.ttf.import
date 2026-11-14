@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://bix1yjnei3jwn"
-path="res://.godot/imported/PixelifySans.ttf-fc5a9a3e822b21581d248cfb12b28920.fontdata"
+uid="uid://duobaxgoylt7e"
+path="res://.godot/imported/Silkscreen-Regular.ttf-e7c9095ae8ad479e83bb3f0632782855.fontdata"
 
 [deps]
 
-source_file="res://fonts/PixelifySans.ttf"
-dest_files=["res://.godot/imported/PixelifySans.ttf-fc5a9a3e822b21581d248cfb12b28920.fontdata"]
+source_file="res://fonts/Silkscreen-Regular.ttf"
+dest_files=["res://.godot/imported/Silkscreen-Regular.ttf-e7c9095ae8ad479e83bb3f0632782855.fontdata"]
 
 [params]
 

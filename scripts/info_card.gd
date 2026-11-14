@@ -11,7 +11,7 @@ var idx := 0
 const PX := 70.0         # panel left (virtual)
 const PY := 24.0
 const PW := 180.0
-const PH := 132.0
+const PH := 150.0
 const PAD := 14.0        # 8 px inner padding on top of the 9-slice border
 
 func _ready() -> void:
@@ -22,20 +22,20 @@ func _ready() -> void:
 	root.add_child(UIKit.panel(Vector2(PX, PY), Vector2(PW, PH)))
 	title_l = UIKit.label("", 8, Color("FFD23F"))
 	title_l.position = Vector2(PX + PAD, PY + PAD - 2)
-	UIKit.box(title_l, PW - 2 * PAD, 12)
+	UIKit.box(title_l, PW - 2 * PAD - 20, 12)
 	root.add_child(title_l)
 	body_l = UIKit.label("", 8)
 	body_l.position = Vector2(PX + PAD, PY + PAD + 12)
-	UIKit.box(body_l, PW - 2 * PAD, 62)
+	UIKit.box(body_l, PW - 2 * PAD, 76)
 	body_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	root.add_child(body_l)
 	src_l = UIKit.label("", 6, Color(0.65, 0.7, 0.85))
-	src_l.position = Vector2(PX + PAD, PY + PH - PAD - 20)
-	UIKit.box(src_l, PW - 2 * PAD - 28, 18)
+	src_l.position = Vector2(PX + PAD, PY + PH - PAD - 24)
+	UIKit.box(src_l, PW - 2 * PAD, 24)
 	src_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	root.add_child(src_l)
 	var ek := UIKit.icon("icon_ekey", 16)
-	ek.position = Vector2(PX + PW - PAD - 16, PY + PH - PAD - 16)
+	ek.position = Vector2(PX + PW - PAD - 16, PY + PAD - 4)
 	root.add_child(ek)
 	_show()
 

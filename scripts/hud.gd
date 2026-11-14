@@ -5,8 +5,8 @@ extends CanvasLayer
 # Also: notice line at the bottom, floating toasts, day splash, black fade, blinking storm icon.
 
 @export var strip_height := 36.0
-@export var first_cell := 100.0      # clock cell
-@export var cell_width := 75.0       # icon 32 + value (widest value "40.0L" = 41 px)
+@export var first_cell := 140.0      # clock cell ("DAY 32 06:00" in Silkscreen 16)
+@export var cell_widths: Array[float] = [58.0, 76.0, 70.0, 70.0, 70.0, 84.0]   # icon 32 + value, fixed so digits never jitter
 @export var notice_seconds := 4.0
 
 var sky_icon: TextureRect
@@ -41,36 +41,37 @@ func _build() -> void:
 	# cell 0: "Day N hh:mm" (the sun/moon icon sits under the strip, next to the storm icon)
 	clock_label = _text(Vector2(4, 8), 16, root)
 	clock_label.custom_minimum_size = Vector2(first_cell - 6.0, 20)
-	sky_icon = _icon("icon_sun", Vector2(4, strip_height + 2), root)
+	sky_icon = _icon("icon_sun", Vector2(604, strip_height + 2), root)
 	# stat cells (icon 32 + value in a fixed-width cell)
 	var defs := [
 		["icon_ration", func(): return str(GameState.meals_left())],
-		["icon_water", func(): return "%.1fL" % GameState.water],
+		["icon_water", func(): return "%.1f" % GameState.water],
 		["icon_oxygen", func(): return "%dh" % int(round(GameState.oxygen_h))],
-		["icon_pack", func(): return "%d%%" % int(round(GameState.base_pack))],
-		["icon_pack", func(): return "%d%%" % int(round(GameState.spare_pack))],
+		["icon_pack", func(): return "%d" % int(round(GameState.base_pack))],
+		["icon_pack", func(): return "%d" % int(round(GameState.spare_pack))],
 		["icon_research", func(): return "%d%%" % int(round(GameState.research))],
 	]
+	var x := first_cell
 	for i in defs.size():
-		var x := first_cell + i * cell_width
 		var ic := _icon(defs[i][0], Vector2(x, 2), root)
-		var lb := _text(Vector2(x + 33, 8), 16, root)
-		lb.custom_minimum_size = Vector2(cell_width - 33.0, 20)
+		var lb := _text(Vector2(x + 34, 8), 16, root)
+		lb.custom_minimum_size = Vector2(cell_widths[i] - 34.0, 20)
 		if i == 4:
 			lb.add_theme_color_override("font_color", Color("9BE8FF"))    # spare pack on the charger
 		stats.append({"icon": ic, "label": lb, "get": defs[i][1]})
+		x += cell_widths[i]
 	# health: heart + red bar (bar_frame + fill)
-	var hx := first_cell + defs.size() * cell_width
+	var hx := x
 	_icon("icon_heart", Vector2(hx, 2), root)
 	health_bar = HudBar.new().setup(640.0 - hx - 38.0, Color("E5484D"))
 	health_bar.position = Vector2(hx + 34, 10)
 	root.add_child(health_bar)
 	# blinking storm icon under the strip
-	storm_icon = _icon("icon_storm", Vector2(40, strip_height + 2), root)
+	storm_icon = _icon("icon_storm", Vector2(568, strip_height + 2), root)
 	storm_icon.visible = false
-	blackout_icon = _icon("icon_blackout", Vector2(76, strip_height + 2), root)
+	blackout_icon = _icon("icon_blackout", Vector2(532, strip_height + 2), root)
 	blackout_icon.visible = false
-	judge_label = _text(Vector2(280, strip_height + 4), 16, root, Color("F06FA8"))
+	judge_label = _text(Vector2(4, strip_height + 4), 16, root, Color("F06FA8"))
 	judge_label.text = Text.t("ui.judge_label")
 	judge_label.visible = false
 	# notice line
