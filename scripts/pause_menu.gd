@@ -29,6 +29,6 @@ func _confirm_quit() -> void:
 	m.items = [
 		{"icon": "icon_lock", "text": Text.t("ui.no")},
 		{"icon": "icon_sleep", "text": Text.t("ui.yes"), "sub": Text.t("ui.confirm_quit_sub"), "call": func(): Scenes.go("res://scenes/Title.tscn")}]
-	m.menu_width = 250.0
+	m.menu_width = 300.0
 	get_parent().add_child(m)
 	m.build()

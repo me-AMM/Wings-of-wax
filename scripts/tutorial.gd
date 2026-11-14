@@ -58,8 +58,10 @@ func _next_goal() -> Array:
 		return ["radish", "Tray"]
 	if gs.day == 3 and not gs.sliders_tried:
 		return ["sliders", "Console"]
-	if not gs.slept_today:
+	if not gs.slept_today and fmod(gs.hour, 24.0) >= 18.0:
 		return ["sleep", "Habitat"]
+	if not gs.slept_today:
+		return ["wait", ""]
 	return ["done", ""]
 
 func _process(delta: float) -> void:

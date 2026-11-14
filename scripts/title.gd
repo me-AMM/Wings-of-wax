@@ -93,9 +93,10 @@ func _on_start() -> void:
 		m.title_text = Text.t("ui.new_game_q")
 		m.items = [
 			{"icon": "icon_heart", "text": Text.t("ui.yes"), "sub": Text.t("ui.new_game_sub"), "call": _begin_new},
-			{"icon": "icon_lock", "text": Text.t("ui.no")}]
+			{"icon": "icon_clock", "text": Text.t("ui.no")}]
 		m.sel = 1
-		m.menu_width = 280.0
+		m.menu_width = 300.0
+		m.closed.connect(func(): start_btn.grab_focus())     # keyboard focus comes back after No
 		add_child(m)
 		m.build()
 	else:

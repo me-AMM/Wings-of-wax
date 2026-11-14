@@ -26,9 +26,13 @@ func _ready() -> void:
 		lines = Text.list("ending_failed_" + GameState.fail_reason)
 	var body := UIKit.world_label("\n".join(lines), 16)
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body.add_theme_font_size_override("font_size", 8)   # 4 lines of story text must fit above the percent line
+	body.add_theme_font_size_override("font_size", 16 if not (name == "EndingSuccess") else 12)   # 4 lines of story text must fit above the percent line
 	add_child(body)
-	body.position = Vector2(34, 180)
+	if not success:
+		var head := UIKit.world_label(Text.t("ui.failed_title"), 24, UIStyle.DANGER)
+		head.position = Vector2(34, 176)
+		add_child(head)
+	body.position = Vector2(34, 180 if success else 210)
 	body.size = Vector2(560, 84)          # set after add_child so the wrap width sticks
 	if success:
 		var pct := UIKit.world_label(Text.t("ui.ending_percent") % int(round(GameState.research)), 24, UIStyle.ACCENT)

@@ -86,6 +86,9 @@ func _go() -> void:
 	Scenes.go("res://scenes/Story.tscn")
 
 func _unhandled_input(e: InputEvent) -> void:
+	if e is InputEventKey and e.pressed and e.keycode == KEY_ESCAPE:
+		Scenes.go("res://scenes/Title.tscn")
+		return
 	var f := get_viewport().gui_get_focus_owner()
 	if f is LineEdit:
 		return

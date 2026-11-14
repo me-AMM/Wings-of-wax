@@ -37,6 +37,7 @@ func _ready() -> void:
 		var gw := gs.can_gym()
 		items.append({"icon": "icon_gym", "text": Text.t("ui.gym"), "sub": Text.t(gw) if gw != "" else "+5 " + Text.t("ui.health_word"),
 			"enabled": gw == "", "call": func(): outpost.do_gym()})
+	menu_width = 260.0
 	build()
 
 func _eat(kind: String) -> void:

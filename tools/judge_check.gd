@@ -182,7 +182,8 @@ func press_and_assert(host: String, nm: String, b: Button, panel: Node) -> Strin
 		"Close":
 			b.pressed.emit()
 			await frames(3)
-			if Judge.panel != null and is_instance_valid(Judge.panel) and not Judge.panel.is_queued_for_deletion():
+			await frames(20)                          # the panel fades out (0.12 s) before it is freed
+			if Judge.panel != null and is_instance_valid(Judge.panel) and Judge.panel.is_open:
 				return "panel still open"
 		"Start game":
 			b.pressed.emit()

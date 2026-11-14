@@ -19,6 +19,7 @@ const PauseMenuScript := preload("res://scripts/pause_menu.gd")
 @export var barrier_x: Array[float] = [560.0, 1000.0, 1440.0, 1880.0]
 @export var gap_bottom := Vector2(860, 1060)      # y range of the gap in barriers 1 and 3
 @export var gap_top := Vector2(50, 250)           # y range of the gap in barriers 2 and 4
+@export var finale_stone_pos := Vector2(1220, 600)   # between walls 2 and 3
 @export var pick_radius := 30.0
 @export var flag_radius := 28.0
 @export var dark_tint := Color(0.3, 0.34, 0.58)
@@ -135,6 +136,7 @@ func _build_world() -> void:
 		var n := _sprite("ice_deposit", ice_pos, world)
 		items.append({"node": n, "type": "ice", "done": false, "pos": ice_pos})
 	if kind == "finale":
+		flag_pos = finale_stone_pos                  # the finale is shorter: the storm is the challenge
 		var st := AnimatedSprite2D.new()
 		st.sprite_frames = Art.frames("rare_stone_glow")
 		st.centered = false
@@ -206,7 +208,7 @@ func _build_player() -> void:
 	player.set_script(load("res://scripts/player.gd"))
 	player.position = base_pos + Vector2(0, 40)
 	world.add_child(player)
-	player.world_min = Vector2(40, 40)
+	player.world_min = Vector2(40, 84)          # never walk up under the HUD strip
 	player.world_max = world_size - Vector2(40, 36)
 	base_speed = Config.data["player"]["player_speed"]
 	var cam := Camera2D.new()
@@ -414,10 +416,28 @@ func _update_arrow() -> void:
 			if d < best:
 				best = d
 				dest = it["pos"]
+	dest = _via_gap(dest)                            # through the next gap if a wall is in the way
 	var dist := player.position.distance_to(dest)
 	arrow.visible = dist > 80.0
 	arrow.rotation = (dest - player.position).angle()
 	arrow.position = Vector2(0, -34) + Vector2.from_angle(arrow.rotation) * 24.0
+
+# If a boulder wall stands between the player and the target, point at that wall's gap instead.
+func _via_gap(dest: Vector2) -> Vector2:
+	var px := player.position.x
+	var best_i := -1
+	var best_dx := 1e9
+	for i in barrier_x.size():
+		var bx: float = barrier_x[i]
+		if (px < bx and dest.x > bx) or (px > bx and dest.x < bx):
+			var dx := absf(bx - px)
+			if dx < best_dx:
+				best_dx = dx
+				best_i = i
+	if best_i < 0:
+		return dest
+	var gap := gap_bottom if best_i % 2 == 0 else gap_top
+	return Vector2(barrier_x[best_i], (gap.x + gap.y) / 2.0)
 
 func _use_target() -> void:
 	if target == null or target is String:
@@ -483,7 +503,7 @@ func _end(success: bool, msg_key: String) -> void:
 	m.title_text = Text.t("ui.mission_done") if success else Text.t("ui.mission_failed")
 	m.items = [{"icon": "icon_research" if success else "icon_storm", "text": Text.t("ui.ok"), "sub": Text.t(msg_key),
 		"call": func(): Scenes.go("res://scenes/Outpost.tscn")}]
-	m.menu_width = 250.0
+	m.menu_width = 300.0
 	add_child(m)
 	m.build()
 
