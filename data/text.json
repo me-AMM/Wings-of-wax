@@ -88,7 +88,8 @@
     "stars": "Stars",
     "play_again": "Play again",
     "credits": "Credits",
-    "title_menu": "Title screen"
+    "title_menu": "Title screen",
+    "habitat": "Habitat"
   },
   "notices": {
     "cargo_tomorrow": "Cargo lander arrives tomorrow at 07:00.",
@@ -117,7 +118,12 @@
     "fc_low_watch": "Set storm watch to medium to see the next storm.",
     "fc_next": "Next storm: %s on day %d."
   },
-  "storm_names": { "small": "Small storm", "medium": "Medium storm", "large": "Large storm", "finale": "Huge storm" },
+  "storm_names": {
+    "small": "Small storm",
+    "medium": "Medium storm",
+    "large": "Large storm",
+    "finale": "Huge storm"
+  },
   "story": [
     "You arrived at the Moon's south pole on an Artemis lander. The Sun circles low in the sky here, and some craters never see daylight.",
     "Your crew is working far from the outpost. Until they return, the outpost is yours to run: power, air, water and food.",
@@ -142,37 +148,165 @@
     "This game is not endorsed by NASA."
   ],
   "cards": {
-    "welcome": { "title": "Welcome to the south pole", "body": "The Sun circles low here, so there is no daily night. But some craters are always dark, and the Moon's shadows can block the Sun for days.", "source": "NASA Artemis" },
-    "breathing": { "title": "Breathing", "body": "One astronaut breathes about 0.84 kg of oxygen every day. Your habitat keeps a reserve of oxygen, and life support keeps it topped up.", "source": "NASA ISS life support" },
-    "radishes": { "title": "Radishes", "body": "Radishes grow fast. On the Space Station plants take about 27 days to grow, but here we speed it up about 4 times so you can harvest in 7 days.", "source": "NASA Veggie" },
-    "recycling": { "title": "Recycling", "body": "The Space Station recycles about 98% of its water. Your breath and sweat become tomorrow's drinking water. Nothing is wasted.", "source": "NASA ISS water recovery" },
-    "exercise": { "title": "Exercise", "body": "Astronauts on the Space Station train about 2 hours every day. Without exercise, bones and muscles get weak in space.", "source": "NASA Human Research" },
-    "osdr_gym": { "title": "Go to the gym!", "body": "Mice lived on the Space Station for 37 days. Their leg bones got weaker, but their spines did not. Bones need work to stay strong. Go to the gym!", "source": "NASA OSDR, study OSD-804 (Rodent Research-1)" },
-    "solar": { "title": "Solar power", "body": "NASA's polar design uses about 36 square meters of solar panels on a 10 meter mast to make about 10 kilowatts. That is what your four panel groups make.", "source": "NASA polar power concepts" },
-    "dust": { "title": "Dust", "body": "Moon dust is sticky and sharp. When Apollo 11 lifted off, the dust it kicked up dimmed a sensor by 17% at once. Keep your panels clean.", "source": "NASA Apollo reports" },
-    "packs": { "title": "Power packs", "body": "Your packs hold 120 kilowatt-hours each. A real pack that big would weigh about 800 kg. Swap packs so one charges while the other works.", "source": "NASA battery estimates" },
-    "cargo_landers": { "title": "Cargo landers", "body": "Real Moon outposts will bring most supplies from Earth. Here, robot landers drop rations and water, but they also kick up dust on your panels.", "source": "NASA Artemis" },
-    "moonwalks": { "title": "Moonwalks", "body": "The longest Moon walk was 7 hours 37 minutes, by Apollo 17 astronauts. Your suit meter shows the hours of oxygen you have left.", "source": "NASA Apollo 17" },
-    "solar_storms": { "title": "Solar storms", "body": "The Sun sends flares, called class M and X. The countdown you see is for the particles that arrive after the flash, not the light itself.", "source": "NASA DONKI" },
-    "shelter_card": { "title": "The shelter", "body": "About 80 centimeters of Moon soil can stop storm particles. Astronauts would hide in a buried shelter just like yours.", "source": "NASA radiation shielding studies" },
-    "forecasts": { "title": "Forecasts", "body": "Scientists watch the Sun all day with satellites. When they see a flare, they warn astronauts so there is time to get safe.", "source": "NASA Space Weather" },
-    "moon_ice": { "title": "Moon ice", "body": "Ice hides in craters that never see sunlight. NASA's LCROSS mission saw water mixed with other chemicals in a dark crater.", "source": "NASA LCROSS" },
-    "spacesuits": { "title": "Spacesuits", "body": "A spacesuit holds about 8 hours of oxygen plus a 30-minute backup. Always watch your suit meter and head back in time.", "source": "NASA EVA suits" },
-    "silent_moon": { "title": "Silent Moon", "body": "There is no air on the Moon, so sound cannot travel outside. Everything you hear on a mission comes through your suit.", "source": "NASA" },
-    "ice_drink": { "title": "Is moon ice drinkable?", "body": "Not yet! Moon ice has to be cleaned before anyone can drink it, and nobody has done that on the Moon. That is why we study samples.", "source": "NASA Artemis science" },
-    "gannon": { "title": "The Gannon storm", "body": "In May 2024 the strongest geomagnetic storm since 2003 hit Earth. The Sun fired many flares in just a few days. The storm in this game is based on it.", "source": "NASA DONKI" },
-    "feeding_person": { "title": "Feeding a person", "body": "About 10 square meters of plants could feed one person. Radishes are a fresh extra, not a full meal plan.", "source": "NASA food production studies" },
-    "csa_radish": { "title": "Fresh food", "body": "Fresh food helps keep astronauts healthy. Canada's space agency studies how to grow food on the Moon, and the same ideas help people in remote places on Earth.", "source": "Canadian Space Agency, Food production on the Moon toolkit" },
-    "shadows": { "title": "Shadows at the pole", "body": "Near the equator the Moon's night lasts about 14 days. On a tall mast at the pole, shadows last only a few days. Charge both packs.", "source": "NASA Artemis" },
-    "power_dark": { "title": "Power in the dark", "body": "NASA plans a 40 kilowatt fission reactor for future Moon bases, so they can have power even when the Sun is hidden.", "source": "NASA Fission Surface Power" },
-    "radiation": { "title": "Radiation on the surface", "body": "On the Moon's surface astronauts get about 1.37 millisieverts a day, like having an X-ray every day.", "source": "NASA / Chang'e-4 measurements" },
-    "busy_sun": { "title": "A busy Sun", "body": "NASA counted 82 notable flares in just one week of May 2024. The Sun was very busy.", "source": "NASA DONKI" },
-    "radlab_storm": { "title": "Radiation on the Station", "body": "Detectors inside the Space Station measure radiation every day. One solar storm in September 2017 added about a quarter of a day's dose, even behind the walls.", "source": "ISS dosimetry: DOSIS 3D-DOSTEL, via NASA OSDR RadLab" },
-    "muscles": { "title": "Muscles on the Moon", "body": "Scientists do not know yet how one sixth gravity changes bones over weeks. Maybe you will be the one to find out.", "source": "NASA Human Research" },
-    "space_food": { "title": "Space food", "body": "An astronaut eats about 2,500 to 2,800 calories a day. That is about 1.8 kg of food.", "source": "NASA Space Food Systems" },
-    "getting_braver": { "title": "Getting braver", "body": "Apollo moonwalks grew from about 2.5 hours on Apollo 11 to about 7.5 hours on Apollo 17.", "source": "NASA Apollo" },
-    "biggest_storms": { "title": "The biggest storms", "body": "The largest geomagnetic storm was in 1859. In August 1972 a storm hit between Apollo 16 and 17, and could have been deadly on the Moon.", "source": "NASA" },
-    "why_forecasts_work": { "title": "Why forecasts work", "body": "Storm clouds from the Sun usually take 2 to 3 days to reach us. The fastest ever took 14.6 hours. That gives time to prepare.", "source": "NASA DONKI" },
-    "potatoes": { "title": "Potatoes in space", "body": "On Space Shuttle mission STS-73, potato cuttings grew tiny potatoes in 16 days. Space farming started small.", "source": "NASA" }
+    "welcome": {
+      "title": "Welcome to the south pole",
+      "body": "The Sun circles low here, so there is no daily night. But some craters are always dark, and the Moon's shadows can block the Sun for days.",
+      "source": "NASA Artemis"
+    },
+    "breathing": {
+      "title": "Breathing",
+      "body": "One astronaut breathes about 0.84 kg of oxygen every day. Your habitat keeps a reserve of oxygen, and life support keeps it topped up.",
+      "source": "NASA ISS life support"
+    },
+    "radishes": {
+      "title": "Radishes",
+      "body": "Radishes grow fast. On the Space Station plants take about 27 days to grow, but here we speed it up about 4 times so you can harvest in 7 days.",
+      "source": "NASA Veggie"
+    },
+    "recycling": {
+      "title": "Recycling",
+      "body": "The Space Station recycles about 98% of its water. Your breath and sweat become tomorrow's drinking water. Nothing is wasted.",
+      "source": "NASA ISS water recovery"
+    },
+    "exercise": {
+      "title": "Exercise",
+      "body": "Astronauts on the Space Station train about 2 hours every day. Without exercise, bones and muscles get weak in space.",
+      "source": "NASA Human Research"
+    },
+    "osdr_gym": {
+      "title": "Go to the gym!",
+      "body": "Mice lived on the Space Station for 37 days. Their leg bones got weaker, but their spines did not. Bones need work to stay strong. Go to the gym!",
+      "source": "NASA OSDR, study OSD-804 (Rodent Research-1)"
+    },
+    "solar": {
+      "title": "Solar power",
+      "body": "NASA's polar design uses about 36 square meters of solar panels on a 10 meter mast to make about 10 kilowatts. That is what your four panel groups make.",
+      "source": "NASA polar power concepts"
+    },
+    "dust": {
+      "title": "Dust",
+      "body": "Moon dust is sticky and sharp. When Apollo 11 lifted off, the dust it kicked up dimmed a sensor by 17% at once. Keep your panels clean.",
+      "source": "NASA Apollo reports"
+    },
+    "packs": {
+      "title": "Power packs",
+      "body": "Your packs hold 120 kilowatt-hours each. A real pack that big would weigh about 800 kg. Swap packs so one charges while the other works.",
+      "source": "NASA battery estimates"
+    },
+    "cargo_landers": {
+      "title": "Cargo landers",
+      "body": "Real Moon outposts will bring most supplies from Earth. Here, robot landers drop rations and water, but they also kick up dust on your panels.",
+      "source": "NASA Artemis"
+    },
+    "moonwalks": {
+      "title": "Moonwalks",
+      "body": "The longest Moon walk was 7 hours 37 minutes, by Apollo 17 astronauts. Your suit meter shows the hours of oxygen you have left.",
+      "source": "NASA Apollo 17"
+    },
+    "solar_storms": {
+      "title": "Solar storms",
+      "body": "The Sun sends flares, called class M and X. The countdown you see is for the particles that arrive after the flash, not the light itself.",
+      "source": "NASA DONKI"
+    },
+    "shelter_card": {
+      "title": "The shelter",
+      "body": "About 80 centimeters of Moon soil can stop storm particles. Astronauts would hide in a buried shelter just like yours.",
+      "source": "NASA radiation shielding studies"
+    },
+    "forecasts": {
+      "title": "Forecasts",
+      "body": "Scientists watch the Sun all day with satellites. When they see a flare, they warn astronauts so there is time to get safe.",
+      "source": "NASA Space Weather"
+    },
+    "moon_ice": {
+      "title": "Moon ice",
+      "body": "Ice hides in craters that never see sunlight. NASA's LCROSS mission saw water mixed with other chemicals in a dark crater.",
+      "source": "NASA LCROSS"
+    },
+    "spacesuits": {
+      "title": "Spacesuits",
+      "body": "A spacesuit holds about 8 hours of oxygen plus a 30-minute backup. Always watch your suit meter and head back in time.",
+      "source": "NASA EVA suits"
+    },
+    "silent_moon": {
+      "title": "Silent Moon",
+      "body": "There is no air on the Moon, so sound cannot travel outside. Everything you hear on a mission comes through your suit.",
+      "source": "NASA"
+    },
+    "ice_drink": {
+      "title": "Is moon ice drinkable?",
+      "body": "Not yet! Moon ice has to be cleaned before anyone can drink it, and nobody has done that on the Moon. That is why we study samples.",
+      "source": "NASA Artemis science"
+    },
+    "gannon": {
+      "title": "The Gannon storm",
+      "body": "In May 2024 the strongest geomagnetic storm since 2003 hit Earth. The Sun fired many flares in just a few days. The storm in this game is based on it.",
+      "source": "NASA DONKI"
+    },
+    "feeding_person": {
+      "title": "Feeding a person",
+      "body": "About 10 square meters of plants could feed one person. Radishes are a fresh extra, not a full meal plan.",
+      "source": "NASA food production studies"
+    },
+    "csa_radish": {
+      "title": "Fresh food",
+      "body": "Fresh food helps keep astronauts healthy. Canada's space agency studies how to grow food on the Moon, and the same ideas help people in remote places on Earth.",
+      "source": "Canadian Space Agency, Food production on the Moon toolkit"
+    },
+    "shadows": {
+      "title": "Shadows at the pole",
+      "body": "Near the equator the Moon's night lasts about 14 days. On a tall mast at the pole, shadows last only a few days. Charge both packs.",
+      "source": "NASA Artemis"
+    },
+    "power_dark": {
+      "title": "Power in the dark",
+      "body": "NASA plans a 40 kilowatt fission reactor for future Moon bases, so they can have power even when the Sun is hidden.",
+      "source": "NASA Fission Surface Power"
+    },
+    "radiation": {
+      "title": "Radiation on the surface",
+      "body": "On the Moon's surface astronauts get about 1.37 millisieverts a day, like having an X-ray every day.",
+      "source": "NASA / Chang'e-4 measurements"
+    },
+    "busy_sun": {
+      "title": "A busy Sun",
+      "body": "NASA counted 82 notable flares in just one week of May 2024. The Sun was very busy.",
+      "source": "NASA DONKI"
+    },
+    "radlab_storm": {
+      "title": "Radiation on the Station",
+      "body": "Detectors inside the Space Station measure radiation every day. One solar storm in September 2017 added about a quarter of a day's dose, even behind the walls.",
+      "source": "ISS dosimetry: DOSIS 3D-DOSTEL, via NASA OSDR RadLab"
+    },
+    "muscles": {
+      "title": "Muscles on the Moon",
+      "body": "Scientists do not know yet how one sixth gravity changes bones over weeks. Maybe you will be the one to find out.",
+      "source": "NASA Human Research"
+    },
+    "space_food": {
+      "title": "Space food",
+      "body": "An astronaut eats about 2,500 to 2,800 calories a day. That is about 1.8 kg of food.",
+      "source": "NASA Space Food Systems"
+    },
+    "getting_braver": {
+      "title": "Getting braver",
+      "body": "Apollo moonwalks grew from about 2.5 hours on Apollo 11 to about 7.5 hours on Apollo 17.",
+      "source": "NASA Apollo"
+    },
+    "biggest_storms": {
+      "title": "The biggest storms",
+      "body": "The largest geomagnetic storm was in 1859. In August 1972 a storm hit between Apollo 16 and 17, and could have been deadly on the Moon.",
+      "source": "NASA"
+    },
+    "why_forecasts_work": {
+      "title": "Why forecasts work",
+      "body": "Storm clouds from the Sun usually take 2 to 3 days to reach us. The fastest ever took 14.6 hours. That gives time to prepare.",
+      "source": "NASA DONKI"
+    },
+    "potatoes": {
+      "title": "Potatoes in space",
+      "body": "On Space Shuttle mission STS-73, potato cuttings grew tiny potatoes in 16 days. Space farming started small.",
+      "source": "NASA"
+    }
   }
 }

@@ -63,6 +63,11 @@ var later_left_h := 0.0
 var player_name := "Nova"
 var astronaut := "a"               # "a" or "b"
 var judge_mode := false
+var modal_count := 0               # open overlays (clock pauses while > 0)
+var day_intro_pending := true      # cards/notices of this day not shown yet
+var mission_done_today := false
+var mission_kind := ""             # set by the Outpost when a mission starts
+var last_modal_close_ms := 0
 var game_over := false
 var game_result := ""              # "" / "success" / "failed"
 var total_hours := 0.0             # hours since day 1, 06:00 (for cooldowns)
@@ -117,7 +122,7 @@ func new_game() -> void:
 	game_over = false
 	game_result = ""
 	total_hours = 0.0
-	_start_day()
+	_start_day(false)
 
 func to_dict() -> Dictionary:
 	var d := {}
@@ -133,6 +138,8 @@ func from_dict(d: Dictionary) -> void:
 		if val is Array or val is Dictionary:
 			val = val.duplicate(true)
 		set(k, val)
+	modal_count = 0
+	day_intro_pending = true
 	# JSON turns whole numbers into floats: fix the int-like arrays
 	sliders = sliders.map(func(x): return int(x))
 	rations = int(rations)
@@ -286,7 +293,17 @@ func _storm_tick(dt: float) -> void:
 			storm_hit()
 
 # ---------------------------------------------------------------- day start / end
-func _start_day() -> void:
+# Shows today's info cards and HUD notices (scenes call this once when they are ready).
+func emit_day_intro() -> void:
+	day_intro_pending = false
+	var d := today()
+	for c in d["cards"]:
+		card.emit(c)
+	for n in d["notices"]:
+		notice.emit(n)
+
+func _start_day(emit_intro := true) -> void:
+	mission_done_today = false
 	hour = DAY_START
 	ate_today = false
 	drank_today = false
@@ -308,10 +325,9 @@ func _start_day() -> void:
 	queue = []
 	if d["lander"] != null:
 		queue.append({"t": 7.0, "name": "lander"})
-	for c in d["cards"]:
-		card.emit(c)
-	for n in d["notices"]:
-		notice.emit(n)
+	day_intro_pending = true
+	if emit_intro:
+		emit_day_intro()
 	event.emit("day_start", {"day": day})
 	changed.emit()
 
@@ -589,6 +605,7 @@ func finish_mission(kind: String, success: bool) -> void:
 			pending_research.append(locked_research_value())
 	else:
 		missions_failed += 1
+	mission_done_today = true
 	event.emit("mission_end", {"kind": kind, "success": success})
 	changed.emit()
 
