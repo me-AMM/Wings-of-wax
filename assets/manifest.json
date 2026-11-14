@@ -1,0 +1,1475 @@
+{
+ "project": "Junior Astronaut Mission Trainer",
+ "built": "2026-11-13",
+ "display": {
+  "base_resolution": [
+   320,
+   180
+  ],
+  "scale": 4,
+  "output_resolution": [
+   1280,
+   720
+  ],
+  "tile_grid": 64,
+  "texture_filter": "nearest",
+  "mipmaps": false
+ },
+ "palette_16": [
+  "#0B0D1A",
+  "#1F2438",
+  "#3D4560",
+  "#6B7391",
+  "#A3ABC2",
+  "#E4E8F2",
+  "#2F5BE0",
+  "#F06FA8",
+  "#FFD23F",
+  "#3FA7F5",
+  "#9BE8FF",
+  "#5FC96B",
+  "#2E7D4F",
+  "#E5484D",
+  "#8A5CF5",
+  "#B0855A"
+ ],
+ "conventions": {
+  "frame_naming": "<character>_<action>_<direction>_<frame>.png, frame starts at 0",
+  "direction_names": {
+   "front": "south",
+   "back": "north",
+   "left": "west",
+   "right": "east"
+  },
+  "still_names_use": "south / north / west / east (astro_a_south.png etc.)",
+  "astronaut_frame_canvas": "104x104, feet row at y=88, anchor (52, 88); the 92x92 stills do not share this canvas, so use *_idle_<dir>_0 for a standing pose",
+  "icon_files": "64x64; display at 32 or 64",
+  "astronaut_b": "pink recolor of astronaut_a: identical frames and timing",
+  "dust_levels": "solar_clean = 0%, solar_dust25 / 50 / 75 = dust %",
+  "radish_stages": [
+   "radish_empty",
+   "radish_sprout",
+   "radish_growing",
+   "radish_ready"
+  ]
+ },
+ "nine_slice": {
+  "ui_panel": {
+   "mode": "9-slice",
+   "left_right": 13,
+   "top_bottom": 14
+  },
+  "button_normal / hover / pressed": {
+   "mode": "3-slice horizontal only (fixed height 32)",
+   "left_right": 17,
+   "top_bottom": 0,
+   "min_width": 38
+  },
+  "bar_frame": {
+   "mode": "3-slice horizontal only",
+   "left_right": 8,
+   "top_bottom": 0
+  },
+  "storm_frame": {
+   "mode": "3-slice horizontal only (hazard-stripe ends)",
+   "left_right": 9,
+   "top_bottom": 0
+  }
+ },
+ "ui_layout": {
+  "bar_frame_inner_rect_xyxy": [
+   3,
+   4,
+   125,
+   13
+  ],
+  "bar_fill_note": "bar_fill is a plain white 128x16 bar: clip/scale it to the inner rect, tint per bar (health red, oxygen cyan, research purple) with modulate",
+  "slider_track_zones_x_ranges": {
+   "low_green": [
+    7,
+    43
+   ],
+   "medium_yellow": [
+    46,
+    81
+   ],
+   "high_red": [
+    84,
+    120
+   ]
+  },
+  "dig_bar": {
+   "size": [
+    192,
+    32
+   ],
+   "target_zone_x_range": [
+    78,
+    114
+   ],
+   "track_inner_x_range": [
+    4,
+    187
+   ],
+   "track_inner_y_range": [
+    8,
+    22
+   ],
+   "marker_sprite": "dig_marker.png (12x32); centre it on the marker position x"
+  }
+ },
+ "made_in_godot_not_sprites": [
+  "shadow darkness (CanvasModulate)",
+  "flashlight (PointLight2D)",
+  "storm screen tint",
+  "blinking lights: storm icon, charger, water recycler (use modulate/tween on the stills)",
+  "all text and the font"
+ ],
+ "stills": {
+  "antenna": {
+   "path": "sprites/props/antenna.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "prop",
+   "priority": "Nice"
+  },
+  "astro_a_east": {
+   "path": "sprites/characters/astro_a_east.png",
+   "size": [
+    92,
+    92
+   ],
+   "category": "character",
+   "priority": "Must"
+  },
+  "astro_a_north": {
+   "path": "sprites/characters/astro_a_north.png",
+   "size": [
+    92,
+    92
+   ],
+   "category": "character",
+   "priority": "Must"
+  },
+  "astro_a_south": {
+   "path": "sprites/characters/astro_a_south.png",
+   "size": [
+    92,
+    92
+   ],
+   "category": "character",
+   "priority": "Must"
+  },
+  "astro_a_west": {
+   "path": "sprites/characters/astro_a_west.png",
+   "size": [
+    92,
+    92
+   ],
+   "category": "character",
+   "priority": "Must"
+  },
+  "astro_b_east": {
+   "path": "sprites/characters/astro_b_east.png",
+   "size": [
+    92,
+    92
+   ],
+   "category": "character",
+   "priority": "Must"
+  },
+  "astro_b_north": {
+   "path": "sprites/characters/astro_b_north.png",
+   "size": [
+    92,
+    92
+   ],
+   "category": "character",
+   "priority": "Must"
+  },
+  "astro_b_south": {
+   "path": "sprites/characters/astro_b_south.png",
+   "size": [
+    92,
+    92
+   ],
+   "category": "character",
+   "priority": "Must"
+  },
+  "astro_b_west": {
+   "path": "sprites/characters/astro_b_west.png",
+   "size": [
+    92,
+    92
+   ],
+   "category": "character",
+   "priority": "Must"
+  },
+  "bar_fill": {
+   "path": "sprites/ui/bar_fill.png",
+   "size": [
+    128,
+    16
+   ],
+   "category": "ui",
+   "priority": "Must"
+  },
+  "bar_frame": {
+   "path": "sprites/ui/bar_frame.png",
+   "size": [
+    128,
+    16
+   ],
+   "category": "ui",
+   "priority": "Must"
+  },
+  "boulder_wall": {
+   "path": "sprites/tiles/boulder_wall.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "tile",
+   "priority": "Must"
+  },
+  "button_hover": {
+   "path": "sprites/ui/button_hover.png",
+   "size": [
+    128,
+    32
+   ],
+   "category": "ui",
+   "priority": "Must"
+  },
+  "button_normal": {
+   "path": "sprites/ui/button_normal.png",
+   "size": [
+    128,
+    32
+   ],
+   "category": "ui",
+   "priority": "Must"
+  },
+  "button_pressed": {
+   "path": "sprites/ui/button_pressed.png",
+   "size": [
+    128,
+    32
+   ],
+   "category": "ui",
+   "priority": "Must"
+  },
+  "cargo_crate": {
+   "path": "sprites/props/cargo_crate.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "prop",
+   "priority": "Must"
+  },
+  "cargo_lander": {
+   "path": "sprites/props/cargo_lander.png",
+   "size": [
+    128,
+    128
+   ],
+   "category": "prop",
+   "priority": "Must"
+  },
+  "charger_empty": {
+   "path": "sprites/buildings/charger_empty.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "building",
+   "priority": "Must"
+  },
+  "charger_full": {
+   "path": "sprites/buildings/charger_full.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "building",
+   "priority": "Must"
+  },
+  "crater_large": {
+   "path": "sprites/tiles/crater_large.png",
+   "size": [
+    192,
+    192
+   ],
+   "category": "tile",
+   "priority": "Must"
+  },
+  "crater_small": {
+   "path": "sprites/tiles/crater_small.png",
+   "size": [
+    128,
+    128
+   ],
+   "category": "tile",
+   "priority": "Must"
+  },
+  "credits_bg": {
+   "path": "sprites/screens/credits_bg.png",
+   "size": [
+    320,
+    180
+   ],
+   "category": "screen",
+   "priority": "Nice"
+  },
+  "crew_lander": {
+   "path": "sprites/props/crew_lander.png",
+   "size": [
+    192,
+    192
+   ],
+   "category": "prop",
+   "priority": "Must"
+  },
+  "dig_bar": {
+   "path": "sprites/ui/dig_bar.png",
+   "size": [
+    192,
+    32
+   ],
+   "category": "ui",
+   "priority": "Must"
+  },
+  "dig_marker": {
+   "path": "sprites/ui/dig_marker.png",
+   "size": [
+    12,
+    32
+   ],
+   "category": "ui",
+   "priority": "Must"
+  },
+  "dust_puff": {
+   "path": "sprites/effects/dust_puff.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "effect",
+   "priority": "Must"
+  },
+  "ending_failed": {
+   "path": "sprites/screens/ending_failed.png",
+   "size": [
+    320,
+    180
+   ],
+   "category": "screen",
+   "priority": "Must"
+  },
+  "ending_success": {
+   "path": "sprites/screens/ending_success.png",
+   "size": [
+    320,
+    180
+   ],
+   "category": "screen",
+   "priority": "Must"
+  },
+  "forecast_board": {
+   "path": "sprites/props/forecast_board.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "prop",
+   "priority": "Must"
+  },
+  "forecast_screen": {
+   "path": "sprites/ui/forecast_screen.png",
+   "size": [
+    320,
+    180
+   ],
+   "category": "ui",
+   "priority": "Must"
+  },
+  "greenhouse": {
+   "path": "sprites/buildings/greenhouse.png",
+   "size": [
+    128,
+    128
+   ],
+   "category": "building",
+   "priority": "Must"
+  },
+  "ground_1": {
+   "path": "sprites/tiles/ground_1.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "tile",
+   "priority": "Must"
+  },
+  "ground_2": {
+   "path": "sprites/tiles/ground_2.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "tile",
+   "priority": "Must"
+  },
+  "ground_3": {
+   "path": "sprites/tiles/ground_3.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "tile",
+   "priority": "Must"
+  },
+  "ground_dark": {
+   "path": "sprites/tiles/ground_dark.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "tile",
+   "priority": "Must"
+  },
+  "habitat": {
+   "path": "sprites/buildings/habitat.png",
+   "size": [
+    192,
+    192
+   ],
+   "category": "building",
+   "priority": "Must"
+  },
+  "ice_deposit": {
+   "path": "sprites/mission/ice_deposit.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "mission",
+   "priority": "Must"
+  },
+  "icon_blackout": {
+   "path": "sprites/icons/icon_blackout.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_clock": {
+   "path": "sprites/icons/icon_clock.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_ekey": {
+   "path": "sprites/icons/icon_ekey.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_gym": {
+   "path": "sprites/icons/icon_gym.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_heart": {
+   "path": "sprites/icons/icon_heart.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_ice": {
+   "path": "sprites/icons/icon_ice.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_lock": {
+   "path": "sprites/icons/icon_lock.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_moon": {
+   "path": "sprites/icons/icon_moon.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_oxygen": {
+   "path": "sprites/icons/icon_oxygen.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_pack": {
+   "path": "sprites/icons/icon_pack.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_pack_low": {
+   "path": "sprites/icons/icon_pack_low.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_radish": {
+   "path": "sprites/icons/icon_radish.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_ration": {
+   "path": "sprites/icons/icon_ration.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_research": {
+   "path": "sprites/icons/icon_research.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_rock": {
+   "path": "sprites/icons/icon_rock.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_sleep": {
+   "path": "sprites/icons/icon_sleep.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_star_empty": {
+   "path": "sprites/icons/icon_star_empty.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_star_full": {
+   "path": "sprites/icons/icon_star_full.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_storm": {
+   "path": "sprites/icons/icon_storm.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_sun": {
+   "path": "sprites/icons/icon_sun.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "icon_water": {
+   "path": "sprites/icons/icon_water.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "icon",
+   "priority": "Must"
+  },
+  "landing_pad": {
+   "path": "sprites/buildings/landing_pad.png",
+   "size": [
+    192,
+    192
+   ],
+   "category": "building",
+   "priority": "Must"
+  },
+  "path": {
+   "path": "sprites/tiles/path.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "tile",
+   "priority": "Must"
+  },
+  "portrait_a": {
+   "path": "sprites/characters/portrait_a.png",
+   "size": [
+    128,
+    128
+   ],
+   "category": "character",
+   "priority": "Must"
+  },
+  "portrait_b": {
+   "path": "sprites/characters/portrait_b.png",
+   "size": [
+    128,
+    128
+   ],
+   "category": "character",
+   "priority": "Must"
+  },
+  "radish_empty": {
+   "path": "sprites/props/radish_empty.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "prop",
+   "priority": "Must"
+  },
+  "radish_growing": {
+   "path": "sprites/props/radish_growing.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "prop",
+   "priority": "Must"
+  },
+  "radish_ready": {
+   "path": "sprites/props/radish_ready.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "prop",
+   "priority": "Must"
+  },
+  "radish_sprout": {
+   "path": "sprites/props/radish_sprout.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "prop",
+   "priority": "Must"
+  },
+  "rare_stone": {
+   "path": "sprites/mission/rare_stone.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "mission",
+   "priority": "Nice"
+  },
+  "rocks_1": {
+   "path": "sprites/tiles/rocks_1.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "tile",
+   "priority": "Must"
+  },
+  "rocks_2": {
+   "path": "sprites/tiles/rocks_2.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "tile",
+   "priority": "Must"
+  },
+  "sample_spot": {
+   "path": "sprites/mission/sample_spot.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "mission",
+   "priority": "Must"
+  },
+  "science_lab": {
+   "path": "sprites/buildings/science_lab.png",
+   "size": [
+    192,
+    192
+   ],
+   "category": "building",
+   "priority": "Must"
+  },
+  "select_bg": {
+   "path": "sprites/screens/select_bg.png",
+   "size": [
+    320,
+    180
+   ],
+   "category": "screen",
+   "priority": "Must"
+  },
+  "shelter": {
+   "path": "sprites/buildings/shelter.png",
+   "size": [
+    128,
+    128
+   ],
+   "category": "building",
+   "priority": "Must"
+  },
+  "slider_console": {
+   "path": "sprites/props/slider_console.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "prop",
+   "priority": "Must"
+  },
+  "slider_knob": {
+   "path": "sprites/ui/slider_knob.png",
+   "size": [
+    32,
+    32
+   ],
+   "category": "ui",
+   "priority": "Must"
+  },
+  "slider_track": {
+   "path": "sprites/ui/slider_track.png",
+   "size": [
+    128,
+    32
+   ],
+   "category": "ui",
+   "priority": "Must"
+  },
+  "solar_clean": {
+   "path": "sprites/buildings/solar_clean.png",
+   "size": [
+    128,
+    64
+   ],
+   "category": "building",
+   "priority": "Must"
+  },
+  "solar_dust25": {
+   "path": "sprites/buildings/solar_dust25.png",
+   "size": [
+    128,
+    64
+   ],
+   "category": "building",
+   "priority": "Must"
+  },
+  "solar_dust50": {
+   "path": "sprites/buildings/solar_dust50.png",
+   "size": [
+    128,
+    64
+   ],
+   "category": "building",
+   "priority": "Must"
+  },
+  "solar_dust75": {
+   "path": "sprites/buildings/solar_dust75.png",
+   "size": [
+    128,
+    64
+   ],
+   "category": "building",
+   "priority": "Must"
+  },
+  "sparkle": {
+   "path": "sprites/effects/sparkle.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "effect",
+   "priority": "Must"
+  },
+  "storm_frame": {
+   "path": "sprites/ui/storm_frame.png",
+   "size": [
+    128,
+    32
+   ],
+   "category": "ui",
+   "priority": "Must"
+  },
+  "storm_specks": {
+   "path": "sprites/effects/storm_specks.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "effect",
+   "priority": "Nice"
+  },
+  "story_1": {
+   "path": "sprites/screens/story_1.png",
+   "size": [
+    320,
+    180
+   ],
+   "category": "screen",
+   "priority": "Must"
+  },
+  "story_2": {
+   "path": "sprites/screens/story_2.png",
+   "size": [
+    320,
+    180
+   ],
+   "category": "screen",
+   "priority": "Must"
+  },
+  "story_3": {
+   "path": "sprites/screens/story_3.png",
+   "size": [
+    320,
+    180
+   ],
+   "category": "screen",
+   "priority": "Must"
+  },
+  "title_screen": {
+   "path": "sprites/screens/title_screen.png",
+   "size": [
+    320,
+    180
+   ],
+   "category": "screen",
+   "priority": "Must"
+  },
+  "ui_panel": {
+   "path": "sprites/ui/ui_panel.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "ui",
+   "priority": "Must"
+  },
+  "ui_panel_hazard": {
+   "path": "sprites/ui/ui_panel_hazard.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "ui",
+   "priority": "Extra"
+  },
+  "water_recycler": {
+   "path": "sprites/buildings/water_recycler.png",
+   "size": [
+    128,
+    128
+   ],
+   "category": "building",
+   "priority": "Must"
+  },
+  "waypoint_flag": {
+   "path": "sprites/mission/waypoint_flag.png",
+   "size": [
+    64,
+    64
+   ],
+   "category": "mission",
+   "priority": "Must"
+  }
+ },
+ "animations": {
+  "astronaut_a_dig_front": {
+   "frames": [
+    "animations/characters/astronaut_a_dig_front_0.png",
+    "animations/characters/astronaut_a_dig_front_1.png",
+    "animations/characters/astronaut_a_dig_front_2.png",
+    "animations/characters/astronaut_a_dig_front_3.png"
+   ],
+   "frame_count": 4,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 6,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_a_idle_back": {
+   "frames": [
+    "animations/characters/astronaut_a_idle_back_0.png",
+    "animations/characters/astronaut_a_idle_back_1.png"
+   ],
+   "frame_count": 2,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 2,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_a_idle_front": {
+   "frames": [
+    "animations/characters/astronaut_a_idle_front_0.png",
+    "animations/characters/astronaut_a_idle_front_1.png"
+   ],
+   "frame_count": 2,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 2,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_a_idle_left": {
+   "frames": [
+    "animations/characters/astronaut_a_idle_left_0.png",
+    "animations/characters/astronaut_a_idle_left_1.png"
+   ],
+   "frame_count": 2,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 2,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_a_idle_right": {
+   "frames": [
+    "animations/characters/astronaut_a_idle_right_0.png",
+    "animations/characters/astronaut_a_idle_right_1.png"
+   ],
+   "frame_count": 2,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 2,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_a_interact_front": {
+   "frames": [
+    "animations/characters/astronaut_a_interact_front_0.png",
+    "animations/characters/astronaut_a_interact_front_1.png",
+    "animations/characters/astronaut_a_interact_front_2.png"
+   ],
+   "frame_count": 3,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 6,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_a_walk_back": {
+   "frames": [
+    "animations/characters/astronaut_a_walk_back_0.png",
+    "animations/characters/astronaut_a_walk_back_1.png",
+    "animations/characters/astronaut_a_walk_back_2.png",
+    "animations/characters/astronaut_a_walk_back_3.png"
+   ],
+   "frame_count": 4,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 8,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_a_walk_front": {
+   "frames": [
+    "animations/characters/astronaut_a_walk_front_0.png",
+    "animations/characters/astronaut_a_walk_front_1.png",
+    "animations/characters/astronaut_a_walk_front_2.png",
+    "animations/characters/astronaut_a_walk_front_3.png"
+   ],
+   "frame_count": 4,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 8,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_a_walk_left": {
+   "frames": [
+    "animations/characters/astronaut_a_walk_left_0.png",
+    "animations/characters/astronaut_a_walk_left_1.png",
+    "animations/characters/astronaut_a_walk_left_2.png",
+    "animations/characters/astronaut_a_walk_left_3.png"
+   ],
+   "frame_count": 4,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 8,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_a_walk_right": {
+   "frames": [
+    "animations/characters/astronaut_a_walk_right_0.png",
+    "animations/characters/astronaut_a_walk_right_1.png",
+    "animations/characters/astronaut_a_walk_right_2.png",
+    "animations/characters/astronaut_a_walk_right_3.png"
+   ],
+   "frame_count": 4,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 8,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_b_dig_front": {
+   "frames": [
+    "animations/characters/astronaut_b_dig_front_0.png",
+    "animations/characters/astronaut_b_dig_front_1.png",
+    "animations/characters/astronaut_b_dig_front_2.png",
+    "animations/characters/astronaut_b_dig_front_3.png"
+   ],
+   "frame_count": 4,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 6,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_b_idle_back": {
+   "frames": [
+    "animations/characters/astronaut_b_idle_back_0.png",
+    "animations/characters/astronaut_b_idle_back_1.png"
+   ],
+   "frame_count": 2,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 2,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_b_idle_front": {
+   "frames": [
+    "animations/characters/astronaut_b_idle_front_0.png",
+    "animations/characters/astronaut_b_idle_front_1.png"
+   ],
+   "frame_count": 2,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 2,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_b_idle_left": {
+   "frames": [
+    "animations/characters/astronaut_b_idle_left_0.png",
+    "animations/characters/astronaut_b_idle_left_1.png"
+   ],
+   "frame_count": 2,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 2,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_b_idle_right": {
+   "frames": [
+    "animations/characters/astronaut_b_idle_right_0.png",
+    "animations/characters/astronaut_b_idle_right_1.png"
+   ],
+   "frame_count": 2,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 2,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_b_interact_front": {
+   "frames": [
+    "animations/characters/astronaut_b_interact_front_0.png",
+    "animations/characters/astronaut_b_interact_front_1.png",
+    "animations/characters/astronaut_b_interact_front_2.png"
+   ],
+   "frame_count": 3,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 6,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_b_walk_back": {
+   "frames": [
+    "animations/characters/astronaut_b_walk_back_0.png",
+    "animations/characters/astronaut_b_walk_back_1.png",
+    "animations/characters/astronaut_b_walk_back_2.png",
+    "animations/characters/astronaut_b_walk_back_3.png"
+   ],
+   "frame_count": 4,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 8,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_b_walk_front": {
+   "frames": [
+    "animations/characters/astronaut_b_walk_front_0.png",
+    "animations/characters/astronaut_b_walk_front_1.png",
+    "animations/characters/astronaut_b_walk_front_2.png",
+    "animations/characters/astronaut_b_walk_front_3.png"
+   ],
+   "frame_count": 4,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 8,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_b_walk_left": {
+   "frames": [
+    "animations/characters/astronaut_b_walk_left_0.png",
+    "animations/characters/astronaut_b_walk_left_1.png",
+    "animations/characters/astronaut_b_walk_left_2.png",
+    "animations/characters/astronaut_b_walk_left_3.png"
+   ],
+   "frame_count": 4,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 8,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "astronaut_b_walk_right": {
+   "frames": [
+    "animations/characters/astronaut_b_walk_right_0.png",
+    "animations/characters/astronaut_b_walk_right_1.png",
+    "animations/characters/astronaut_b_walk_right_2.png",
+    "animations/characters/astronaut_b_walk_right_3.png"
+   ],
+   "frame_count": 4,
+   "size": [
+    104,
+    104
+   ],
+   "fps_suggested": 8,
+   "loop": true,
+   "anchor": [
+    52,
+    88
+   ],
+   "anchor_note": "bottom-centre of the feet; same point in every frame"
+  },
+  "cargo_lander_touchdown": {
+   "frames": [
+    "animations/objects/cargo_lander_touchdown_0.png",
+    "animations/objects/cargo_lander_touchdown_1.png",
+    "animations/objects/cargo_lander_touchdown_2.png",
+    "animations/objects/cargo_lander_touchdown_3.png",
+    "animations/objects/cargo_lander_touchdown_4.png",
+    "animations/objects/cargo_lander_touchdown_5.png"
+   ],
+   "frame_count": 6,
+   "size": [
+    128,
+    192
+   ],
+   "fps_suggested": 8,
+   "loop": false,
+   "anchor": [
+    64,
+    168
+   ],
+   "anchor_note": "bottom-centre of the LAST frame (landed position); canvas is bottom-aligned"
+  },
+  "dust_puff": {
+   "frames": [
+    "animations/effects/dust_puff_0.png",
+    "animations/effects/dust_puff_1.png",
+    "animations/effects/dust_puff_2.png",
+    "animations/effects/dust_puff_3.png"
+   ],
+   "frame_count": 4,
+   "size": [
+    64,
+    64
+   ],
+   "fps_suggested": 10,
+   "loop": false,
+   "anchor": [
+    30,
+    55
+   ],
+   "anchor_note": "bottom-centre of the first frame"
+  },
+  "radish_ready_sway": {
+   "frames": [
+    "animations/objects/radish_ready_sway_0.png",
+    "animations/objects/radish_ready_sway_1.png"
+   ],
+   "frame_count": 2,
+   "size": [
+    64,
+    64
+   ],
+   "fps_suggested": 2,
+   "loop": true,
+   "anchor": [
+    31,
+    57
+   ],
+   "anchor_note": "bottom-centre of the first frame"
+  },
+  "rare_stone_glow": {
+   "frames": [
+    "animations/objects/rare_stone_glow_0.png",
+    "animations/objects/rare_stone_glow_1.png",
+    "animations/objects/rare_stone_glow_2.png",
+    "animations/objects/rare_stone_glow_3.png"
+   ],
+   "frame_count": 4,
+   "size": [
+    64,
+    64
+   ],
+   "fps_suggested": 6,
+   "loop": true,
+   "anchor": [
+    32,
+    32
+   ],
+   "anchor_note": "canvas centre"
+  },
+  "sparkle": {
+   "frames": [
+    "animations/effects/sparkle_0.png",
+    "animations/effects/sparkle_1.png",
+    "animations/effects/sparkle_2.png",
+    "animations/effects/sparkle_3.png"
+   ],
+   "frame_count": 4,
+   "size": [
+    64,
+    64
+   ],
+   "fps_suggested": 8,
+   "loop": true,
+   "anchor": [
+    32,
+    32
+   ],
+   "anchor_note": "canvas centre"
+  },
+  "storm_specks": {
+   "frames": [
+    "animations/effects/storm_specks_0.png",
+    "animations/effects/storm_specks_1.png",
+    "animations/effects/storm_specks_2.png"
+   ],
+   "frame_count": 3,
+   "size": [
+    64,
+    64
+   ],
+   "fps_suggested": 8,
+   "loop": true,
+   "anchor": [
+    32,
+    32
+   ],
+   "anchor_note": "canvas centre"
+  },
+  "waypoint_flag_pulse": {
+   "frames": [
+    "animations/objects/waypoint_flag_pulse_0.png",
+    "animations/objects/waypoint_flag_pulse_1.png",
+    "animations/objects/waypoint_flag_pulse_2.png",
+    "animations/objects/waypoint_flag_pulse_3.png"
+   ],
+   "frame_count": 4,
+   "size": [
+    64,
+    64
+   ],
+   "fps_suggested": 6,
+   "loop": true,
+   "anchor": [
+    36,
+    57
+   ],
+   "anchor_note": "bottom-centre of the first frame"
+  }
+ },
+ "not_in_manifest": {
+  "unmapped_approved_files": []
+ }
+}
