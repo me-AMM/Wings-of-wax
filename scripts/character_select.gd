@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Control
 # CharacterSelect: pick astronaut A (blue) or B (pink) and type a name. 320x180 art shown at 2x, UI in real pixels.
 # Left/Right (or A/D, or click) choose the astronaut, Down goes to the name field, Enter confirms.

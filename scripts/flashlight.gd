@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends PointLight2D
 # Visual-only flashlight on the player. On during shadow days (and blackouts) so the dark filter stays playable.
 @export var light_radius := 150.0

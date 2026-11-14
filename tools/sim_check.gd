@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends SceneTree
 # Plays a scripted "good player" through GameState (no scenes) and compares each day with docs/03.
 # Run:  godot --headless --path . -s tools/sim_check.gd

@@ -16,7 +16,7 @@ Arrows or WASD to move, **E** to interact (hold E for 2 s to clean a panel or sw
 - **NASA CCMC DONKI** (space weather database): the 8 storms in the game are labelled with real solar flares. The archive was downloaded once
   from the CCMC host (`tools/fetch_donki.py` -> `data/donki_events.json`); the game makes no live calls.
 - **NASA OSDR** (study OSD-804, mice on the Space Station): the gym info card.
-- **RadLab / ISS DOSIS 3D-DOSTEL dosimetry (via NASA OSDR)**: the storm radiation info card.
+- **ISS radiation measurements: DOSIS 3D-DOSTEL (Berger et al., 2018)**: the storm radiation info card.
 - **Canadian Space Agency, Food production on the Moon toolkit**: the radish info card.
 - Other facts on the info cards come from public NASA material (see each card's source line in `data/text.json`).
 
@@ -47,6 +47,6 @@ Design documents are in `docs/` (rulebook, day script, decisions, collision note
 - **Font:** Silkscreen by Jason Kottke, SIL Open Font License 1.1 (`fonts/LICENSE`), chosen because its digits (3, 5, 8, 9) stay clearly different at small sizes.
 
 ## Credits
-Made with Godot Engine. Space weather data: NASA CCMC DONKI. The 2003 flare: NOAA / ESA. OSDR, RadLab and the Canadian Space Agency as above.
+Made with Godot Engine. Space weather data: NASA CCMC DONKI. The 2003 flare: NOAA / ESA. NASA OSDR, ISS radiation measurements (DOSIS 3D-DOSTEL, Berger et al., 2018) and the Canadian Space Agency as above.
 
 **This game is not endorsed by NASA.** No NASA logos are used.

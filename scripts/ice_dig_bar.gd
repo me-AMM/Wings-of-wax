@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends CanvasLayer
 # IceDigBar: a marker slides back and forth; press E when it is inside the green zone (3 hits needed).
 # Does NOT pause the clock (a storm countdown keeps running while you dig). Esc cancels.

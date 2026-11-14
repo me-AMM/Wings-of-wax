@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends CanvasLayer
 # HUD, drawn in real 640x360 pixels. ONE slim top strip, icon + value pairs in evenly spaced fixed-width cells
 # (so digits never jitter): day/time, rations, water, oxygen hours, base pack %, spare pack %, research %,

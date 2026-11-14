@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Node2D
 # Pointer arrow: a small yellow triangle with a 1 px dark outline, drawn in code (no art).
 # The Mission scene moves it around the player (about 24 px away) and rotates it toward the target.

@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Modal
 # JudgePanel (debug panel for judges). Drawn in real 640x360 pixels (not the 2x UI scale).
 # Mouse or keyboard: Tab / arrows / Enter. J toggles, Esc or Close leaves.

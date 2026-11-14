@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends CharacterBody2D
 # Player: walks with arrows / WASD. A CharacterBody2D with a small circle at the feet, so it is stopped by the
 # "Footprint" StaticBody2D shapes of buildings and props. Origin = the feet (frame anchor 52,88).

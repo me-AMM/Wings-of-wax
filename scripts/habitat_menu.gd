@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends MenuModal
 # HabitatMenu: Eat (ration / radish meal), Sleep, Gym. Disabled rows show why.
 # `outpost` is set by the Outpost scene; sleep and gym need its fade/animation.

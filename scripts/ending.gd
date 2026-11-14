@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Control
 # Ending screen, used by EndingSuccess.tscn and EndingFailed.tscn (the scene name decides which).
 # Success: "You achieved X% of the mission" and stars that pop in one by one (Judge runs earn no stars). Then Credits.

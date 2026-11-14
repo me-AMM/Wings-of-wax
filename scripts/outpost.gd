@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Node2D
 const PauseMenuScript := preload("res://scripts/pause_menu.gd")
 # Outpost: the main map. Buildings are Interactable nodes in the scene (move them in the editor!).

@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Node
 # Save autoload: ONE slot, user://save.json (on the web build user:// lives in the browser, IndexedDB).
 # File: {version, checksum, saved_at, data (the state), day_start (the 06:00 state of that day)}.

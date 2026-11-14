@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 """Downloads real solar flares from NASA CCMC DONKI and writes data/donki_events.json.
 Standard library only. Run once:  python tools/fetch_donki.py
 The game reads ONLY data/donki_events.json (no live calls). No API key needed.

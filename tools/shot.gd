@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends SceneTree
 # Takes a screenshot of a scene for quick visual checks (needs a window, not --headless).
 # godot --path . -s tools/shot.gd -- res://scenes/Outpost.tscn out.png [setup_name]

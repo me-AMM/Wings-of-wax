@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 class_name UIKit
 extends RefCounted
 # Small helpers that build UI pieces from the pixel art. Used by all overlays.
@@ -36,7 +37,7 @@ static func box(l: Control, w: float, h: float) -> void:
 
 # Label for the world (scale 1, real pixels): prompts and lock labels above buildings.
 static func world_label(text: String, px: int = 16, color: Color = Color.WHITE) -> Label:
-	px = maxi(16, int(round(px / 8.0)) * 8)      # whole multiples of the font size 8, never below 16
+	px = maxi(8, int(round(px / 8.0)) * 8)       # whole multiples of the font size 8
 	var l := Label.new()
 	l.text = text
 	l.add_theme_font_size_override("font_size", px)

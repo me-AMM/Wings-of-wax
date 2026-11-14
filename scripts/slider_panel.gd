@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Modal
 # SliderPanel: the 4 power sliders. Up/Down choose a slider, Left/Right change it, E or Esc close.
 # Uses slider_track (zones low/medium/high) and slider_knob from the art.

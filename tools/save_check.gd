@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Node
 # Save system check:  godot --headless --path . res://tools/save_check.tscn   (uses user://save_test.json, never the real save)
 #  1. a good player to day 12, save, rebuild GameState from the file: every field equal

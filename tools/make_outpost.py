@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 """Generates scenes/Outpost.tscn (and the tiny overlay scenes) as text.
 Run: python tools/footprints.py && python tools/make_outpost.py
 Footprints (StaticBody2D "Footprint" with a CollisionPolygon2D) come from data/footprints.json.

@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Node
 # GameState autoload: ALL game state and ALL rules (docs/02_RULEBOOK.md). No scenes needed.
 # Time is in game hours. A day runs from hour 6.0 to hour 30.0 (30 = 06:00 next day).

@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Control
 # Story: 3 intro pages in one scene (story_1..3 art at 2x). E / Enter / click = next page; after page 3 the game starts.
 

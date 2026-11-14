@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Node
 # Oxygen and blackout rules (docs/02), run headless:  godot --headless --path . res://tools/o2_check.tscn
 #  a. life support low for 48 game hours: the reserve falls 12 h per day.

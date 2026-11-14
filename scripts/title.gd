@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Control
 # Title screen: Start Game, Load Game, Judge Mode. The 320x180 art is shown at exactly 2x (Nearest); buttons are real
 # 640x360 pixels on the sky, away from the habitat picture.
@@ -43,6 +44,11 @@ func _ready() -> void:
 	msg_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	msg_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(msg_l)
+	var ai := UIKit.world_label(Text.t("ui.ai_statement"), 8)      # AI statement (challenge rules)
+	ai.position = Vector2(8, 334)
+	ai.size = Vector2(624, 12)
+	ai.modulate.a = 0.85
+	add_child(ai)
 	_refresh_load()
 	start_btn.grab_focus()
 	start_btn.focus_neighbor_right = load_btn.get_path()

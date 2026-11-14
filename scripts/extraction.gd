@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Control
 # Extraction: a short still scene. The astronaut walks to the crew lander, boards it, the lander lifts off,
 # then the game ends with the success ending (stars, then credits). E skips.

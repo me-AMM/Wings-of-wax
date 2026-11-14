@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 """Computes collision footprints from the sprite alpha (no guessing). Pillow only.
 Run: python tools/footprints.py   -> writes data/footprints.json
 Points are relative to the sprite ORIGIN = bottom centre of the image (the node origin in the scenes).

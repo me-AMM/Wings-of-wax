@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Node
 # Instantiates every full-screen scene once (Title, CharacterSelect, Story, endings, Credits, Board) to catch errors.
 var n := 0

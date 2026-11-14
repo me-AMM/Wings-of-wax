@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 """Builds data/days.json from the docs/03 glance table plus the day text.
 Run: python tools/build_days.py   (standard library only)
 Edit the dicts below if the script changes; days.json is DATA that the game reads."""

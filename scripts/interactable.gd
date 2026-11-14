@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 class_name Interactable
 extends Node2D
 # Put this on any node (origin = bottom centre of a building) to make it usable with E.

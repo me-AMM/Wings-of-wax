@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 class_name HudBar
 extends Control
 # A bar: bar_frame (3-slice) with a tinted fill inside (docs/04: inner rect x 3-125, y 4-13).

@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 class_name Modal
 extends CanvasLayer
 # Base for overlays that pause the game clock and take the keyboard (menus, cards, sliders).

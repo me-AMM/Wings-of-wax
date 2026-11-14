@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Node
 # Audio check:  godot --headless --path . res://tools/audio_check.tscn
 # All Priority 1 files exist, are not silent, peak at about -3 dB, and the ambience loops are seamless (8 s).
@@ -17,8 +18,15 @@ func samples(path: String) -> PackedFloat32Array:
 	var d := FileAccess.get_file_as_bytes(path)
 	if d.size() < 46:
 		return out
-	for i in range(44, d.size() - 1, 2):
-		out.append(d.decode_s16(i) / 32768.0)
+	var pos := 12                              # walk the RIFF chunks to the "data" chunk
+	while pos + 8 <= d.size():
+		var tag := d.slice(pos, pos + 4).get_string_from_ascii()
+		var size := d.decode_u32(pos + 4)
+		if tag == "data":
+			for i in range(pos + 8, mini(pos + 8 + size, d.size()) - 1, 2):
+				out.append(d.decode_s16(i) / 32768.0)
+			return out
+		pos += 8 + size + (size % 2)
 	return out
 
 func _ready() -> void:
@@ -46,5 +54,15 @@ func _ready() -> void:
 		var avg_step: float = steps / float(x.size() - 1)
 		var seam := absf(x[0] - x[x.size() - 1])
 		check(absf(x.size() / 22050.0 - 8.0) < 0.05 and seam <= maxf(4.0 * avg_step, 0.01), "loop '%s': 8 s, seam jump %.4f vs average step %.4f" % [n, seam, avg_step])
+	# every file carries the LIST/INFO metadata chunk (SI-generated audio)
+	var tagged := 0
+	for n in P1 + P2 + P3:
+		var b := FileAccess.get_file_as_bytes("res://audio/sfx/%s.wav" % n)
+		var txt := ""
+		for x in b.slice(maxi(0, b.size() - 120), b.size()):
+			txt += char(x) if x >= 32 and x < 127 else " "
+		if "SI-generated audio" in txt:
+			tagged += 1
+	check(tagged == (P1 + P2 + P3).size(), "LIST/INFO metadata (ICMT 'SI-generated audio') in %d of %d sound files" % [tagged, (P1 + P2 + P3).size()])
 	print("audio_check FAILS: ", fails)
 	get_tree().quit(1 if fails > 0 else 0)

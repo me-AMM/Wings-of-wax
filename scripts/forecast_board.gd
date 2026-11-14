@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Control
 # ForecastBoard: full screen in the lab (320x180 art at exactly 2x). Free to read. At storm watch medium/high it
 # names the next storm, its day, and the real flare it is modelled on (NASA DONKI). E or Esc goes back.

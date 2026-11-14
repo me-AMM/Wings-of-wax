@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends CanvasLayer
 # StormWarning overlay (real 640x360 pixels): ONE small panel in the top-right corner, under the HUD strip and the
 # sun/moon icons (about 30% of the screen width, under 28% of its height, 8 px margin).

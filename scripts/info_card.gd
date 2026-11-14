@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Modal
 # InfoCard: one card at a time from a queue (data/text.json "cards"). Title, body wrapped to about 34 characters,
 # dim source line at the bottom, "E to close" with icon_ekey, 0.15 s fade. E or Esc shows the next card / closes.

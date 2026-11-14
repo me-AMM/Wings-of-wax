@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Node2D
 # F3 overlay: shows footprints (red), slow zones (cyan) and interaction radii (yellow). Off by default.
 func _ready() -> void:

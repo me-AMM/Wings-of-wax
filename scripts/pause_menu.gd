@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends MenuModal
 # Pause menu (Esc in the Outpost or a mission): Resume, Save game, Quit to title (with a confirmation).
 # Saving is disabled, with the reason shown, during a mission, a storm warning or a storm, and in judge mode.

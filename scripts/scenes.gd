@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends CanvasLayer
 # Scenes autoload: Scenes.go("res://scenes/X.tscn") changes scene with a 0.2 s fade out and in.
 var rect: ColorRect

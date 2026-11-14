@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 class_name MenuModal
 extends Modal
 # A vertical menu of buttons: up/down to move, E to choose, Esc to close.

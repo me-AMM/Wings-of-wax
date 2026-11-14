@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Node
 # Quick visuals, code only (no new art): soft contact shadows, camera smoothing, vignette, slow blinking lights on the
 # charger / recycler / lab, an occasional sparkle on the solar panels, and a screen shake helper.

@@ -1,3 +1,4 @@
+# AI-assisted code (Claude Code), reviewed by the team, NASA Space Apps Cairo 2026
 extends Control
 # Credits: credits_bg at 2x with the lines from data/text.json ("credits") scrolling up. E / Esc goes to the Title.
 
@@ -16,6 +17,11 @@ func _ready() -> void:
 	dim.color = Color(0.04, 0.05, 0.1, 0.55)
 	dim.size = Vector2(640, 360)
 	add_child(dim)
+	var ai := UIKit.world_label(Text.t("ui.ai_statement"), 8)      # AI statement (challenge rules)
+	ai.position = Vector2(8, 334)
+	ai.size = Vector2(624, 12)
+	ai.modulate.a = 0.85
+	add_child(ai)
 	box = Control.new()
 	box.position = Vector2(60, 340)
 	add_child(box)
