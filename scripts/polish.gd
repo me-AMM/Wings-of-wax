@@ -17,8 +17,16 @@ var panels: Array = []
 const BAYER := [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5]    # 4x4 ordered dither, pixel-art soft edges
 const SHADOW_ALPHA := 0.45        # contact shadow core
 const SHADOW_FLAT := 0.25         # contact shadow height / width
-const DIRT_ALPHA := 0.30          # dark dirt patch under buildings
+const DIRT_ALPHA := 0.38          # dark dirt patch under buildings
 const DIRT_WIDE := 1.18           # dirt patch width / ground-contact width
+# POLAR SUN: at the south pole the Sun circles low on the horizon, so shadows are long and turn once a day.
+const SUN_ALPHA := 0.27           # long shadow darkness
+const SUN_LENGTH := 1.5           # shadow length / object height
+const SUN_FLAT := 0.55            # top-down view squashes the north-south part of the direction
+const SUN_PHASE := 0.0            # turn the whole clock (radians) if the shadows point the wrong way at 06:00
+var sun_group: CanvasGroup        # all long shadows: drawn as one layer, so overlaps never get darker
+var sun_items: Array = []         # [shadow Sprite2D, node] pairs
+var player_sun: Sprite2D
 static var _shadow_cache := {}
 static var _bases := {}
 
@@ -110,6 +118,13 @@ func setup(host_node: Node, player_node: Node2D, kind: String) -> void:
 	ps.position = Vector2(0, -2)          # overlaps the boots (feet are on the origin)
 	player.add_child(ps)
 	player.move_child(ps, 0)
+	player_sun = Sprite2D.new()
+	player_sun.name = "SunShadow"
+	player_sun.centered = false
+	player_sun.show_behind_parent = true
+	player_sun.modulate = Color(0.02, 0.02, 0.06, SUN_ALPHA)
+	player.add_child(player_sun)
+	player.move_child(player_sun, 0)
 	# 2. camera smoothing (the project snaps 2D transforms to whole pixels, so the picture stays crisp)
 	for c in player.get_children():
 		if c is Camera2D:
@@ -162,6 +177,10 @@ func _shadows_for_buildings() -> void:
 	var dirt_layer := Node2D.new()
 	dirt_layer.name = "DirtPatches"
 	ground.add_child(dirt_layer)
+	sun_group = CanvasGroup.new()
+	sun_group.name = "SunShadows"
+	sun_group.self_modulate = Color(1, 1, 1, SUN_ALPHA)
+	ground.add_child(sun_group)
 	var shadow_layer := Node2D.new()
 	shadow_layer.name = "ContactShadows"
 	ground.add_child(shadow_layer)
@@ -182,14 +201,24 @@ func _shadows_for_buildings() -> void:
 		dirt.texture = ellipse_texture(dw, int(dw * 0.36), DIRT_ALPHA, Color(0.10, 0.09, 0.09), seed_v, 1.0)
 		dirt.position = base + Vector2(0, -2)
 		dirt_layer.add_child(dirt)
-		var s := make_shadow(w * 1.04)
+		var s := make_shadow(w * 1.12)
 		s.show_behind_parent = false
 		s.position = base + Vector2(0, -3)          # overlaps the bottom 3-4 px of the sprite: no gap
 		shadow_layer.add_child(s)
+		# long sun shadow: the sprite's own silhouette, skewed along the sun direction (updated in _process)
+		var ls := Sprite2D.new()
+		ls.texture = sp.texture
+		ls.centered = false
+		ls.offset = sp.position + sp.offset - b["pos"]          # pixels relative to the visual base
+		ls.position = base
+		ls.modulate = Color(0.02, 0.02, 0.06)
+		sun_group.add_child(ls)
+		sun_items.append([ls, sp])
 		# follow the node if it is hidden (locked or not landed yet)
-		n.visibility_changed.connect(func(): dirt.visible = n.visible; s.visible = n.visible)
+		n.visibility_changed.connect(func(): dirt.visible = n.visible; s.visible = n.visible; ls.visible = n.visible)
 		dirt.visible = n.visible
 		s.visible = n.visible
+		ls.visible = n.visible
 
 # slow blinking lights on the charger, the recycler and the lab
 func _blinking_lights() -> void:
@@ -213,7 +242,34 @@ func _blinking_lights() -> void:
 		tw.tween_property(d, "modulate:a", 0.15, 1.1 + 0.3 * randf())
 		tw.tween_property(d, "modulate:a", 1.0, 1.1 + 0.3 * randf())
 
+# ground direction of the shadows: one full turn per 24 game hours
+func sun_dir() -> Vector2:
+	var a := TAU * GameState.hour / 24.0 + SUN_PHASE
+	return Vector2(cos(a), sin(a) * SUN_FLAT)
+
+func _update_sun() -> void:
+	var on := not GameState.in_shadow       # shadow days: the Sun is blocked, no long shadows
+	var skew_axis := -sun_dir() * SUN_LENGTH  # a pixel h above the base lands h * SUN_LENGTH along the direction
+	if sun_group != null:
+		sun_group.visible = on
+		for it in sun_items:
+			var ls: Sprite2D = it[0]
+			ls.texture = it[1].texture           # follows texture swaps (dusty panels, empty charger)
+			ls.transform = Transform2D(Vector2(1, 0), skew_axis, ls.position)
+	if player_sun != null:
+		player_sun.visible = on
+		var ps: AnimatedSprite2D = null
+		for c in player.get_children():
+			if c is AnimatedSprite2D:
+				ps = c
+		if ps != null and ps.sprite_frames != null:
+			player_sun.texture = ps.sprite_frames.get_frame_texture(ps.animation, ps.frame)
+			player_sun.offset = ps.offset
+			player_sun.flip_h = ps.flip_h
+			player_sun.transform = Transform2D(Vector2(1, 0), skew_axis, Vector2.ZERO)
+
 func _process(delta: float) -> void:
+	_update_sun()
 	# an occasional sparkle on a solar panel
 	if panels.is_empty() or GameState.in_shadow:
 		return
