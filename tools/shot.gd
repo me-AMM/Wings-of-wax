@@ -25,6 +25,8 @@ func _start() -> void:
 			gs.advance(1.2)
 		"r100":
 			gs.research = 100.0
+			gs.cards_seen = ["welcome", "solar_storms", "osdr_gym", "csa_radish"]
+			gs.storms_survived = ["small1", "medium1", "small2"]
 		"day2":
 			gs.day = 2
 			gs._start_day(false)

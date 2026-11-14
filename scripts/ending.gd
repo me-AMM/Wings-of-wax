@@ -25,10 +25,11 @@ func _ready() -> void:
 	if not success and Text.list("ending_failed_" + GameState.fail_reason).size() > 0:
 		lines = Text.list("ending_failed_" + GameState.fail_reason)
 	var body := UIKit.world_label("\n".join(lines), 16)
-	body.position = Vector2(34, 176)
-	body.size = Vector2(572, 92)
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.add_theme_font_size_override("font_size", 8)   # 4 lines of story text must fit above the percent line
 	add_child(body)
+	body.position = Vector2(34, 180)
+	body.size = Vector2(560, 84)          # set after add_child so the wrap width sticks
 	if success:
 		var pct := UIKit.world_label(Text.t("ui.ending_percent") % int(round(GameState.research)), 24, Color("FFD23F"))
 		pct.position = Vector2(34, 272)
@@ -65,6 +66,7 @@ func _ready() -> void:
 		newb.focus_neighbor_right = tb.get_path()
 		tb.focus_neighbor_left = newb.get_path()
 		retry_btn.grab_focus()
+	_learned()
 	Audio.play("success" if success else "fail")
 
 func _stars() -> void:
@@ -110,3 +112,32 @@ func _unhandled_input(e: InputEvent) -> void:
 			_next()
 		else:
 			_retry()
+
+# "What you learned": up to 3 facts the player met (NASA-data cards first), each with its source.
+func _learned() -> void:
+	var prefer := ["solar_storms", "gannon", "osdr_gym", "radlab_storm", "csa_radish", "busy_sun", "why_forecasts_work", "dust", "solar", "breathing"]
+	var picks: Array = []
+	for k in prefer:
+		if k in GameState.cards_seen and picks.size() < 3:
+			picks.append(k)
+	for k in GameState.cards_seen:
+		if picks.size() < 3 and not (k in picks):
+			picks.append(k)
+	if picks.is_empty():
+		return
+	var panel := ColorRect.new()
+	panel.color = Color(0.04, 0.05, 0.1, 0.8)
+	panel.position = Vector2(20, 12)
+	panel.size = Vector2(600, 24 + 32 * picks.size())
+	add_child(panel)
+	var head := UIKit.world_label(Text.t("ui.learned"), 16, Color("FFD23F"))
+	head.position = Vector2(30, 14)
+	add_child(head)
+	for i in picks.size():
+		var c: Dictionary = Text.card(picks[i])
+		var t := UIKit.world_label("- " + c["title"], 16)
+		t.position = Vector2(30, 34 + 32 * i)
+		add_child(t)
+		var s := UIKit.world_label(c["source"], 8, Color(0.75, 0.85, 1.0))
+		s.position = Vector2(46, 52 + 32 * i)
+		add_child(s)

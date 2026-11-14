@@ -42,6 +42,8 @@ func _ready() -> void:
 
 func _show() -> void:
 	var c: Dictionary = Text.card(keys[idx])
+	if not (keys[idx] in GameState.cards_seen):
+		GameState.cards_seen.append(keys[idx])
 	title_l.text = c["title"]
 	body_l.text = c["body"]
 	src_l.text = c["source"]

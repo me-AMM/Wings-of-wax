@@ -22,6 +22,7 @@ var fade_rect: ColorRect
 var splash: Label
 var judge_label: Label
 var storm_icon: TextureRect
+var fact_btn: Button
 var day_card: ColorRect
 var day_info: Label
 var health_num: Label
@@ -93,6 +94,12 @@ func _build() -> void:
 	judge_label = _text(Vector2(4, 298), 16, root, Color("F06FA8"))
 	judge_label.text = Text.t("ui.judge_label")
 	judge_label.visible = false
+	# Fact log: reopens every info card seen so far (also the F key)
+	var fb := UIKit.flat_button(Text.t("ui.fact_log"), Rect2(440, strip_height + 6, 84, 18))
+	fb.focus_mode = Control.FOCUS_NONE
+	fb.pressed.connect(open_fact_log)
+	root.add_child(fb)
+	fact_btn = fb
 	# notice line
 	notice_panel = ColorRect.new()
 	notice_panel.color = Color(0.04, 0.05, 0.1, 0.75)
@@ -149,6 +156,7 @@ func _build() -> void:
 	fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(fade_rect)
 	UIKit.ignore_mouse(root)
+	fact_btn.mouse_filter = Control.MOUSE_FILTER_STOP
 
 func _icon(icon_name: String, pos: Vector2, parent: Control) -> TextureRect:
 	var ic := UIKit.icon(icon_name, 32)       # 32x32 derived icon, shown 1:1
@@ -305,3 +313,14 @@ func show_banner(text: String, seconds: float) -> void:
 	banner_panel.visible = true
 	await get_tree().create_timer(seconds).timeout
 	banner_panel.visible = false
+
+func open_fact_log() -> void:
+	if GameState.cards_seen.is_empty() or GameState.modal_count > 0:
+		return
+	var c = load("res://scenes/InfoCard.tscn").instantiate()
+	c.keys = GameState.cards_seen.duplicate()
+	add_child(c)
+
+func _unhandled_input(e: InputEvent) -> void:
+	if e is InputEventKey and e.pressed and not e.echo and e.keycode == KEY_F and GameState.modal_count == 0:
+		open_fact_log()

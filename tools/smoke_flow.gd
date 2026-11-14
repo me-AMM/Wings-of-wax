@@ -3,7 +3,7 @@ extends Node
 # Instantiates every full-screen scene once (Title, CharacterSelect, Story, endings, Credits, Board) to catch errors.
 var n := 0
 var cur: Node
-var list := ["Title", "CharacterSelect", "Story", "EndingSuccess", "EndingFailed", "Credits", "ForecastBoard", "Outpost", "Mission"]
+var list := ["Title", "CharacterSelect", "Story", "EndingSuccess", "EndingFailed", "Credits", "ForecastBoard", "SpaceWeatherLog", "Outpost", "Mission"]
 func _process(_d: float) -> void:
 	n += 1
 	if n == 3:

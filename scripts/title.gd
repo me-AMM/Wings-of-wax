@@ -38,8 +38,15 @@ func _ready() -> void:
 	summary_l.size = Vector2(240, 20)
 	summary_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	add_child(summary_l)
+	var log_btn := UIKit.button(Text.t("ui.title_log"), 160)
+	log_btn.position = Vector2(240, 84)
+	log_btn.pressed.connect(func():
+		Audio.play("ui_click")
+		GameState.log_return = "res://scenes/Title.tscn"
+		Scenes.go("res://scenes/SpaceWeatherLog.tscn"))
+	add_child(log_btn)
 	msg_l = UIKit.world_label("", 16, Color("FF8080"))
-	msg_l.position = Vector2(120, 82)
+	msg_l.position = Vector2(120, 122)
 	msg_l.size = Vector2(400, 40)
 	msg_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	msg_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -55,6 +62,8 @@ func _ready() -> void:
 	load_btn.focus_neighbor_left = start_btn.get_path()
 	load_btn.focus_neighbor_right = judge_btn.get_path()
 	judge_btn.focus_neighbor_left = load_btn.get_path()
+	load_btn.focus_neighbor_bottom = log_btn.get_path()
+	log_btn.focus_neighbor_top = load_btn.get_path()
 
 # Load Game is greyed out without a (readable) save.
 func _refresh_load() -> void:
@@ -99,6 +108,10 @@ func _unhandled_input(e: InputEvent) -> void:
 	var f := get_viewport().gui_get_focus_owner()
 	if e.is_action_pressed("interact") and f is Button:
 		f.pressed.emit()
+	elif e.is_action_pressed("move_down") and f != null and f.focus_neighbor_bottom != NodePath(""):
+		f.get_node(f.focus_neighbor_bottom).grab_focus()
+	elif e.is_action_pressed("move_up") and f != null and f.focus_neighbor_top != NodePath(""):
+		f.get_node(f.focus_neighbor_top).grab_focus()
 	elif e.is_action_pressed("move_right") or e.is_action_pressed("move_left"):
 		if f == null:
 			start_btn.grab_focus()

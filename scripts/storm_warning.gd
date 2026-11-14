@@ -19,6 +19,7 @@ var warn_nodes: Array = []       # tint and specks
 var panel: Control
 var count_label: Label
 var size_label: Label
+var src_label: Label
 var real_label: Label
 var shelter_label: Label
 var full_panel: ColorRect
@@ -70,6 +71,11 @@ func _ready() -> void:
 	count_label.position = Vector2(38, 6)
 	count_label.size = Vector2(150, 20)
 	panel.add_child(count_label)
+	src_label = UIKit.world_label("", 8, Color("9BE8FF"))     # the data source, always visible
+	src_label.position = Vector2(100, 42)
+	src_label.size = Vector2(88, 12)
+	src_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	panel.add_child(src_label)
 	size_label = UIKit.world_label("", 16, Color("FFD23F"))
 	size_label.position = Vector2(4, 36)
 	size_label.size = Vector2(184, 20)
@@ -113,6 +119,7 @@ func _begin(play_sound := true) -> void:
 	panel.modulate = Color.WHITE
 	size_label.text = Text.t("storm_names." + GameState.storm_size)
 	real_label.text = Config.storm_short(GameState.storm_event)
+	src_label.text = Text.t("ui.source_noaa") if Config.donki.get(GameState.storm_event, {}).get("source", "") == "NOAA / ESA" else Text.t("ui.source_donki")
 	full_label.text = Config.storm_label(GameState.storm_event)
 	if play_sound:
 		Audio.play("storm_warning")              # loops during the countdown
@@ -132,6 +139,7 @@ func _on_event(ev_name: String, _data: Dictionary) -> void:
 		count_label.text = Text.t("ui.storm_over")
 		size_label.text = ""
 		real_label.text = ""
+		src_label.text = ""
 		shelter_label.text = ""
 		over_t = 2.0
 

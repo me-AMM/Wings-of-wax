@@ -80,6 +80,9 @@ var game_over := false
 var fail_day := 0                  # the day the run failed on (Retry day N)
 var day_start_state: Dictionary = {}   # the 06:00 state of the current day (autosave / Retry)
 var game_started := false          # false until the Outpost opens (autosave starts then)
+var storms_survived: Array = []    # DONKI event slots of storms the player lived through (Space Weather Log ticks)
+var cards_seen: Array = []         # info cards already shown (Fact log)
+var log_return := ""               # scene the Space Weather Log goes back to
 var storm_resolved_today := false  # today's scheduled storm already passed (not repeated after a load)
 var fail_reason := ""             # why the run failed: storm / air / health (picks the ending text)
 var game_result := ""              # "" / "success" / "failed"
@@ -141,6 +144,8 @@ func new_game() -> void:
 	fail_day = 0
 	game_started = false
 	time_scale = 1.0
+	storms_survived = []
+	cards_seen = []
 	total_hours = 0.0
 	_start_day(false)
 
@@ -157,7 +162,7 @@ const SAVE_EXCLUDE := ["cfg", "days", "day_start_state", "outpost_spawn", "judge
 	"time_scale", "last_modal_close_ms", "card_queue", "mission_kind", "game_over", "game_result", "fail_reason", "fail_day",
 	"storm_state", "storm_size", "storm_event", "storm_left_h", "storm_total_h", "storm_hit_hour", "storm_warned",
 	"later_damage_pct", "later_left_h", "later_base", "pending_mission", "finale_cleared", "in_shelter", "game_started",
-	"day_intro_pending"]
+	"day_intro_pending", "log_return"]
 const INT_FIELDS := ["day", "rations", "radish_meals", "tray_growth", "tray_high_days", "last_gym_day", "no_drink_days",
 	"no_meal_days", "missions_done", "missions_failed"]
 
@@ -660,6 +665,10 @@ func storm_hit() -> Dictionary:
 	var res := {"sheltered": in_shelter, "damage_pct": 0.0, "failed": false, "size": size}
 	storm_state = "none"
 	storm_resolved_today = true
+	if not in_shelter and (size == "large" or size == "finale"):
+		pass
+	elif storm_event != "" and not (storm_event in storms_survived):
+		storms_survived.append(storm_event)
 	if size == "large" or size == "finale":
 		if in_shelter:
 			damage(cfg["storms"]["shelter_damage_big"])

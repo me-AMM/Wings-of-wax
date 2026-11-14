@@ -26,6 +26,9 @@ func _ready() -> void:
 	add_child(real)
 	var back := UIKit.world_label(Text.t("ui.board_back"), 16)
 	back.position = Vector2(440, 266)      # inside the board frame (the border is the outer 30 px)
+	var lh := UIKit.world_label(Text.t("ui.log_hint"), 16, Color("FFD23F"))
+	lh.position = Vector2(48, 266)
+	add_child(lh)
 	add_child(back)
 
 # The next storm (day, entry) from today on, or {}.
@@ -54,5 +57,8 @@ func _real_line() -> String:
 	return "" if n.is_empty() else Config.storm_label(n["storm"]["event"])
 
 func _unhandled_input(e: InputEvent) -> void:
-	if e.is_action_pressed("interact") or (e is InputEventKey and e.pressed and e.keycode == KEY_ESCAPE):
+	if e is InputEventKey and e.pressed and e.keycode == KEY_L:
+		GameState.log_return = "res://scenes/ForecastBoard.tscn"
+		Scenes.go("res://scenes/SpaceWeatherLog.tscn")
+	elif e.is_action_pressed("interact") or (e is InputEventKey and e.pressed and e.keycode == KEY_ESCAPE):
 		Scenes.go("res://scenes/Outpost.tscn")
