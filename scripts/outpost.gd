@@ -319,18 +319,29 @@ func _clamp_locks() -> void:
 	var view: Rect2 = get_viewport().get_canvas_transform().affine_inverse() * get_viewport().get_visible_rect()
 	if not is_inside_tree():
 		return
+	var idx := 0
 	for it in locks:
+		idx += 1
 		if not is_instance_valid(it):
 			continue
 		var d: Dictionary = locks[it]
-		if not is_instance_valid(d["label"]) or not d["label"].visible:
+		if not is_instance_valid(d["label"]) or it.is_open():
 			continue
 		var sp: Sprite2D = it.get_node("Sprite2D")
-		var c: Vector2 = it.global_position + sp.offset + sp.texture.get_size() / 2.0 + Vector2(0, 22)
-		var lbl_w := 160.0
-		c.x = clampf(c.x, view.position.x + lbl_w / 2.0 + 6.0, view.end.x - lbl_w / 2.0 - 6.0)
+		# neighbouring labels sit at two different heights so they never overlap
+		var c: Vector2 = it.global_position + sp.offset + sp.texture.get_size() / 2.0 + Vector2(0, 22 + 24 * (idx % 2))
+		var show := view.grow(40.0).has_point(c)               # a building that is off screen shows no label
+		d["label"].visible = show
+		d["back"].visible = show
+		if not show:
+			continue
+		var font: Font = d["label"].get_theme_font("font")
+		var tw: float = font.get_string_size(d["label"].text, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x
+		d["label"].size = Vector2(tw + 8.0, 18.0)
+		d["back"].size = Vector2(tw + 16.0, 20.0)
+		c.x = clampf(c.x, view.position.x + tw / 2.0 + 12.0, view.end.x - tw / 2.0 - 12.0)
 		c.y = clampf(c.y, view.position.y + 56.0, view.end.y - 70.0)
-		d["label"].global_position = c - Vector2(lbl_w / 2.0, 0)
+		d["label"].global_position = c - Vector2(tw / 2.0 + 4.0, 0)
 		d["back"].global_position = d["label"].global_position + Vector2(-4, -1)
 
 func _update_prompt() -> void:
